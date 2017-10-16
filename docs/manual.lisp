@@ -60,6 +60,39 @@
 
     @end{section}
 
+
+(progn
+  (level [section] )
+  (begin section)
+  (title Class hierarchy)
+  (text
+   Most of the CL-DATA-STRUCTURES containers are available in few variants: @emph{Functional}, @emph{Transactional} and @emph{Mutable}.The different vairants allow for different approaches:)
+
+  (text (emph Mutable) containers allow for any modifications of their contents. This might result in better performance due to the lower abstraction level, but at the high cost: mutation in any place can lead to dangerous and unmaintainable code. There is no failsafe - if the execution of your code is interrupted, the changes made in the container are preserved, even if they represent incoherent or invalid data. Changes are also shared between threads, leading to potential data races.)
+
+  (text (emph Functional) containers do not suffer from the same problems. The operations on the functional containers return modified copy (a new object), leaving the original object unchanged. Unfortunately, this approach is also slower. Although copying the whole structure is usually not required, we still need to copy at least some parts of it.)
+
+  (text (emph Transactional) containers are a compromise between the previous approaches. The transactional container created from the mutable one (by #'BECOME-TRANSACTIONAL) will copy of the original container - the changes in the copy won't affect the original - but the transactional container will be modified. The transactional container is a mix of functional and mutable approaches. This allows us to achieve compromise between safety, simplicity and speed. The transactional container that is not created from other container will behave like the mutable container.)
+
+  @text{All containers with @emph{transactional} variant available can be also used as @emph{functional}, @emph{lazy} containers. Those containers reduce consing that troubles @emph{functional} containers by grouping all modification operations, and performing hidden, destructive modification of @emph{transactional} containers in the last possible moment. Since all those fancy functional data structures are just trees with copy on write semantics it improves performance a little bit.}
+
+  @text{Containers can be converted between functional, transactional and mutable variants using @emph{become} methods. However, not every container is available in all three variants. It is also important to remember that @emph{become} methods have limited guaranties. For instance: @emph{BECOME-TRANSACTIONAL} guaranties that changes from returned instance won't leak outside of returned instance, but not that destructive changes from original instance can't leak into it. Same applies for @emph{BECOME-FUNCTIONAL} method. Be careful and keep this in mind.}
+
+
+
+
+  (progn
+    @begin{section} @title{Trait classes}
+    @text{Class hierarchy of CL-DATA-STRUCTURES objects may appear to be complex, and somewhat convoluted, but there is a reason for that. CL-DATA-STRUCTURES defines multiple slotless classes, like FUNCTIONAL. Those classes are used as a way to attach set of informations about containers contract. In case of functional containers, that would be: not allowing any sort of mutable operations, in case of dictionaries: mapping keys to values. Thanks to this programmer, may write code that dispatches logic according to behavior of the container. This manual contains description of each such trait, and container class documentation contains information about inherited classes.}
+    @text{Some of trait classes, are used to represents variants.}
+    @end{section})
+
+  @begin{section}
+  @title{Variants}
+  @end{section} @end{section} @end{section} @end{section})
+
+
+
     (progn
       @begin{section} @title{POSITION-MODIFICATION metaprotocol}
       @text{Interestingly enough, generic functions performing modification on containers are in fact just wrappers around low level position-modification function. This may seem odd, but has rather simple motivation. Consider building nested data structures (sequences of dictionaries for instance). Performing destructive modifications is simple enough, however, when we assume that both top level and bottom level structures are purely functional, this becomes very tricky. One may be tempted to create set of higher order functions that are used to implement all those operations. In essence, PERFORM-POSITION-MODIFICATION is such function, hovewer because passing multiple callbacks is rather tiresome on the long run, instead it dispatches it's logic on the function itself. In addition to the above, this approach reduces code duplication when implementing additional, convinience functions (like UPDATE-IF).}
@@ -82,7 +115,8 @@
 
       @text{This is made possible by the fact that Generic Functions in Common Lisp are in fact objects with their own classes. By creating custom classes, Common Lisp programmer may actually assign behavior as method of function (as peculiar as it may sound). This essentially means that, INSERT function object satisfies protocol that allows to query it about itself (for example: is it modification or query?), explains how to handle existing key (see ADD and UPDATE for instance) and so one, without need of additional object at all. In fact, some of the functions in are implementations with rather complex class inheritance!}
       @text{Because understanding how this protocol works is usefull when implementing generic and reusable algorithms, it is beneficial to explain it here, even it is not required for simple use cases.}
-      (progn
+
+       (progn
         @begin{section} @title{How does it work?}
         @text{Function that is supposed to modify data structure calls POSITION-MODIFICATION, passing itself as argument. POSITION-MODIFICATION is generic function with multiple implementations dispatched on the class of the passed function. For instance, INSERT is of class INSERT-FUNCTION which inherits GROW-FUNCTION, while ERASE is of class ERASE-FUNCTION which in turns inherits SHRINK-FUNCTION. Therefore, typically container implements POSITION-MODIFICATION generic function for GROW-FUNCTION and SHRINK-FUNCTION. Next, it is assumed that passed function fullfills particular contract. For instance (to stay within established boundries) INSERT-FUNCTION should be applicable with methods GROW-BUCKET and MAKE-BUCKET while ERASE-FUNCTION needs to know how to SHRINK-BUCKET when used with dictionaries. List of required functions is provided for every container, as well as description of function itself in the API reference section.}
         @text{In summary, generic functions like ADD can be considered high level. Direct classes of those functions can be considered medium level, while SHRINK-FUNCTION and GROW-FUNCTION are lowest level of the system. Adding new high level and medium level objects is encouraged and allowed, hovewer low level functionality should be considered to be primitives.}
@@ -93,34 +127,7 @@
     @text{Common Lisp standard says that GETHASH function returns two values: first being value itself (or NIL if value was not found in the hashtable), while second is boolean that is true if value was found. This is reasonable approach that is also taken by AT function. However, (SETF GETHASH) returns just one value. This is problematic, because information about previous value is lost. To counter this problem, modification functions return MODIFICATION-STATUS object as a second value. This object grants access to this information using reader functions. It also may be implemented in different ways, which is beneficial in situations when obtaining value in strict way is not ideal. To simplify using this object, MOD-BIND macro is introduced (syntatic sugar used to mimic MULTIPLE-VALUE-BIND syntax).}
     @end{section}
 
-    (progn
-      @begin{section} @title{Trait classes}
-      @text{Class hierarchy of CL-DATA-STRUCTURES objects may appear to be complex, and somewhat convoluted, but there is a reason for that. CL-DATA-STRUCTURES defines multiple slotless classes, like FUNCTIONAL. Those classes are used as a way to attach set of informations about containers contract. In case of functional containers, that would be: not allowing any sort of mutable operations, in case of dictionaries: mapping keys to values. Thanks to this programmer, may write code that dispatches logic according to behavior of the container. This manual contains description of each such trait, and container class documentation contains information about inherited classes.}
-      @text{Some of trait classes, are used to represents variants.}
-      @end{section})
-
-    @begin{section}
-    @title{Variants}
-
-    @text{Most of cl-data-structures containers are available in few variants. Purpose of those is to aid programmer in avoidining errors by that may occur when mixing functional and destructive operations, while still providing access to both. To understand motivation behind this decission, consider other possible approaches that could be taken instead.}
-
-    @text{You can just allow arbitrary changes happening on any level. This usual gives you the best raw performance, but at the high cost: state that you are mutating can be shared in arbitrary way. If execution of your code is interupted, changes made in the container are preserved, even if they represent incoherent or invalid data. You need to clean it up yourself. Changes are also shared between threads, which means that you will need to also share some mutex to protect your data from races. This kind of containers are called @emph{mutable} in this library.}
-
-    @text{@emph{Functional} containers do not suffer from the same problems. Every operation that would change existing state in the mutable container instead will return new container, with changes visible only there. This, however has another limitation: copying is costly. Although copying whole structure is usually not required, we still need to copy at least parts of it.}
-
-    @text{@emph{Transactional} containers represent compromise between those two opposite approaches. Transactional containers implement @emph{mutable} api in distinct way: instead of performing destructive operations in arbitrary way, we are trying to @emph{isolate} changes so they will be visible only in the instance that we passed into method. This allows us to achieve compromise between safety, simplicity and speed.}
-
-    @text{All containers with @emph{transactional} variant available can be also used as @emph{functional}, @emph{lazy} containers. Those containers reduce consing that troubles @emph{functional} containers by grouping all modification operations, and performing hidden, destructive modification of @emph{transactional} containers in the last possible moment. Since all those fancy functional data structures are just trees with copy on write semantics it improves performance a little bit.}
-
-    @text{Containers can be converted between functional, transactional and mutable variants using @emph{become} methods. However, not every container is available in all three variants. It is also important to remember that @emph{become} methods have limited guaranties. For instance: @emph{BECOME-TRANSACTIONAL} guaranties that changes from returned instance won't leak outside of returned instance, but not that destructive changes from original instance can't leak into it. Same applies for @emph{BECOME-FUNCTIONAL} method. Be careful and keep this in mind.}
-
-    @end{section}
-
-    @end{section}
-
-    @end{section})
-
-  (chunk *cl-data-structures*
+      (chunk *cl-data-structures*
     @begin{section} @label{cl-ds API}
     @title{API Reference}
     @text{This section contains reference of all functions, classes and macros provided by this library to the user.}
@@ -341,4 +348,3 @@
     @end{section}
 
     @end{section}))
-
