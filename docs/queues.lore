@@ -1,0 +1,42 @@
+(in-package #:cl-data-structures.documentation)
+(cl-lore.api.syntax:syntax
+ cl-lore.extensions.documentation.api
+ cl-lore.extensions.sequence-graphs.api)
+
+
+@begin{section}
+@label{queues api}
+@title{API}
+@text{To modify content of the functional queue use the following functions.}
+ @begin{list}
+ @item{PUT}
+ @item{TAKE-OUT}
+ @end{list}
+@text{To modify content of the mutable queue use the following functions.}
+ @begin{list}
+ @item{PUT!}
+ @item{TAKE-OUT!}
+ @end{list}
+@end{section}
+
+@begin{section}
+@label{2-3-tree}
+@title{2-3-tree}
+@text{2-3-tree is a trie where each subtree holds either 2 or 3 children and grows like B-tree (and as such does not need balancing).}
+@begin{documentation} @pack{CL-DATA-STRUCTURES.QUEUES.2-3-TREE}
+@docfun['cl-ds.queues.2-3-tree:make-functional-2-3-queue]
+@docfun['cl-ds.queues.2-3-tree:make-mutable-2-3-queue]
+@docfun['cl-ds.queues.2-3-tree:make-transactional-2-3-queue]
+@docclass['cl-ds.queues.2-3-tree:functional-2-3-queue]
+@docclass['cl-ds.queues.2-3-tree:mutable-2-3-queue]
+@docclass['cl-ds.queues.2-3-tree:transactional-2-3-queue]
+@end{documentation}
+@end{section}
+
+@begin{section}
+@label{queues}
+@title{Queue structures}
+@text{Queues are FIFO structures, commonly used for the implementation of scheduling systems and various breadth-first search algorithms.}
+@include{queues api}
+@include{2-3-tree}
+@end{section}

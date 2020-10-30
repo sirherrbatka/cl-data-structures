@@ -27,6 +27,7 @@
    "introduction.lore"
    "dicts.lore"
    "manual.lore"
+   "queues.lore"
    "in-depth.lore")
 
   @title{CL-DATA-STRUCTURES}
@@ -39,6 +40,7 @@
   @include{cl-ds threads}
   @include{cl-ds streaming}
   @include{dicts}
+  @include{queues}
   @include{cl-ds internals}
   )
 

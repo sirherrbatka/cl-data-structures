@@ -52,8 +52,9 @@
 
 
 (defmethod cl-ds:whole-range ((obj vector))
-  (make 'vector-range :vector obj
-                      :upper-bound (length obj)))
+  (make 'vector-range
+        :vector obj
+        :upper-bound (length obj)))
 
 
 (defmethod cl-ds:at ((range vector-range) location &rest more)
@@ -126,12 +127,13 @@
 
 (defmethod cl-ds:traverse ((range vector-range) function)
   (bind (((:slots %lower-bound %upper-bound %vector) range)
+         (vector %vector)
          (lower-bound %lower-bound)
          (upper-bound %upper-bound))
     (unwind-protect
          (iterate
            (for i from lower-bound below upper-bound)
-           (funcall function (aref %vector i))
+           (funcall function (aref vector i))
            (setf lower-bound i))
       (setf %lower-bound lower-bound))
     range))

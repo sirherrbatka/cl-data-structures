@@ -171,6 +171,7 @@
                              (:file "docstrings")
                              (:module "2-3-tree"
                               :components ((:file "api")
+                                           (:file "docstrings")
                                            ))))
                (:module "sets"
                 :components ((:file "packages")
