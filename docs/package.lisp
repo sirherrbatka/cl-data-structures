@@ -26,6 +26,8 @@
    "conventions.lore"
    "introduction.lore"
    "dicts.lore"
+   "sets.lore"
+   "sequences.lore"
    "manual.lore"
    "queues.lore"
    "in-depth.lore")
@@ -33,14 +35,16 @@
   @title{CL-DATA-STRUCTURES}
   @include{cl-ds intro}
   @include{cl-ds API}
+  @include{dicts}
+  @include{sets}
+  @include{queues}
+  @include{sequences}
   @include{cl-ds algorithms}
   @include{cl-ds file system}
   @include{cl-ds math}
   @include{cl-ds clustering}
   @include{cl-ds threads}
   @include{cl-ds streaming}
-  @include{dicts}
-  @include{queues}
   @include{cl-ds internals}
   )
 

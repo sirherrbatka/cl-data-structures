@@ -1,0 +1,33 @@
+(in-package #:cl-data-structures.documentation)
+(cl-lore.api.syntax:syntax
+ cl-lore.extensions.documentation.api
+ cl-lore.extensions.sequence-graphs.api)
+
+@begin{section} @label{RRB vector}
+@title{RRB vector}
+@text{RRB stands for "Relaxed Radix Trie". Elements are indexed using the successive 5 bit fragments of the index as the keys in the trees. This data structure is commonly seen in the new generation of functional languages (scala, clojure).}
+@docclass['cl-ds.seqs.rrb:functional-rrb-vector]
+@docclass['cl-ds.seqs.rrb:mutable-rrb-vector]
+@docclass['cl-ds.seqs.rrb:transactional-rrb-vector]
+@docfun['cl-ds.seqs.rrb:make-functional-rrb-vector]
+@docfun['cl-ds.seqs.rrb:make-mutable-rrb-vector]
+@docfun['cl-ds.seqs.rrb:make-transactional-rrb-vector]
+@end{section}
+
+@begin{section} @label{Sequences API}
+@title{API}
+@text{To obtain value under index use the AT function. To modify content of the sequence use the following function.}
+ @begin{list}
+ @item{PUT}
+ @item{PUT!}
+ @item{TAKE-OUT!} 
+ @item{TAKE-OUT!} 
+ @end{list}
+@end{section}
+
+@begin{section} @title{Sequence structures}
+@label{sequences}
+@text{Sequences are collections storing elements under numeric index, in consecutive numeric range starting from 0. Those semantics are very much like those of CL:SEQUENCE.}
+@include{Sequences API}
+@include{RRB vector}
+@end{section}

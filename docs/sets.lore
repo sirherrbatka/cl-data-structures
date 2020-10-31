@@ -1,0 +1,46 @@
+(in-package #:cl-data-structures.documentation)
+(cl-lore.api.syntax:syntax
+ cl-lore.extensions.documentation.api
+ cl-lore.extensions.sequence-graphs.api)
+
+@begin{section}
+@title{QP-Trie set}
+@label{QP-Trie set}
+@text{QP-Trie set is dedicated storage for the (simple-array (unsigned-byte 8) (*)) objects. Primary use case are utf-8. This data structure is uniquely suited toward storing large sets of such strings because it utilizes prefix structure that will compress set to reuse memory for storing identical prefixes of the content.}
+@begin{documentation}
+@pack{CL-DATA-STRUCTURES.SETS.QP-TRIE}
+@docclass['cl-ds.sets.qp-trie:mutable-qp-trie-set]
+@docfun['cl-ds.sets.qp-trie:make-mutable-qp-trie-set]
+@end{documentation}
+@end{section}
+
+@begin{section}
+@title{Skip-list set}
+@label{Skip-list set}
+@text{Skip lists are a general purpose ordered containers, like a self-balancing trees.}
+@begin{documentation}
+@pack{CL-DATA-STRUCTURES.SETS.SKIP-LIST}
+@docclass['cl-ds.sets.skip-list:mutable-skip-list-set]
+@docfun['cl-ds.sets.skip-list:make-mutable-skip-list-set]
+@end{documentation}
+@end{section}
+
+@begin{section}
+@label{Sets API}
+@title{API}
+@text{To modify content of the mutable set use the following functions.}
+ @begin{list}
+ @item{PUT!}
+ @item{ERASE!}
+ @end{list}
+@text{To query content of the set use AT function. Pass object as a key. Function will return T if element is in the set and NIL otherwise.}
+@end{section}
+
+@begin{section}
+@title{Set structures}
+@label{sets}
+@text{Sets are collections of unique elements. Therefore the only operation which can be performed on the set is checking if objects is member of the set, removing object from the set, and adding object to the set.}
+@include{Sets API}
+@include{QP-Trie set}
+@include{Skip-list set}
+@end{section}

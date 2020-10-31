@@ -31,7 +31,7 @@
      location
      &rest all)
   (declare (ignore all))
-  (check-type location (simple-array (unsigned-byte 8)))
+  (check-type location (simple-array (unsigned-byte 8) (*)))
   (when (emptyp location)
     (error 'empty-array-key :value location))
   (let ((result (cl-ds.common.qp-trie:qp-trie-insert!
@@ -51,7 +51,8 @@
      container
      location
      &rest all)
-  (check-type location (simple-array (unsigned-byte 8)))
+  (declare (ignore all))
+  (check-type location (simple-array (unsigned-byte 8) (*)))
   (when (emptyp location)
     (error 'empty-array-key :value location))
   (let ((result (cl-ds.common.qp-trie:qp-trie-delete! structure location)))

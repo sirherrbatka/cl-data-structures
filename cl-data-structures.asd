@@ -176,12 +176,13 @@
                (:module "sets"
                 :components ((:file "packages")
                              (:file "common")
+                             (:file "docstrings")
                              (:module "qp-trie"
                               :components ((:file "api")
                                            (:file "docstrings")))
                              (:module "skip-list"
                               :components ((:file "api")
-                                           ))))
+                                           (:file "docstrings")))))
                (:module "metric-space"
                 :components ((:file "packages")
                              (:file "trait-classes")
