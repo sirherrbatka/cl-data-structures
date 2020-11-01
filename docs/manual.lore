@@ -231,6 +231,7 @@
 @pack{CL-DATA-STRUCTURES.STREAMING-ALGORITHMS}
 @docgeneric['cl-ds.sa:bloom-filter]
 @docgeneric['cl-ds.sa:approximated-counts]
+@docgeneric['cl-ds.sa:approximated-top-k]
 @docgeneric['cl-ds.sa:approximated-set-cardinality]
 @docgeneric['cl-ds.sa:union]
 @docgeneric['cl-ds.sa:clean-sketch]
