@@ -136,11 +136,11 @@
   @begin{documentation}
    @pack{CL-DATA-STRUCTURES.ALGORITHMS}
    @docfun['cl-ds.alg:accumulate]
-   @docfun['cl-ds.alg:cumulative-accumulate]
    @docfun['cl-ds.alg:count-elements]
    @docfun['cl-ds.alg:extrema]
    @docfun['cl-ds.alg:extremum]
    @docfun['cl-ds.alg:to-vector]
+   @docfun['cl-ds.alg:to-list]
    @docfun['cl-ds.alg:to-hash-table]
   @end{documentation}
  @end{section}
@@ -151,6 +151,8 @@
    @pack{CL-DATA-STRUCTURES.ALGORITHMS}
    @docfun['cl-ds.alg:distinct]
    @docfun['cl-ds.alg:cumulative-accumulate]
+   @docfun['cl-ds.alg:translation]
+   @docfun['cl-ds.alg:enumerate]
    @docfun['cl-ds.alg:flatten-lists]
    @docfun['cl-ds.alg:group-by]
    @docfun['cl-ds.alg:on-each]
@@ -169,10 +171,18 @@
    @pack{CL-DATA-STRUCTURES.ALGORITHMS}
    @docfun['cl-ds.alg:cartesian]
    @docfun['cl-ds.alg:chain]
+   @docfun['cl-ds.alg:cartesian]
    @docfun['cl-ds.alg:shuffled-range]
    @docfun['cl-ds.alg:zip]
    @docmacro['cl-ds.alg:summary]
    @docfun['cl-ds.alg:shuffled-range]
+  @end{documentation}
+ @end{section}
+
+ @begin{section} @title{Variables}
+  @begin{documentation}
+  @pack{CL-DATA-STRUCTURES.ALGORITHMS}
+  @docvar['cl-ds.alg:*current-key*]
   @end{documentation}
  @end{section}
 
