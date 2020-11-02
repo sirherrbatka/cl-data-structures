@@ -83,7 +83,7 @@
                                (cl-ds:value
                                 (cl-data-structures.streaming-algorithms:approximated-set-cardinality
                                  data
-                                 :hash-fn #'cl-data-structures.streaming-algorithms.hyperloglog:hash-integer))
+                                 :hash-fn #'cl-data-structures.utils:hash-integer))
                                510000)))]))
 
   (function clean-sketch
