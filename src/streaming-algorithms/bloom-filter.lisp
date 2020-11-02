@@ -24,7 +24,7 @@
     (:width access-width)))
 
 
-(defmethod compatible-p ((first bloom-filter) &rest more)
+(defmethod compatiblep ((first bloom-filter) &rest more)
   (push first more)
   (and (cl-ds.utils:homogenousp more :key #'access-width)
        (cl-ds.utils:homogenousp more :key #'access-depth)

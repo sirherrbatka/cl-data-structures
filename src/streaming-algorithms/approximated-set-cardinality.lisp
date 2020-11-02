@@ -16,7 +16,7 @@
     :registers (~> object access-registers copy-array)))
 
 
-(defmethod compatible-p ((first-sketch approximated-set-cardinality)
+(defmethod compatiblep ((first-sketch approximated-set-cardinality)
                          &rest more-sketches)
   (push first-sketch more-sketches)
   (cl-ds.utils:homogenousp more-sketches :key #'class-of))
