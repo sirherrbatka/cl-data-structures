@@ -14,7 +14,7 @@
                 :metabang-bind    :bordeaux-threads
                 :scribble         :osicat
                 :cl-progress-bar  :cl-ppcre
-                :trivial-garbage)
+                :trivial-garbage  :uiop)
   :serial T
   :pathname "src"
   :components ((:file "aux-package")
