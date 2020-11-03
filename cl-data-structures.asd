@@ -13,8 +13,8 @@
                 :lparallel        :flexichain
                 :metabang-bind    :bordeaux-threads
                 :scribble         :osicat
-                :cl-fad           :cl-progress-bar
-                :trivial-garbage  :cl-ppcre)
+                :cl-progress-bar  :cl-ppcre
+                :trivial-garbage)
   :serial T
   :pathname "src"
   :components ((:file "aux-package")
