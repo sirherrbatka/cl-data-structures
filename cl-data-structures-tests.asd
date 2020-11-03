@@ -5,8 +5,8 @@
   :name "cl-data-structures-tests"
   :version "0.0.0"
   :license "BSD simplified"
-  :author "Lisp Mechanics"
-  :maintainer "Lisp Mechanics"
+  :author "Marek Kochanowicz"
+  :maintainer "Marek Kochanowicz"
   :depends-on (:prove-asdf :prove :cl-data-structures)
   :defsystem-depends-on (:prove-asdf)
   :serial T

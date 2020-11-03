@@ -5,8 +5,8 @@
   :name "cl-data-structures"
   :version "0.0.0"
   :license "BSD simplified"
-  :author "Lisp Mechanics"
-  :maintainer "Lisp Mechanics"
+  :author "Marek Kochanowicz"
+  :maintainer "Marek Kochanowicz"
   :depends-on ( :iterate          :alexandria
                 :serapeum         :documentation-utils-extensions
                 :more-conditions  :closer-mop
