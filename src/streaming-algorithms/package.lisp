@@ -10,6 +10,7 @@
    (#:ph #:cl-data-structures.streaming-algorithms.polynomial-hashing))
   (:export
    #:approximated-counts
+   #:approximated-counts-distance
    #:approximated-set-cardinality
    #:approximated-top-k
    #:bloom-filter
@@ -24,7 +25,7 @@
    #:minhash-jaccard/double-float
    #:minhash-jaccard/fixnum
    #:minhash-jaccard/single-float
-   #:one-bit-minhash-jaccard/single-float
    #:one-bit-minhash-jaccard/double-float
    #:one-bit-minhash-jaccard/fixnum
+   #:one-bit-minhash-jaccard/single-float
    #:union))

@@ -3,7 +3,7 @@
 
 (defclass approximated-counts (fundamental-data-sketch)
   ((%counters :initarg :counters
-              :type (simple-array fixnum (* *))
+              :type (simple-array non-negative-fixnum (* *))
               :accessor access-counters)
    (%hashes :initarg :hashes
             :type vector
@@ -138,34 +138,33 @@
         :width width))
 
 
-(defun count-min-sketches-distance (a-count-min-sketch b-count-min-sketch)
-  (unless (compatiblep a-count-min-sketch b-count-min-sketch)
-    (error 'cl-ds:incompatible-arguments
-           :parameters '(a-count-min-sketch b-count-min-sketch)
-           :values `(,a-count-min-sketch ,b-count-min-sketch)
-           :format-control "Sketches passed to the count-min-sketches-distance are not compatible."))
+(defun approximated-counts-distance (a-sketch b-sketch)
+  (check-type a-sketch approximated-counts)
+  (check-type b-sketch approximated-counts)
+  (assert (compatiblep a-sketch b-sketch)
+          (a-sketch b-sketch)
+          (make-condition 'cl-ds:incompatible-arguments
+                          :parameters '(a-sketch b-sketch)
+                          :values `(,a-sketch ,b-sketch)
+                          :format-control "Sketches passed to the count-min-sketches-distance are not compatible."))
   (flet ((counter-mean (counter line)
            (iterate
              (with length = (array-dimension counter 1))
              (for i from 0 below length)
              (sum (aref counter line i) into total)
              (finally (return (/ total length))))))
-    (iterate 
-      (with a-counters = (access-counters a-count-min-sketch))
-      (with b-counters = (access-counters b-count-min-sketch))
+    (iterate
+      (with a-counters = (access-counters a-sketch))
+      (with b-counters = (access-counters b-sketch))
       (with line-size = (array-dimension a-counters 1))
       (for i from 0 below (array-dimension a-counters 0))
       (for score = (iterate
                      (for j from 0 below line-size)
                      (for a = (aref a-counters i j))
                      (for b = (aref b-counters i j))
-                     (sum (* a b))))
+                     (sum (sqrt (* a b)))))
       (for a-mean = (counter-mean a-counters i))
       (for b-mean = (counter-mean b-counters i))
       (maximize (~>> (* a-mean b-mean line-size line-size)
-                     sqrt
-                     (/ 1)
-                     (* score)
-                     (- 1)
-                     sqrt
+                     sqrt (/ 1) (* score) (- 1) sqrt
                      (coerce _ 'single-float))))))

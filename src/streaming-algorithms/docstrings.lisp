@@ -107,6 +107,14 @@
      :notes ("Quality of the estimate directly depends on DEPTH and WIDTH."
              "Sensitive to a hash function. Large avalanche factor is very helpful.")))
 
+  (function approximated-counts-distance
+    (:description "Estimates bhattacharyya-distance from two count-min-sketches."
+     :returns "SINGLE-FLOAT"
+     :exceptional-situations ("Will signal a TYPE-ERROR if either A-SKETCH or B-SKETCH are not of the type APPROXIMATED-COUNTS."
+                              "Will signal a INCOMPATIBLE-ARGUMENTS if sketches are not compatible.")
+
+             :notes "Result is biased toward the higher values."))
+
   (function bloom-filter
     (:description "Creates bloom filter out of elements in the range. Bloom filter is a memory efficient data structure allowing to check if an item is absent from the range. If AT returns nil, the item is certainly absent. If AT returns T item either present or not."
      :returns "Instance of the fundamental-data-sketch class. Use cl-ds:at to check if element is present. False positives are possible, false negatives are not possible."
