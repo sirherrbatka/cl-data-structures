@@ -9,11 +9,11 @@
          (score (iterate
                   (for a in-vector h1)
                   (for b in-vector h2)
-                  (sum (* a b)))))
+                  (sum (sqrt (* a b))))))
     (~>> (* mean1 mean2 (length h1) (length h2))
          sqrt
          (/ 1)
          (* score)
          (- 1)
          sqrt
-         (coerce 'single-float))))
+         (coerce _ 'single-float))))
