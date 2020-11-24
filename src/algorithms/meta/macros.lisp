@@ -7,6 +7,11 @@
          (mapcar (lambda (x) (if (listp x) (first x) x)))
          (remove-if (lambda (x) (member x '(&key &optional &rest &allow-other-keys))))))
 
+  (defun key-parameters-start-at (lambda-list)
+    (if-let ((position (position 'cl:&key lambda-list)))
+      position
+      0))
+
   (defun extract-values (lambda-list)
     (bind (((:values required optional rest keys) (parse-ordinary-lambda-list lambda-list)))
       (~> (append required
@@ -35,7 +40,8 @@
 
   (defun aggregator-constructor-form (function-class function-state-forms init-body
                                       aggregate-form result-form method-lambda-list
-                                      parameters)
+                                      parameters
+                                      key-position)
     (let ((function-state (mapcar (lambda (x) (if (atom x) x (first x)))
                                   function-state-forms))
           (function-types (mapcar (lambda (x) (if (atom x) t (second x)))
@@ -71,12 +77,12 @@
                                                 (,!outer-constructor (eql nil))
                                                 (,!function ,function-class)
                                                 (,!arguments list))
-               (,!function (cl-ds.utils:at-list ,!arguments :key) ,!arguments))
+               (,!function (getf (drop ,key-position ,!arguments) :key) ,!arguments))
              (defmethod aggregator-constructor ((,!range cl:sequence)
                                                 (,!outer-constructor (eql nil))
                                                 (,!function ,function-class)
                                                 (,!arguments list))
-               (,!function (cl-ds.utils:at-list ,!arguments :key) ,!arguments))))))))
+               (,!function (getf (drop ,key-position ,!arguments) :key) ,!arguments))))))))
 
 
 (defmacro define-aggregation-function
@@ -89,6 +95,7 @@
   (setf generic-lambda-list (substitute 'range :range generic-lambda-list)
         method-lambda-list (substitute 'range :range method-lambda-list))
   (let ((parameters (extract-parameters generic-lambda-list))
+        (key-position (key-parameters-start-at generic-lambda-list))
         (values (extract-values generic-lambda-list)))
     `(progn
        ,(aggregation-function-class-form function-class)
@@ -103,7 +110,8 @@
                                      aggregate-form
                                      result-form
                                      method-lambda-list
-                                     parameters))))
+                                     parameters
+                                     key-position))))
 
 
 (defmacro let-aggregator (bindings

@@ -97,4 +97,4 @@
                                        (fn moving-average-function)
                                        all)
   (cl-ds.alg:make-proxy range 'moving-average-range
-                        :key (cl-ds.utils:at-list all :key)))
+                        :key (getf (rest all) :key)))
