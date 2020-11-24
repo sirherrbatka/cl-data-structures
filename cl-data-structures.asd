@@ -221,6 +221,7 @@
                              (:file "without")
                              (:file "multiplex")
                              (:file "only")
+                             (:file "only-different")
                              (:file "cartesian")
                              (:file "restrain-size")
                              (:file "reservoir-sample")

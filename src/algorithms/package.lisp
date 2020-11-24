@@ -106,5 +106,6 @@
    #:transparent-to-chunking-mixin
    #:without
    #:wrap-chunk
+   #:only-different
    #:zip
    #:zip-traversable))

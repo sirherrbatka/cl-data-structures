@@ -154,6 +154,10 @@
              "This macro expands to %SUMMARY call. Programmer may opt to write %SUMMARY call directly despite extra boilerplate required."
              "Particularly useful when the iteration over the range requires considerable time alone and therefore repeating it should be avoided for efficiency sake.")))
 
+  (function only-different
+    (:description "A layer function. Creates a range that skips ELEMENT if it is the same as the previous in the range according to the TEST function."
+     :returns "A forward range."))
+
   (function only
     (:description "A layer function. Creates a range that skips elements that PREDICATE (KEY element) => NIL."
      :exceptional-situations "Will signal a TYPE-ERROR if either PREDICATE or KEY is not funcallable."
