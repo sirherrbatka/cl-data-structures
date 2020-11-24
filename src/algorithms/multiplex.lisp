@@ -124,8 +124,8 @@
                         all)
   (make 'forward-multiplex-proxy
         :original-range range
-        :key (cl-ds.utils:at-list (rest all) :key)
-        :function (cl-ds.utils:at-list (rest all) :function)))
+        :key (getf (rest all) :key)
+        :function (getf (rest all) :function)))
 
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range multiplex-proxy)

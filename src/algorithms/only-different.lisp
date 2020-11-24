@@ -43,10 +43,10 @@
         :comparsion (read-comparsion range)))
 
 
-(defgeneric only-different-function (range &key
-                                           test
-                                           initial-value
-                                           key)
+(defgeneric only-different (range &key
+                                  test
+                                  initial-value
+                                  key)
   (:generic-function-class only-different-function)
   (:method (range &key (test 'eql)
                        initial-value
@@ -63,9 +63,9 @@
                         (function only-different-function)
                         all)
   (make 'forward-only-different-proxy
-        :comparsion (cl-ds.utils:at-list (cdr all) :test)
-        :previous (cl-ds.utils:at-list (cdr all) :initial-value)
-        :key (cl-ds.utils:at-list (cdr all) :key)
+        :comparsion (getf (cdr all) :test)
+        :previous (getf (cdr all) :initial-value)
+        :key (getf (cdr all) :key)
         :original-range range))
 
 

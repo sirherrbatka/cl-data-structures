@@ -119,8 +119,8 @@
                         (fn partition-if-function)
                         all)
   (make-proxy range 'forward-partition-if-proxy
-              :key (cl-ds.utils:at-list all :key)
-              :on-first (cl-ds.utils:at-list all :on-first)
+              :key (getf (cddr all) :key)
+              :on-first (getf (cddr all) :on-first)
               :test (second all)))
 
 

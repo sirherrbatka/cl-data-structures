@@ -110,7 +110,7 @@
                         (function flatten-lists-function)
                         all)
   (make 'forward-flatten-proxy
-        :key (cl-ds.utils:at-list (rest all) :key)
+        :key (getf (rest all) :key)
         :original-range range))
 
 

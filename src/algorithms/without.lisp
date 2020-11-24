@@ -44,7 +44,7 @@
                         all)
   (make 'bidirectional-without-proxy
         :predicate (second all)
-        :key (cl-ds.utils:at-list (cddr all) :key)
+        :key (getf (cddr all) :key)
         :original-range range))
 
 
@@ -53,7 +53,7 @@
                         all)
   (make 'forward-without-proxy
         :predicate (second all)
-        :key (cl-ds.utils:at-list (cddr all) :key)
+        :key (getf (cddr all) :key)
         :original-range range))
 
 

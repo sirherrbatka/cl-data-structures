@@ -90,7 +90,7 @@
                         (fn on-each-function)
                         all)
   (on-each-proxy-range-from-range range (second all)
-                                  (cl-ds.utils:at-list (cddr all) :key)))
+                                  (getf (cddr all) :key)))
 
 
 (defmethod cl-ds:consume-front ((range forward-proxy-box-range))

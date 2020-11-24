@@ -67,7 +67,7 @@
 (defmethod cl-ds.alg.meta:apply-layer ((range fundamental-range)
                                        (fn repeat-function)
                                        all)
-  (let ((times (cl-ds.utils:at-list (rest all) :times)))
+  (let ((times (getf (rest all) :times)))
     (check-type times positive-integer)
     (make 'forward-repeat-proxy
           :times times

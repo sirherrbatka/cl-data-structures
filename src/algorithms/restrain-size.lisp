@@ -63,7 +63,7 @@
 (defmethod cl-ds.alg.meta:apply-layer ((range fundamental-range)
                                        (fn restrain-size-function)
                                        all)
-  (let ((size (cl-ds.utils:at-list all :size)))
+  (let ((size (getf (rest all) :size)))
     (check-type size integer)
     (unless (<= 0 size)
       (error 'cl-ds:argument-value-out-of-bounds
