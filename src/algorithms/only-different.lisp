@@ -52,7 +52,7 @@
                        initial-value
                        (key #'identity))
     (apply-range-function range
-                          #'only-different-function
+                          #'only-different
                           (list range
                                 :test test
                                 :initial-value initial-value

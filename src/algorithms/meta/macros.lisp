@@ -8,9 +8,7 @@
          (remove-if (lambda (x) (member x '(&key &optional &rest &allow-other-keys))))))
 
   (defun key-parameters-start-at (lambda-list)
-    (if-let ((position (position 'cl:&key lambda-list)))
-      position
-      0))
+    (position '&key lambda-list))
 
   (defun extract-values (lambda-list)
     (bind (((:values required optional rest keys) (parse-ordinary-lambda-list lambda-list)))
@@ -77,12 +75,18 @@
                                                 (,!outer-constructor (eql nil))
                                                 (,!function ,function-class)
                                                 (,!arguments list))
-               (,!function (getf (drop ,key-position ,!arguments) :key) ,!arguments))
+               (,!function ,(if key-position
+                                `(getf (drop ,key-position ,!arguments) :key)
+                                nil)
+                           ,!arguments))
              (defmethod aggregator-constructor ((,!range cl:sequence)
                                                 (,!outer-constructor (eql nil))
                                                 (,!function ,function-class)
                                                 (,!arguments list))
-               (,!function (getf (drop ,key-position ,!arguments) :key) ,!arguments))))))))
+               (,!function ,(if key-position
+                                `(getf (drop ,key-position ,!arguments) :key)
+                                nil)
+                           ,!arguments))))))))
 
 
 (defmacro define-aggregation-function
