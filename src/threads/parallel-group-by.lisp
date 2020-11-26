@@ -27,12 +27,12 @@
 
 
 (defclass bidirectional-parallel-group-by-proxy (forward-parallel-group-by-proxy
-                                                 bidirectional-proxy-range)
+                                                 cl-ds.alg:bidirectional-proxy-range)
   ())
 
 
 (defclass random-access-parallel-group-by-proxy (bidirectional-parallel-group-by-proxy
-                                                 random-access-proxy-range)
+                                                 cl-ds.alg:random-access-proxy-range)
   ())
 
 
@@ -132,7 +132,7 @@
                                          (with cl-ds.alg:*current-key* = key)
                                          (for c in-vector buffer)
                                          (bt:with-lock-held (lock)
-                                           (cl-ds.alg.meta:pass-to-aggregation c aggregator))
+                                           (cl-ds.alg.meta:pass-to-aggregation aggregator c))
                                          (finally
                                           (bt:with-lock-held (lock)
                                             (return (cons t (cl-ds.alg.meta:extract-result aggregator))))))
