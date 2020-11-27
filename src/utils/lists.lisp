@@ -198,8 +198,3 @@
 (defun transform (function sequence &rest more-sequences)
   (apply #'map-into sequence function sequence
          more-sequences))
-
-(defun at-list (list indicator &optional default)
-  (if-let ((cell (member indicator list)))
-    (second cell)
-    default))

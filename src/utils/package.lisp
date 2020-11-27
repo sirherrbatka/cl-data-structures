@@ -13,7 +13,6 @@
    #:ancestor-p
    #:and*
    #:as-cons-tree
-   #:at-list
    #:binary-search
    #:bind-lambda
    #:bucket-sort
