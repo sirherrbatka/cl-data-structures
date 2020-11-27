@@ -7,8 +7,9 @@
   :license "BSD simplified"
   :author "Marek Kochanowicz"
   :maintainer "Marek Kochanowicz"
-  :depends-on (:prove-asdf :prove :cl-data-structures)
+  :description "Tests for the cl-data-structures system."
   :defsystem-depends-on (:prove-asdf)
+  :depends-on (:prove-asdf :prove :cl-data-structures)
   :serial T
   :pathname "src"
   :components ((:module "utils"

@@ -7,6 +7,7 @@
   :license "BSD simplified"
   :author "Marek Kochanowicz"
   :maintainer "Marek Kochanowicz"
+  :description "Data structures, ranges, ranges algorithms."
   :depends-on ( :iterate          :alexandria
                 :serapeum         :documentation-utils-extensions
                 :more-conditions  :closer-mop
