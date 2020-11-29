@@ -136,6 +136,7 @@
   @begin{documentation}
    @pack{CL-DATA-STRUCTURES.ALGORITHMS}
    @docfun['cl-ds.alg:accumulate]
+   @docfun['cl-ds.alg:reservoir-sample]
    @docfun['cl-ds.alg:count-elements]
    @docfun['cl-ds.alg:extrema]
    @docfun['cl-ds.alg:extremum]
@@ -157,6 +158,7 @@
    @docfun['cl-ds.alg:group-by]
    @docfun['cl-ds.alg:on-each]
    @docfun['cl-ds.alg:only]
+   @docfun['cl-ds.alg:only-different]
    @docfun['cl-ds.alg:without]
    @docfun['cl-ds.alg:partition-if]
    @docfun['cl-ds.alg:repeat]

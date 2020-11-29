@@ -45,6 +45,8 @@
 
   (function reservoir-sample
             (:description "Draws sample in the form of the vector from the range."
+             :exceptional-situations ("Will signal TYPE-ERROR if SAMPLE-SIZE is not of the type POSITIVE-FIXNUM.")
+             :notes "This function implements the L algorithm."
              :returns "VECTOR of the size equal to the SAMPLE-SIZE and with the fill pointer up to the sample-size."))
 
   (function partition-if
@@ -159,8 +161,8 @@
              "Particularly useful when the iteration over the range requires considerable time alone and therefore repeating it should be avoided for efficiency sake.")))
 
   (function only-different
-    (:description "A layer function. Creates a range that skips ELEMENT if it is the same as the previous in the range according to the TEST function."
-     :returns "A forward range."))
+            (:description "A layer function. Creates a range that skips ELEMENT if it is the same as the previous in the range (according to the TEST function)."
+             :returns "A forward range."))
 
   (function only
     (:description "A layer function. Creates a range that skips elements that PREDICATE (KEY element) => NIL."
