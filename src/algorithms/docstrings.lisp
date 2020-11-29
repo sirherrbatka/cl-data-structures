@@ -43,6 +43,10 @@
                   (prove:is (cl-ds:at data 1) #(3 4) :test 'equalp)
                   (prove:is (cl-ds:at data 2) #(5 6) :test 'equalp))]))
 
+  (function reservoir-sample
+            (:description "Draws sample in the form of the vector from the range."
+             :returns "VECTOR of the size equal to the SAMPLE-SIZE and with the fill pointer up to the sample-size."))
+
   (function partition-if
     (:description "Groups consecutive elements in the range into a partition if TEST called on the previous value in the range and the current value in the range returns non-NIL, creates new partition otherwise. This does not change the content of the RANGE, but it will force aggregation to be performed on every group independently. Order of the groups is preserved in the aggregation result."
      :examples [(let* ((data '((1 "w") (1 "o") (1 "r") (1 "d") (2 "a") (2 "s") (3 "l") (3 "a") (3 "w")))
