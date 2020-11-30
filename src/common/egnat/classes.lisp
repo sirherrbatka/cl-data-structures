@@ -66,7 +66,7 @@
     :reader read-distant-range)
    (%children
     :type vector
-    :initform nil
+    :initform #()
     :initarg :children
     :reader read-children)))
 

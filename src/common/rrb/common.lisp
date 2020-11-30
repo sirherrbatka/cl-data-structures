@@ -57,26 +57,16 @@
       (cons content ownership-tag)))
 
 
-(declaim (inline make-sparse-rrb-node))
-(defun make-sparse-rrb-node (&key ownership-tag (content #()) (bitmask 0))
-  (declare (optimize (speed 3) (safety 0)))
-  (assert (>= (length content) (logcount bitmask)))
-  (if (null ownership-tag)
-      (make-sparse-rrb-node-untagged :content content :bitmask bitmask)
-      (make-sparse-rrb-node-tagged :content content
-                                   :bitmask bitmask
-                                   :ownership-tag ownership-tag)))
-
-
 (defmacro with-sparse-rrb-node (node &body body)
   (once-only (node)
-    `(cl-ds.utils:cases ((typep ,node 'sparse-rrb-node-tagged)
-                         (typep ,node 'sparse-rrb-node-untagged))
-       (macrolet ((sindex (index)
-                    `(the rrb-node-position
-                          (1- (logcount (ldb (byte (1+ ,index) 0)
-                                             (sparse-rrb-node-bitmask ,',node)))))))
-         ,@body))))
+    `(locally (declare (type sparse-rrb-node ,node))
+       (cl-ds.utils:cases ((typep ,node 'sparse-rrb-node-tagged)
+                           (typep ,node 'sparse-rrb-node-untagged))
+         (macrolet ((sindex (index)
+                      `(the rrb-node-position
+                            (1- (logcount (ldb (byte (1+ ,index) 0)
+                                               (sparse-rrb-node-bitmask ,',node)))))))
+           ,@body)))))
 
 
 (defmacro with-sparse-rrb-node-path ((tree index shift path indexes length &optional all-present)

@@ -17,7 +17,7 @@
      (%count-fn function))
 
     ((ensure-functionf count-fn)
-     (setf %table (make-hash-table :test test :size)
+     (setf %table (make-hash-table :test test :size size)
            %count-fn (ensure-function count-fn)
            %total-count 0))
 
