@@ -70,7 +70,7 @@
                      :type (or null (simple-array non-negative-fixnum (*))))
      (%sample-size :initarg :sample-size
                    :type positive-integer
-                   :initform 0
+                   :initform 1
                    :accessor access-sample-size)
      (%silhouette :initform nil
                   :type (or null (vector single-float))
@@ -96,8 +96,6 @@
 
 
 (cl-ds.utils:define-list-of-slots clara-algorithm-state (pam-algorithm-state)
-  (%cluster-sample-size read-cluster-sample-size)
-  (%minimal-cluster-size read-minimal-cluster-size)
   (%metric-fn access-metric-fn)
   (%sample-size access-sample-size)
   (%silhouette access-silhouette)

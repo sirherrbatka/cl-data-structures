@@ -189,9 +189,9 @@
              (with p-fake-values = (serapeum:plist-values args))
              (for key in p-fake-keys)
              (for value in p-fake-values)
-             (for (real . fake) = (find (make-keyword key) vars
-                                        :key #'car
-                                        :test #'string=))
+             (for fake = (cdr (find (make-keyword key) vars
+                                    :key #'car
+                                    :test #'string=)))
              (collect (list fake value))))))
 
 
