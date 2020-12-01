@@ -4,13 +4,15 @@
 (cl-ds.alg.meta:define-aggregation-function
     to-hash-table to-hash-table-function
 
-  (:range &key key test size hash-table-key hash-table-value)
+    (:range
+     &key key test size hash-table-key hash-table-value after)
   (:range &key
-          (test 'eql)
-          (key #'identity)
-          (hash-table-key #'identity)
-          (hash-table-value #'identity)
-          (size 16))
+   (test 'eql)
+   (key #'identity)
+   (hash-table-key #'identity)
+   (hash-table-value #'identity)
+   (after #'identity)
+   (size 16))
 
   (%table %hash-table-key %hash-table-value)
 

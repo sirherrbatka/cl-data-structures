@@ -4,10 +4,11 @@
 (cl-ds.alg.meta:define-aggregation-function
     to-vector to-vector-function
 
-  (:range &key key element-type size)
+  (:range &key key element-type size after)
   (:range &key
-          (key #'identity) (element-type t)
-          (size 16))
+   (key #'identity) (element-type t)
+   (after #'identity)
+   (size 16))
 
   (%vector)
 
