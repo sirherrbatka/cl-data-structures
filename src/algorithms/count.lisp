@@ -5,8 +5,8 @@
     count-elements
     count-elements-function
 
-    (:range)
-    (:range)
+    (:range &key after)
+    (:range &key (after #'identity))
 
     ((%count integer))
 

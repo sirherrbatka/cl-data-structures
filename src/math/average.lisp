@@ -3,8 +3,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     average average-function
-    (:range &key key sum count)
-    (:range &key (key #'identity) (sum 0) (count 0))
+    (:range &key key sum count after)
+    (:range &key (key #'identity) (sum 0) (count 0) (after #'identity))
     ((%sum number) (%count integer))
     ((setf %sum sum
            %count count))
@@ -17,8 +17,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     harmonic-average harmonic-average-function
-    (:range &key key count sum)
-    (:range &key (key #'identity) (count 0) (sum 0))
+    (:range &key key count sum after)
+    (:range &key (key #'identity) (after #'identity) (count 0) (sum 0))
     ((%sum number) (%count integer) (%zero boolean))
     ((setf %sum sum
            %count count
@@ -36,8 +36,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     geometric-average geometric-average-function
-    (:range &key key count total)
-    (:range &key (key #'identity) (count 0) (total nil))
+    (:range &key key count total after)
+    (:range &key (key #'identity) (count 0) (total nil) (after #'identity))
     ((%total (or null number)) (%count integer))
     ((setf %total total
            %count count))
@@ -56,8 +56,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     array-average array-average-function
-    (:range &key key sum count)
-    (:range &key (key #'identity) (sum nil) (count 0))
+    (:range &key key sum count after)
+    (:range &key (key #'identity) (after #'identity) (sum nil) (count 0))
     ((%sum (or array null)) (%count integer))
     ((setf %count count
            %sum (if (null sum)
@@ -81,8 +81,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     array-geometric-average array-geometric-average-function
-    (:range &key key total count)
-    (:range &key (key #'identity) (total nil) (count 0))
+    (:range &key key total count after)
+    (:range &key (key #'identity) (after #'identity) (total nil) (count 0))
     ((%total (or array null)) (%count integer))
     ((setf %count count
            %total (if (null total)

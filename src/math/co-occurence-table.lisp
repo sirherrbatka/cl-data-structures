@@ -4,8 +4,8 @@
 (cl-ds.alg.meta:define-aggregation-function
     co-occurence-table co-occurence-table-function
 
-  (:range test-functions &key key)
-  (:range test-functions &key (key #'identity))
+  (:range test-functions &key key after)
+  (:range test-functions &key (key #'identity) (after #'identity))
 
   (%result %test-functions)
 

@@ -4,16 +4,20 @@
 (defclass line-by-line-range (cl-ds:chunking-mixin
                               file-range-mixin
                               cl-ds:fundamental-forward-range)
-  ()
-  (:default-initargs :initial-position 0))
+  ((%lines-read :initarg :lines-read
+                :accessor access-lines-read))
+  (:default-initargs :initial-position 0 :lines-read 0))
 
 
 (defmethod cl-ds:clone ((range line-by-line-range))
-  (close-stream range)
-  (make 'line-by-line-range
-        :path (read-path range)
-        :reached-end (access-reached-end range)
-        :initial-position (access-current-position range)))
+  (declare (optimize (debug 3)))
+  (let ((current-position (access-current-position range)))
+    (close-stream range)
+    (make 'line-by-line-range
+          :path (read-path range)
+          :lines-read (access-lines-read range)
+          :reached-end (access-reached-end range)
+          :initial-position current-position)))
 
 
 (defmethod cl-ds:peek-front ((range line-by-line-range))
@@ -33,6 +37,13 @@
               (values line t))))))
 
 
+(defmethod set-stream-position ((range line-by-line-range) stream)
+  (or (ignore-errors (call-next-method range stream))
+      (iterate
+        (repeat (access-lines-read range))
+        (read-line stream))))
+
+
 (defmethod cl-ds:consume-front ((range line-by-line-range))
   (if (access-reached-end range)
       (values nil nil)
@@ -41,7 +52,9 @@
         (call-next-method range)
         (if (null line)
             (values nil nil)
-            (values line t)))))
+            (progn
+              (incf (access-lines-read range))
+              (values line t))))))
 
 
 (defmethod cl-ds:traverse ((range line-by-line-range) function)
@@ -52,6 +65,7 @@
            (with stream = (read-stream range))
            (for line = (read-line stream nil nil))
            (until (null line))
+           (incf (access-lines-read range))
            (funcall function line))
       (setf (access-current-position range) (~> range
                                                 read-stream

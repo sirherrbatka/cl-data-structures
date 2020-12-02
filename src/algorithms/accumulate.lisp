@@ -4,8 +4,8 @@
 (cl-ds.alg.meta:define-aggregation-function
     accumulate accumulate-function
 
-  (:range fn &key key initial-value)
-  (:range fn &key (key #'identity) (initial-value :unbound))
+  (:range fn &key key initial-value after)
+  (:range fn &key (key #'identity) (initial-value :unbound) (after #'identity))
 
   (%value %fn %first-iteration %initial-value-present)
 

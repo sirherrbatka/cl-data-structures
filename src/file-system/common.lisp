@@ -44,19 +44,24 @@
            :reader read-mutex)))
 
 
+(defgeneric set-stream-position (range stream))
+(defmethod set-stream-position ((range file-range-mixin) stream)
+  (let ((position (access-current-position range)))
+    (unless (or (zerop position)
+                (file-position stream position))
+      (error 'cl-ds:file-releated-error
+             :format-control "Can't set position in the stream."
+             :path (read-path range)))))
+
+
 (defmacro with-stream-input ((stream range) &body body)
-  (with-gensyms (!stream !position)
+  (with-gensyms (!stream)
     (once-only (range)
       `(let* ((,stream (open-stream-designator (read-path ,range)))
-              (,!stream ,stream)
-              (,!position (access-current-position ,range)))
+              (,!stream ,stream))
          (unwind-protect
               (progn
-                (unless (or (zerop ,!position)
-                            (file-position ,stream ,!position))
-                  (error 'cl-ds:file-releated-error
-                         :format-control "Can't set position in the stream."
-                         :path (read-path ,range)))
+                (set-stream-position ,range ,stream)
                 ,@body)
            (close ,!stream))))))
 

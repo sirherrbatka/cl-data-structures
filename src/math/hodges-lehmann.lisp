@@ -39,8 +39,8 @@
 (cl-ds.alg.meta:define-aggregation-function
     hodges-lehmann-estimator hodges-lehmann-estimator-function
 
-    (:range &key key parallel)
-    (:range &key (key #'identity) (parallel nil))
+    (:range &key key parallel after)
+    (:range &key (key #'identity) (parallel nil) (after #'identity))
 
     ((%data (cl-ds.utils:extendable-vector t)) (%parallel boolean))
 

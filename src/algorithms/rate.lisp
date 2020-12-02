@@ -3,8 +3,8 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     rate rate-function
-    (:range test &key key positive total)
-    (:range test &key (key #'identity) (positive 0) (total 0))
+    (:range test &key key positive total after)
+    (:range test &key (key #'identity) (positive 0) (total 0) (after #'identity))
 
     (%positive %total %test)
 

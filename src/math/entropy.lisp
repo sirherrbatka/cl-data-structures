@@ -4,12 +4,13 @@
 (cl-ds.alg.meta:define-aggregation-function
     entropy entropy-function
 
-    (:range &key key test count-fn size)
+    (:range &key key test count-fn size after)
 
     (:range &key
      (key #'identity)
      (test 'eql)
      (size 16)
+     (after #'identity)
      (count-fn (constantly 1)))
 
     ((%table hash-table)

@@ -4,9 +4,9 @@
 (cl-ds.alg.meta:define-aggregation-function
     moments moments-function
 
-  (:range from count about &key key)
+  (:range from count about &key key after)
 
-  (:range from count about &key (key #'identity))
+  (:range from count about &key (key #'identity) (after #'identity))
 
   (%moments %start %count %lambdas)
 

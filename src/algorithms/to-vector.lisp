@@ -7,8 +7,7 @@
   (:range &key key element-type size after)
   (:range &key
    (key #'identity) (element-type t)
-   (after #'identity)
-   (size 16))
+   (after #'identity) (size 16))
 
   (%vector)
 
