@@ -36,7 +36,7 @@
                                                   (arguments list))
   (bind ((batch-size (read-batch-size range))
          (outer-fn (call-next-method)))
-    (declare (type batch-size positive-fixnum))
+    (declare (type batch-size positive-integer))
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
@@ -48,8 +48,8 @@
           (when (zerop chunk-counter)
             (vector-push-extend (cl-ds.alg.meta:call-constructor outer-fn)
                                 chunks))
-          (setf chunk-counter (the fixnum (mod (the fixnum (1+ chunk-counter))
-                                               batch-size)))
+          (setf chunk-counter (mod (the fixnum (1+ chunk-counter))
+                                   batch-size))
           (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
                                               element))
 
@@ -67,7 +67,7 @@
 (defgeneric in-batches (range batch-size)
   (:generic-function-class in-batches-function)
   (:method (range batch-size)
-    (check-type batch-size positive-fixnum)
+    (check-type batch-size positive-integer)
     (apply-range-function range #'in-batches
                           (list range batch-size))))
 

@@ -7,6 +7,11 @@
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
 
+  (function in-batches
+    (:description "Groups RANGE elementwise into partitions of up to the size BATCH-SIZE. This does not change the content of the RANGE, but will force aggregation to be performed on every group independently."
+     :returns "CL:VECTOR holding aggreation results of the successive partitions."
+     :exceptional-situations (("Will signal a TYPE-ERROR if BATCH-SIZE is not of the type POSITIVE-INTEGER."))))
+
   (function multiplex
     (:description "Transforms input RANGE by extracting elements from it, applying FUNCTION and chaining resulting ranges."
      :notes ("Chaining process is not recursive."
@@ -44,10 +49,10 @@
                   (prove:is (cl-ds:at data 2) #(5 6) :test 'equalp))]))
 
   (function reservoir-sample
-            (:description "Draws sample in the form of the vector from the range."
-             :exceptional-situations ("Will signal TYPE-ERROR if SAMPLE-SIZE is not of the type POSITIVE-FIXNUM.")
-             :notes "This function implements the L algorithm."
-             :returns "VECTOR of the size equal to the SAMPLE-SIZE and with the fill pointer up to the sample-size."))
+    (:description "Draws sample in the form of the vector from the range."
+     :exceptional-situations ("Will signal TYPE-ERROR if SAMPLE-SIZE is not of the type POSITIVE-FIXNUM.")
+     :notes "This function implements the L algorithm."
+     :returns "VECTOR of the size equal to the SAMPLE-SIZE and with the fill pointer up to the sample-size."))
 
   (function partition-if
     (:description "Groups consecutive elements in the range into a partition if TEST called on the previous value in the range and the current value in the range returns non-NIL, creates new partition otherwise. This does not change the content of the RANGE, but it will force aggregation to be performed on every group independently. Order of the groups is preserved in the aggregation result."
