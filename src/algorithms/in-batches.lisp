@@ -34,7 +34,6 @@
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
-  (declare (optimize (speed 3) (safety 0)))
   (bind ((batch-size (read-batch-size range))
          (outer-fn (call-next-method)))
     (declare (type batch-size positive-fixnum))
