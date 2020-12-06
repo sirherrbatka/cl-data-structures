@@ -240,6 +240,7 @@
                              (:file "partition-if")
                              (:file "distinct")
                              (:file "first-element")
+                             (:file "in-batches")
                              (:file "docstrings")
                              ))
                (:module "file-system"
