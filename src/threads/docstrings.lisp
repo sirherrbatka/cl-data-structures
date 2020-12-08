@@ -27,7 +27,8 @@
                               "Exceptions raised during aggregation will be transfered to the original thread.")
      :notes ("Thread buffer only changes the aggregation process."
              "For optimal performance results, operations performed before and after THREAD-BUFFER should take approximately the same ammount of time."
-             "Unlike PARALLEL-ON-EACH or PARALLEL-MULTIPLEX, THREAD-BUFFER does not use lparallel workers.")
+             "Unlike PARALLEL-ON-EACH or PARALLEL-MULTIPLEX, THREAD-BUFFER does not use lparallel workers."
+             "Because of the above, be cautious when using THREAD-BUFFER in conjuction with GROUP-BY.")
      :arguments-and-values ((range "The input range.")
                             (:chunk-size "Number of elements grouped before being sent to the queue.")
                             (:maximum-queue-size "The maximal size of the queue used internally. Setting this to a low value reduces memory overhead."))
@@ -42,6 +43,7 @@
                               "Will raise CL-DS:ARGUMENT-VALUE-OUT-OF-BOUNDS when CHUNK-SIZE is not at least 1."
                               "Will raise CL-DS:ARGUMENT-VALUE-OUT-OF-BOUNDS when MAXIMAL-QUEUE-SIZE is not at least 16."
                               "Exceptions raised during aggregation or when funcalling the callback will be transfered to the original thread.")
+     :notes "This function is unsuited for aggregations that depend on the order of the elements."
      :arguments-and-values ((range "Input range.")
                             (:maximum-queue-size "Maximal size of queue used internally. Setting this to low value reduces memory overhead.")
                             (:chunk-size "Number of elements grouped for individual lparallel task."))

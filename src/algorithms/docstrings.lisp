@@ -9,6 +9,8 @@
 
   (function in-batches
     (:description "Groups RANGE elementwise into partitions of up to the size BATCH-SIZE. This does not change the content of the RANGE, but will force aggregation to be performed on every group independently."
+     :arguments ((range "Input range.")
+                 (batch-size "Maximum size of the batch."))
      :returns "CL:VECTOR holding aggreation results of the successive partitions."
      :exceptional-situations ("Will signal a TYPE-ERROR if BATCH-SIZE is not of the type POSITIVE-INTEGER.")))
 

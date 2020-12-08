@@ -10,9 +10,7 @@
   (:generic-function-class restrain-size-function)
   (:method (range size)
     (apply-range-function range #'restrain-size
-                          (list range
-                                #'restrain-size
-                                :size size))))
+                          (list range size))))
 
 
 (defclass restrain-size-proxy (proxy-range)
@@ -63,7 +61,7 @@
 (defmethod cl-ds.alg.meta:apply-layer ((range fundamental-range)
                                        (fn restrain-size-function)
                                        all)
-  (let ((size (getf (rest all) :size)))
+  (let ((size (second all)))
     (check-type size integer)
     (unless (<= 0 size)
       (error 'cl-ds:argument-value-out-of-bounds
