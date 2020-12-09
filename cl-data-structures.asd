@@ -241,6 +241,7 @@
                              (:file "distinct")
                              (:file "first-element")
                              (:file "in-batches")
+                             (:file "sliding-window")
                              (:file "docstrings")
                              ))
                (:module "file-system"

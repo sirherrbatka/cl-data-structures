@@ -106,6 +106,7 @@
    #:without
    #:wrap-chunk
    #:in-batches
+   #:sliding-window
    #:only-different
    #:zip
    #:zip-traversable))
