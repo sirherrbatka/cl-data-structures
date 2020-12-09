@@ -7,11 +7,24 @@
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
 
+  (function sliding-window
+    (:description "Groups RANE elementwise using sliding window of the the size WINDOW-SIZE."
+     :examples [(progn
+                  (prove:is (cl-ds.alg:to-list (cl-ds.alg:sliding-window '(1 2 3) 3))
+                            '((1 2 3))
+                            :test 'equal)
+                  (prove:is (cl-ds.alg:to-list (cl-ds.alg:sliding-window '(1 2 3 4) 3))
+                            '((1 2 3) (2 3 4))
+                            :test 'equal))]
+     :arguments ((range "Input range.")
+                 (window-size "Size of the sliding window."))
+     :notes ("Windows are always of the length of WINDOW-SIZE. If there is not enough elements to form window, range will act as it would be empty.")
+     :exceptional-situations ("Will signal a TYPE-ERROR if WINDOW-SIZE is not of the type POSITIVE-INTEGER.")))
+
   (function in-batches
     (:description "Groups RANGE elementwise into partitions of up to the size BATCH-SIZE. This does not change the content of the RANGE, but will force aggregation to be performed on every group independently."
      :arguments ((range "Input range.")
                  (batch-size "Maximum size of the batch."))
-     :returns "CL:VECTOR holding aggreation results of the successive partitions."
      :exceptional-situations ("Will signal a TYPE-ERROR if BATCH-SIZE is not of the type POSITIVE-INTEGER.")))
 
   (function multiplex

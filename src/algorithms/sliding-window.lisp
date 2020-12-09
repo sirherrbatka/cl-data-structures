@@ -3,7 +3,13 @@
 
 (defclass abstract-sliding-window-proxy ()
   ((%window-size :initarg :window-size
-                 :reader read-window-size)))
+                 :reader read-window-size)
+   (%window :initarg :window
+            :accessor access-window)
+   (%tail :initarg :tail
+          :accessor access-tail)
+   (%current :initarg :current
+             :accessor access-current)))
 
 
 (defclass forward-sliding-window-proxy
@@ -12,38 +18,43 @@
   ())
 
 
-(defclass bidirectional-sliding-window-proxy
-    (abstract-sliding-window-proxy
-     bidirectional-proxy-range)
-  ())
-
-
-(defclass random-access-sliding-window-proxy
-    (abstract-sliding-window-proxy
-     random-access-proxy-range)
-  ())
-
-
 (defmethod clone ((range abstract-sliding-window-proxy))
-  (make (class-of range)
-        :window-size (read-window-size range)
-        :original-range (~> range read-original-range clone)))
+  (let* ((old-window (access-window range))
+         (old-current (access-current range))
+         (old-current-position (iterate
+                                 (for i from 0)
+                                 (for li on old-window)
+                                 (finding i such-that (eq li old-current))))
+         (new-window (copy-list old-window))
+         (new-current (nthcdr old-current-position new-window))
+         (new-tail (last new-window)))
+    (make (class-of range)
+          :window new-window
+          :tail new-tail
+          :current new-current
+          :window-size (read-window-size range)
+          :original-range (~> range read-original-range clone))))
 
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range abstract-sliding-window-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
-  (bind ((window-size (read-window-size range))
+  (bind ((old-window (access-window range))
+         (old-current (access-current range))
+         (old-current-position (iterate
+                                 (for i from 0)
+                                 (for li on old-window)
+                                 (finding i such-that (eq li old-current))))
          (outer-fn (call-next-method)))
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
      (cl-ds.alg.meta:let-aggregator
-         ((window (make-list window-size))
+         ((window (copy-list old-window))
           (tail (last window))
           (inner (cl-ds.alg.meta:call-constructor outer-fn))
-          (current window))
+          (current (nthcdr old-current-position window)))
 
          ((element)
           (setf (first current) element)
@@ -70,7 +81,7 @@
 
 
 (defgeneric sliding-window (range batch-size)
-  (:generic-function-class in-batches-function)
+  (:generic-function-class sliding-window-function)
   (:method (range window-size)
     (check-type window-size positive-integer)
     (apply-range-function range #'sliding-window
@@ -78,21 +89,50 @@
 
 
 (defmethod apply-layer ((range traversable)
-                        (fn in-batches-function)
+                        (fn sliding-window-function)
                         all)
-  (make-proxy range 'forward-sliding-window-proxy
-              :window-size (second all)))
+  (let* ((window-size (second all))
+         (window (make-list window-size)))
+    (check-type window-size positive-integer)
+    (make-proxy range 'forward-sliding-window-proxy
+                :window-size window-size
+                :window window
+                :tail (last window)
+                :current window)))
 
 
-(defmethod apply-layer ((range cl-ds:fundamental-bidirectional-range)
-                        (fn in-batches-function)
-                        all)
-  (make-proxy range 'bidirectional-sliding-window-proxy
-              :window-size (second all)))
+(defmethod cl-ds:consume-front ((range abstract-sliding-window-proxy))
+  (with-accessors ((window access-window)
+                   (current access-current)
+                   (tail access-tail))
+
+      range
+    (iterate
+      (for (values data more) = (call-next-method))
+      (unless more
+        (leave (values nil nil)))
+      (setf (first current) data)
+      (setf current (rest current))
+      (when (endp current)
+        (let ((result (copy-list window)))
+          (psetf (cdr tail) window
+                 tail window
+                 window (rest window)
+                 (cdr window) nil)
+          (setf current tail)
+          (leave (values result t)))))))
 
 
-(defmethod apply-layer ((range cl-ds:fundamental-random-access-range)
-                        (fn in-batches-function)
-                        all)
-  (make-proxy range 'random-access-sliding-window-proxy
-              :window-size (second all)))
+(defmethod cl-ds:traverse ((range abstract-sliding-window-proxy)
+                           function)
+  (ensure-functionf function)
+  (iterate
+    (for (values data more) = (cl-ds:consume-front range))
+    (while more)
+    (funcall function data)
+    (finally (return range))))
+
+
+(defmethod cl-ds:across ((range abstract-sliding-window-proxy)
+                         function)
+  (~> range cl-ds:clone (cl-ds:traverse function)))
