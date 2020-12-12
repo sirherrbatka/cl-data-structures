@@ -156,6 +156,8 @@
    @docfun['cl-ds.alg:enumerate]
    @docfun['cl-ds.alg:flatten-lists]
    @docfun['cl-ds.alg:group-by]
+   @docfun['cl-ds.alg:sliding-window]
+   @docfun['cl-ds.alg:only-different]
    @docfun['cl-ds.alg:on-each]
    @docfun['cl-ds.alg:only]
    @docfun['cl-ds.alg:only-different]
