@@ -228,6 +228,7 @@
                              (:file "reservoir-sample")
                              (:file "repeat")
                              (:file "latch")
+                             (:file "establish-special")
                              (:file "extrema")
                              (:file "extremum")
                              (:file "cumulative-accumulate")

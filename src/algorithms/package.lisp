@@ -107,6 +107,7 @@
    #:wrap-chunk
    #:in-batches
    #:sliding-window
+   #:establish-special
    #:only-different
    #:zip
    #:zip-traversable))
