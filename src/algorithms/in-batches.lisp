@@ -34,8 +34,8 @@
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
-  (bind ((batch-size (read-batch-size range))
-         (outer-fn (call-next-method)))
+  (let ((batch-size (read-batch-size range))
+        (outer-fn (call-next-method)))
     (declare (type batch-size positive-integer))
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
