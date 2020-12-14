@@ -79,7 +79,7 @@
                       (gethash selected groups) group))
               (cl-ds.alg.meta:pass-to-aggregation group element)))
 
-           ((maphash (lambda (key aggregator)
+           ((maphash (lambda (key aggregator &aux (*current-key* key))
                        (setf (gethash key groups)
                              (cl-ds.alg.meta:extract-result aggregator)))
                      groups)
