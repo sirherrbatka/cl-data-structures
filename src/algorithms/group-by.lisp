@@ -5,6 +5,10 @@
   ((%groups :initarg :groups
             :type hash-table
             :reader read-groups)
+   (%having :initarg :having
+            :reader read-having)
+   (%transform :initarg :transform
+               :reader read-transform)
    (%key :initarg :key
          :reader read-key)))
 
@@ -16,6 +20,8 @@
 (defmethod cl-ds.utils:cloning-information append
     ((range group-by-proxy))
   '((:groups read-groups)
+    (:transform read-transform)
+    (:having read-having)
     (:key read-key)))
 
 
@@ -47,12 +53,13 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 
-
-(defgeneric group-by (range &key test key groups)
+(defgeneric group-by (range &key test key groups transform having)
   (:generic-function-class group-by-function)
-  (:method (range &key (test 'eql) (key #'identity) (groups (make-hash-table :test test)))
+  (:method (range &key (test 'eql) (key #'identity) (groups (make-hash-table :test test))
+                       (transform #'identity) (having (constantly t)))
     (apply-range-function range #'group-by
-                          (list range :test test :key key :groups groups))))
+                          (list range :test test :key key :groups groups
+                                :transform transform :having having))))
 
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range group-by-proxy)
@@ -63,6 +70,8 @@
                      (space 0) (compilation-speed 0)))
   (bind ((groups-prototype (read-groups range))
          (group-by-key (ensure-function (read-key range)))
+         (transform (ensure-function (read-transform range)))
+         (accept (ensure-function (read-having range)))
          (outer-fn (call-next-method)))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
@@ -80,8 +89,11 @@
               (cl-ds.alg.meta:pass-to-aggregation group element)))
 
            ((maphash (lambda (key aggregator &aux (*current-key* key))
-                       (setf (gethash key groups)
-                             (cl-ds.alg.meta:extract-result aggregator)))
+                       (let ((result (funcall transform
+                                              (cl-ds.alg.meta:extract-result aggregator))))
+                         (if (funcall accept result)
+                             (setf (gethash key groups) result)
+                             (remhash key groups))))
                      groups)
              (make-instance 'group-by-result-range
                             :hash-table groups
@@ -101,7 +113,9 @@
                         all)
   (make-proxy range 'forward-group-by-proxy
               :groups (getf (rest all) :groups)
-              :key (getf (rest all) :key)))
+              :key (getf (rest all) :key)
+              :having (getf (rest all) :having)
+              :transform (getf (rest all) :transform)))
 
 
 (defmethod apply-layer ((range fundamental-forward-range)
@@ -109,6 +123,8 @@
                         all)
   (make-proxy range 'forward-group-by-proxy
               :groups (getf (rest all) :groups)
+              :transform (getf (rest all) :transform)
+              :having (getf (rest all) :having)
               :key (getf (rest all) :key)))
 
 
@@ -117,6 +133,8 @@
                         all)
   (make-proxy range 'bidirectional-group-by-proxy
               :groups (getf (rest all) :groups)
+              :transform (getf (rest all) :transform)
+              :having (getf (rest all) :having)
               :key (getf (rest all) :key)))
 
 
@@ -125,4 +143,6 @@
                         all)
   (make-proxy range 'random-access-group-by-proxy
               :groups (getf (rest all) :groups)
+              :transform (getf (rest all) :transform)
+              :having (getf (rest all) :having)
               :key (getf (rest all) :key)))

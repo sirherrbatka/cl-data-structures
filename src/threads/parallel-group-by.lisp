@@ -5,6 +5,10 @@
   ((%groups :initarg :groups
             :type hash-table
             :reader read-groups)
+   (%having :initarg :having
+            :reader read-having)
+   (%transform :initarg :transform
+               :reader read-transform)
    (%chunk-size :initarg :chunk-size
                 :reader read-chunk-size)
    (%maximum-queue-size :initarg :maximum-queue-size
@@ -16,6 +20,8 @@
 (defmethod cl-ds.utils:cloning-information append
     ((range parallel-group-by-proxy))
   '((:groups read-groups)
+    (:having read-having)
+    (:having read-transform)
     (:maximum-queue-size read-maximum-queue-size)
     (:chunk-size read-chunk-size)
     (:key read-key)))
@@ -49,11 +55,14 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 
-(defgeneric parallel-group-by (range &key test key groups chunk-size maximum-queue-size)
+(defgeneric parallel-group-by (range &key test key groups chunk-size maximum-queue-size
+                                       having transform)
   (:generic-function-class parallel-group-by-function)
   (:method (range &key
                     (test 'eql) (key #'identity)
                     (chunk-size 16)
+                    (having (constantly t))
+                    (transform #'identity)
                     (maximum-queue-size 32)
                     (groups (make-hash-table :test test)))
     (cl-ds.alg.meta:apply-range-function range #'parallel-group-by
@@ -61,6 +70,8 @@
                                                      :key key
                                                      :maximum-queue-size maximum-queue-size
                                                      :chunk-size chunk-size
+                                                     :having having
+                                                     :transform transform
                                                      :groups groups))))
 
 
@@ -70,6 +81,8 @@
                                                   (arguments list))
   (bind ((groups-prototype (read-groups range))
          (chunk-size (read-chunk-size range))
+         (having (ensure-function (read-having range)))
+         (transform (ensure-function (read-transform range)))
          (maximum-queue-size (read-maximum-queue-size range))
          (group-by-key (ensure-function (read-key range)))
          (queue (lparallel.queue:make-queue
@@ -123,7 +136,7 @@
            ((let ((result (copy-hash-table groups-prototype)))
               (lparallel.queue:with-locked-queue queue
                 (scan-futures t))
-              (maphash (lambda (key group)
+              (maphash (lambda (key group &aux (cl-ds.alg:*current-key* key))
                          (bind (((lock buffer aggregator) group))
                            (setf (gethash key result)
                                  (lparallel:future
@@ -135,14 +148,19 @@
                                            (cl-ds.alg.meta:pass-to-aggregation aggregator c))
                                          (finally
                                           (bt:with-lock-held (lock)
-                                            (return (cons t (cl-ds.alg.meta:extract-result aggregator))))))
+                                            (let* ((result (cl-ds.alg.meta:extract-result aggregator))
+                                                   (transformed (funcall transform result))
+                                                   (accepted (funcall having transformed)))
+                                              (return (list t transformed accepted))))))
                                      (error (e) (cons nil e)))))))
                        groups)
               (maphash (lambda (key aggregator)
-                         (bind (((success . value) (lparallel:force aggregator)))
+                         (bind (((success value accepted) (lparallel:force aggregator)))
                            (unless success
                              (error value))
-                           (setf (gethash key result) value)))
+                           (if accepted
+                               (setf (gethash key result) value)
+                               (remhash key result))))
                        result)
               (make-instance 'cl-ds.alg:group-by-result-range
                              :hash-table result
@@ -164,6 +182,8 @@
                                        all)
   (cl-ds.alg:make-proxy range 'forward-parallel-group-by-proxy
                         :groups (getf (rest all) :groups)
+                        :having (getf (rest all) :having)
+                        :transform (getf (rest all) :transform)
                         :maximum-queue-size (getf (rest all) :maximum-queue-size)
                         :chunk-size (getf (rest all) :chunk-size)
                         :key (getf (rest all) :key)))
@@ -175,6 +195,8 @@
   (cl-ds.alg:make-proxy range 'forward-parallel-group-by-proxy
                         :groups (getf (rest all) :groups)
                         :maximum-queue-size (getf (rest all) :maximum-queue-size)
+                        :having (getf (rest all) :having)
+                        :transform (getf (rest all) :transform)
                         :chunk-size (getf (rest all) :chunk-size)
                         :key (getf (rest all) :key)))
 
@@ -183,6 +205,8 @@
                                        (fn parallel-group-by-function)
                                        all)
   (cl-ds.alg:make-proxy range 'bidirectional-parallel-group-by-proxy
+                        :having (getf (rest all) :having)
+                        :transform (getf (rest all) :transform)
                         :groups (getf (rest all) :groups)
                         :maximum-queue-size (getf (rest all) :maximum-queue-size)
                         :chunk-size (getf (rest all) :chunk-size)
@@ -193,6 +217,8 @@
                                        (fn parallel-group-by-function)
                                        all)
   (cl-ds.alg:make-proxy range 'random-access-parallel-group-by-proxy
+                        :having (getf (rest all) :having)
+                        :transform (getf (rest all) :transform)
                         :groups (getf (rest all) :groups)
                         :maximum-queue-size (getf (rest all) :maximum-queue-size)
                         :chunk-size (getf (rest all) :chunk-size)
