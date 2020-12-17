@@ -30,8 +30,6 @@
              "Unlike PARALLEL-ON-EACH or PARALLEL-MULTIPLEX, THREAD-BUFFER does not use lparallel workers."
              "Because of the above, be cautious when using THREAD-BUFFER in conjuction with GROUP-BY.")
      :arguments-and-values ((range "The input range.")
-                            (:transform "This function will be called with each constructed group and the result will be placed in the result range in place of the original group. Defaults to IDENTITY.")
-                            (:having "This function will called with each constructed, and transformed group. If true is returned; group is kept in the result range, otherwise group is discarded.")
                             (:chunk-size "Number of elements grouped before being sent to the queue.")
                             (:maximum-queue-size "The maximal size of the queue used internally. Setting this to a low value reduces memory overhead."))
      :returns "Instance of BUFFER-RANGE subclass. Depending on the class of the RANGE it may be a FORWARD-BUFFER-RANGE, BIDIRECTIONAL-BUFFER-RANGE or RANDOM-ACCESS-BUFFER-RANGE."))

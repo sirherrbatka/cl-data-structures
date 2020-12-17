@@ -149,8 +149,10 @@
                                          (finally
                                           (bt:with-lock-held (lock)
                                             (let* ((result (cl-ds.alg.meta:extract-result aggregator))
-                                                   (transformed (funcall transform result))
-                                                   (accepted (funcall having transformed)))
+                                                   (accepted (funcall having result))
+                                                   (transformed
+                                                     (when accepted
+                                                       (funcall transform result))))
                                               (return (list t transformed accepted))))))
                                      (error (e) (cons nil e)))))))
                        groups)

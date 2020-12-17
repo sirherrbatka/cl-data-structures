@@ -280,7 +280,7 @@
                               "Will pass TEST to MAKE-HASH-TABLE and therefore will signal same conditions as MAKE-HASH-TABLE.")
      :arguments ((range "Range that is supposed to be groupped.")
                  (:transform "This function will be called with each constructed group and the result will be placed in the result range in place of the original group. Defaults to IDENTITY.")
-                 (:having "This function will called with each constructed, and transformed group. If true is returned; group is kept in the result range, otherwise group is discarded.")
+                 (:having "This function will called with each constructed group (before calling TRANSFORM). If true is returned; group is kept in the result range, otherwise group is discarded.")
                  (:key "Key function, used to extract value for TEST.")
                  (:groups "HASH-TABLE groups prototype. Passing this will cause :TEST to be discarded. This argument is useful for using non-portable HASH-TABLE extension.")
                  (:test "Test for the inner hashtable (either eq, eql or equal)."))

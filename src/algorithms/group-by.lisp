@@ -89,10 +89,9 @@
               (cl-ds.alg.meta:pass-to-aggregation group element)))
 
            ((maphash (lambda (key aggregator &aux (*current-key* key))
-                       (let ((result (funcall transform
-                                              (cl-ds.alg.meta:extract-result aggregator))))
+                       (let ((result (cl-ds.alg.meta:extract-result aggregator)))
                          (if (funcall accept result)
-                             (setf (gethash key groups) result)
+                             (setf (gethash key groups) (funcall transform result))
                              (remhash key groups))))
                      groups)
              (make-instance 'group-by-result-range
