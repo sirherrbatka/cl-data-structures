@@ -20,10 +20,12 @@
 
 
 (defgeneric parallel-on-each (range function
-                              &key key maximum-queue-size chunk-size)
+                              &key key maximum-queue-size chunk-size
+                                functor-constructor)
   (:generic-function-class parallel-on-each-function)
   (:method (range function
-            &key (key #'identity) (maximum-queue-size 512) (chunk-size 128))
+            &key (key #'identity) (maximum-queue-size 512) (chunk-size 128)
+              (functor-constructor #'identity))
     (check-type maximum-queue-size integer)
     (check-type chunk-size integer)
     (cl-ds:check-argument-bounds maximum-queue-size
@@ -31,10 +33,12 @@
     (cl-ds:check-argument-bounds chunk-size (<= 1 chunk-size))
     (ensure-functionf function)
     (ensure-functionf key)
+    (ensure-functionf functor-constructor)
     (cl-ds.alg.meta:apply-range-function
      range #'parallel-on-each
      (list range function
            :key key
+           :functor-constructor functor-constructor
            :maximum-queue-size maximum-queue-size
            :chunk-size chunk-size))))
 
@@ -48,7 +52,8 @@
                    :chunk-size (getf keys :chunk-size)
                    :key (getf keys :key)
                    :maximum-queue-size (getf keys :maximum-queue-size)
-                   :function (second all))))
+                   :functor-constructor (getf keys :functor-constructor)
+                   :functor (second all))))
 
 
 (defmethod cl-ds.alg.meta:aggregator-constructor
@@ -67,6 +72,9 @@
          (key (ensure-function (cl-ds.alg:read-key range)))
          (queue (lparallel.queue:make-queue
                  :fixed-capacity maximum-queue-size))
+         (functor (cl-ds.alg:access-functor range))
+         (functor-constructor (ensure-function (cl-ds.alg:read-functor-constructor range)))
+         (functor-prototype (cl-ds.alg:read-functor-prototype range))
          ((:flet handle-result (elt inner))
           (setf elt (lparallel:force elt))
           (iterate
@@ -74,7 +82,7 @@
             (for i from 0 below length)
             (for e = (aref elt i))
             (cl-ds.alg.meta:pass-to-aggregation inner e)))
-         ((:flet push-chunk (chunk inner))
+         ((:flet push-chunk (fn chunk inner))
           (declare (type (cl-ds.utils:extendable-vector t) chunk))
           (let ((chunk (copy-array chunk)))
             (lparallel.queue:with-locked-queue queue
@@ -94,15 +102,18 @@
                          (:variant (eq fn #'identity)))
        (cl-ds.alg.meta:let-aggregator
            ((inner (cl-ds.alg.meta:call-constructor outer-fn))
-            (chunk (make-array chunk-size :fill-pointer 0)))
+            (chunk (make-array chunk-size :fill-pointer 0))
+            (range-function (ensure-function
+                             (or functor (funcall functor-constructor
+                                                  functor-prototype)))))
 
            ((element)
              (unless (< (fill-pointer chunk) chunk-size)
-               (push-chunk chunk inner))
+               (push-chunk range-function chunk inner))
              (vector-push-extend element chunk))
 
            ((unless (zerop (fill-pointer chunk))
-              (push-chunk chunk inner))
+              (push-chunk range-function chunk inner))
              (lparallel.queue:with-locked-queue queue
                (iterate
                  (until (lparallel.queue:queue-empty-p/no-lock queue))

@@ -87,7 +87,9 @@
    #:random-access-proxy-range
    #:rate
    #:reservoir-sample
-   #:read-function
+   #:access-functor
+   #:read-functor-constructor
+   #:read-functor-prototype
    #:read-key
    #:read-keys
    #:read-original-range
