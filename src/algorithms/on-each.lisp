@@ -192,11 +192,9 @@
                                                   (arguments list))
   (let ((on-each-key (ensure-function (read-key range)))
         (outer-fn (call-next-method))
-        (range-function
-          (ensure-function
-           (or (access-functor range)
-               (funcall (read-functor-constructor range)
-                        (read-functor-prototype range))))))
+        (functor (access-functor range))
+        (functor-constructor (ensure-function (read-functor-constructor range)))
+        (functor-prototype (read-functor-prototype range)))
     (assert (functionp outer-fn))
     (locally (declare (optimize (speed 3) (safety 0)))
       (cl-ds.alg.meta:aggregator-constructor
@@ -204,7 +202,10 @@
        (cl-ds.utils:cases ((:variant (eq on-each-key #'identity)
                                      (eq on-each-key 'identity)))
          (cl-ds.alg.meta:let-aggregator
-             ((inner (cl-ds.alg.meta:call-constructor outer-fn)))
+             ((inner (cl-ds.alg.meta:call-constructor outer-fn))
+              (range-function (ensure-function
+                               (or functor (funcall functor-constructor
+                                                    functor-prototype)))))
 
              ((element) (~>> element (funcall on-each-key) (funcall range-function)
                              (cl-ds.alg.meta:pass-to-aggregation inner)))
