@@ -6,23 +6,33 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 
-(defgeneric on-each (range function &key key)
+(defgeneric on-each (range function &key key functor-constructor)
   (:generic-function-class on-each-function)
-  (:method (range function &key (key #'identity))
+  (:method (range function &key (key #'identity) (functor-constructor #'identity))
     (apply-range-function range #'on-each
-                          (list range function :key key))))
+                          (list range function
+                                :key key
+                                :functor-constructor functor-constructor))))
 
 
 (defclass proxy-box-range (proxy-range)
-  ((%function :initarg :function
-              :reader read-function)
+  ((%functor :initarg :functor
+             :accessor access-functor)
+   (%functor-prototype :initarg :functor-prototype
+                       :reader read-functor-prototype)
+   (%functor-constructor :initarg :functor-constructor
+                         :reader read-functor-constructor)
    (%key :initarg :key
-         :reader read-key)))
+         :reader read-key))
+  (:default-initargs :functor nil
+                     :functor-constructor #'identity))
 
 
 (defmethod cl-ds.utils:cloning-information append
     ((range proxy-box-range))
-  '((:function read-function)
+  '((:functor access-functor)
+    (:functor-constructor read-functor-constructor)
+    (:functor-prototype read-functor-prototype)
     (:key read-key)))
 
 
@@ -45,13 +55,17 @@
 (defmethod wrap-chunk ((range forward-proxy-box-range)
                        (chunk cl-ds:fundamental-forward-range))
   (make 'forward-proxy-box-range
-        :function (read-function range)
+        :functor (access-functor range)
+        :functor-prototype (read-functor-prototype range)
+        :functor-constructor (read-functor-constructor range)
         :key (read-key range)
         :original-range chunk))
 
 
 (defmethod cl-ds:traverse ((range forward-proxy-box-range) function)
-  (let* ((fn (read-function range))
+  (let* ((fn (ensure (access-functor range)
+               (funcall (read-functor-constructor range)
+                        (read-functor-prototype range))))
          (key (or (read-key range) #'identity))
          (function-fn-key (compose function fn key)))
     (cl-ds:traverse (read-original-range range)
@@ -60,7 +74,9 @@
 
 
 (defmethod cl-ds:across ((range forward-proxy-box-range) function)
-  (let* ((fn (read-function range))
+  (let* ((fn (or (access-functor range)
+                 (funcall (read-functor-constructor range)
+                          (read-functor-prototype range))))
          (key (or (read-key range) #'identity))
          (function-fn-key (compose function fn key)))
     (cl-ds:across (read-original-range range)
@@ -68,29 +84,37 @@
   range)
 
 
-(defgeneric on-each-proxy-range-from-range (range function key)
-  (:method ((range cl-ds:traversable) function key)
+(defgeneric on-each-proxy-range-from-range (range function key functor-constructor)
+  (:method ((range cl-ds:traversable)
+            function key functor-constructor)
     (make 'forward-proxy-box-range
+          :functor-constructor functor-constructor
+          :functor-prototype function
           :original-range range
-          :function function
           :key key))
-  (:method ((range fundamental-random-access-range) function key)
+  (:method ((range fundamental-random-access-range)
+            function key functor-constructor)
     (make 'random-access-proxy-box-range
-          :function function
+          :functor-constructor functor-constructor
+          :functor-prototype function
           :key key
           :original-range range))
-  (:method ((range fundamental-bidirectional-range) function key)
+  (:method ((range fundamental-bidirectional-range)
+            function key functor-constructor)
     (make 'bidirectional-proxy-box-range
           :original-range range
-          :function function
+          :functor-constructor functor-constructor
+          :functor-prototype function
           :key key)))
 
 
 (defmethod apply-layer ((range cl-ds:traversable)
                         (fn on-each-function)
                         all)
-  (on-each-proxy-range-from-range range (second all)
-                                  (getf (cddr all) :key)))
+  (on-each-proxy-range-from-range range
+                                  (second all)
+                                  (getf (cddr all) :key)
+                                  (getf (cddr all) :functor-constructor)))
 
 
 (defmethod cl-ds:consume-front ((range forward-proxy-box-range))
@@ -98,7 +122,9 @@
     (if found
         (values (~>> elt
                      (funcall (read-key range))
-                     (funcall (read-function range)))
+                     (funcall (ensure (access-functor range)
+                                (funcall (read-functor-constructor range)
+                                         (read-functor-prototype range)))))
                 t)
         (values nil nil))))
 
@@ -108,7 +134,9 @@
     (if found
         (values (~>> elt
                      (funcall (read-key range))
-                     (funcall (read-function range)))
+                     (funcall (ensure (access-functor range)
+                                (funcall (read-functor-constructor range)
+                                         (read-functor-prototype range)))))
                 t)
         (values nil nil))))
 
@@ -118,7 +146,9 @@
     (if found
         (values (~>> elt
                      (funcall (read-key range))
-                     (funcall (read-function range)))
+                     (funcall (or (access-functor range)
+                                  (funcall (read-functor-constructor range)
+                                           (read-functor-prototype range)))))
                 t)
         (values nil nil))))
 
@@ -128,7 +158,9 @@
     (if found
         (values (~>> elt
                      (funcall (read-key range))
-                     (funcall (read-function range)))
+                     (funcall (or (access-functor range)
+                                  (funcall (read-functor-constructor range)
+                                           (read-functor-prototype range)))))
                 t)
         (values nil nil))))
 
@@ -158,23 +190,32 @@
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
-  (declare (optimize (speed 3) (safety 0)))
   (let ((on-each-key (ensure-function (read-key range)))
         (outer-fn (call-next-method))
-        (range-function (ensure-function (read-function range))))
+        (range-function
+          (ensure-function
+           (or (access-functor range)
+               (funcall (read-functor-constructor range)
+                        (read-functor-prototype range))))))
     (assert (functionp outer-fn))
-    (cl-ds.alg.meta:aggregator-constructor
-     (read-original-range range)
-     (cl-ds.utils:cases ((:variant (eq on-each-key #'identity)
-                                   (eq on-each-key 'identity)))
-       (cl-ds.alg.meta:let-aggregator
-           ((inner (cl-ds.alg.meta:call-constructor outer-fn)))
+    (locally (declare (optimize (speed 3) (safety 0)))
+      (cl-ds.alg.meta:aggregator-constructor
+       (read-original-range range)
+       (cl-ds.utils:cases ((:variant (eq on-each-key #'identity)
+                                     (eq on-each-key 'identity)))
+         (cl-ds.alg.meta:let-aggregator
+             ((inner (cl-ds.alg.meta:call-constructor outer-fn)))
 
-           ((element) (~>> element (funcall on-each-key) (funcall range-function)
-                           (cl-ds.alg.meta:pass-to-aggregation inner)))
+             ((element) (~>> element (funcall on-each-key) (funcall range-function)
+                             (cl-ds.alg.meta:pass-to-aggregation inner)))
 
-           ((cl-ds.alg.meta:extract-result inner))
+             ((cl-ds.alg.meta:extract-result inner))
 
-         (cl-ds.alg.meta:cleanup inner)))
-     function
-     arguments)))
+           (cl-ds.alg.meta:cleanup inner)))
+       function
+       arguments))))
+
+
+(defmethod cl-ds:reset! ((range proxy-box-range))
+  (setf (access-functor range) nil)
+  (call-next-method))
