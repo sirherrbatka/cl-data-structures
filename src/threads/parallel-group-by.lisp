@@ -21,7 +21,7 @@
     ((range parallel-group-by-proxy))
   '((:groups read-groups)
     (:having read-having)
-    (:having read-transform)
+    (:transform read-transform)
     (:maximum-queue-size read-maximum-queue-size)
     (:chunk-size read-chunk-size)
     (:key read-key)))
@@ -154,7 +154,7 @@
                                                      (when accepted
                                                        (funcall transform result))))
                                               (return (list t transformed accepted))))))
-                                     (error (e) (cons nil e)))))))
+                                     (error (e) (list nil e nil)))))))
                        groups)
               (maphash (lambda (key aggregator)
                          (bind (((success value accepted) (lparallel:force aggregator)))
