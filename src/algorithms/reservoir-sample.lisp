@@ -20,8 +20,8 @@
 (cl-ds.alg.meta:define-aggregation-function
     reservoir-sample reservoir-sample-function
 
-    (:range sample-size &key key)
-    (:range sample-size &key (key #'identity))
+    (:range sample-size &key key after)
+    (:range sample-size &key (key #'identity) (after #'identity))
 
     ((%result (cl-ds.utils:extendable-vector t))
      (%w double-float)

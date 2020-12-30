@@ -53,7 +53,7 @@
                    :key (getf keys :key)
                    :maximum-queue-size (getf keys :maximum-queue-size)
                    :functor-constructor (getf keys :functor-constructor)
-                   :functor (second all))))
+                   :functor-prototype (second all))))
 
 
 (defmethod cl-ds.alg.meta:aggregator-constructor
@@ -68,7 +68,6 @@
                         '() nil function arguments)))
          (maximum-queue-size (read-maximum-queue-size range))
          (chunk-size (the fixnum (read-chunk-size range)))
-         (fn (ensure-function (cl-ds.alg:read-function range)))
          (key (ensure-function (cl-ds.alg:read-key range)))
          (queue (lparallel.queue:make-queue
                  :fixed-capacity maximum-queue-size))
@@ -98,8 +97,7 @@
           (setf (fill-pointer chunk) 0)))
     (cl-ds.alg.meta:aggregator-constructor
      (cl-ds.alg:read-original-range range)
-     (cl-ds.utils:cases ((:variant (eq key #'identity))
-                         (:variant (eq fn #'identity)))
+     (cl-ds.utils:cases ((:variant (eq key #'identity)))
        (cl-ds.alg.meta:let-aggregator
            ((inner (cl-ds.alg.meta:call-constructor outer-fn))
             (chunk (make-array chunk-size :fill-pointer 0))
