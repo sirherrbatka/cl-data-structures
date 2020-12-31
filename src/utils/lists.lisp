@@ -104,7 +104,7 @@
       (leave elt))))
 
 
-(-> try-find-cell (t list &key (:test (-> (t t) boolean)) (:key (-> (t) t))) (values t boolean))
+(-> try-find (t list &key (:test (-> (t t) boolean)) (:key (-> (t) t))) (values t boolean))
 (defun try-find (item list &key (test #'eql) (key #'identity))
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   "@b(Returns) first matching elements as first value and boolean telling if it was found as second"
