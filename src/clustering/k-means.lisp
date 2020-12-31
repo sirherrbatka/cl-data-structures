@@ -11,9 +11,9 @@
      &key (key 'identity) (silhouette-sample-size 500)
      (iterations nil) (silhouette-sample-count 15))
 
-    (%number-of-medoids %distortion-epsilon %silhouette
-     %silhouette-sample-size %iterations %silhouette-sample-count
-     %data)
+    (%number-of-medoids %distortion-epsilon
+     %silhouette-sample-size %iterations
+     %silhouette-sample-count %data)
 
     ((cl-ds:check-argument-bounds distortion-epsilon
                                   (< 0.0 distortion-epsilon))
@@ -28,7 +28,6 @@
                                     (< 0 iterations)))
      (setf %number-of-medoids       number-of-medoids
            %distortion-epsilon      distortion-epsilon
-           %silhouette              silhouette
            %silhouette-sample-size  silhouette-sample-size
            %iterations              iterations
            %data                    (vect)

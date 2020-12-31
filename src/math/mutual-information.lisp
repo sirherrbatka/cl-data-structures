@@ -114,8 +114,7 @@
 
     (%data %fields)
 
-    ((&key fields &allow-other-keys)
-     (cl-ds:validate-fields #'mutual-information-matrix fields)
+    ((cl-ds:validate-fields #'mutual-information-matrix fields)
      (setf %data (vect)
            %fields fields))
 
@@ -251,8 +250,7 @@
 
     (%data %field %comparative-fields)
 
-    ((&key fields &allow-other-keys)
-     (cl-ds:validate-fields #'harmonic-average-mutual-information
+    ((cl-ds:validate-fields #'harmonic-average-mutual-information
                             fields)
      (setf %data (vect)
            %field (first fields)

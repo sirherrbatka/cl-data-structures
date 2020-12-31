@@ -90,6 +90,7 @@
    #:access-functor
    #:read-functor-constructor
    #:read-functor-prototype
+   #:read-function
    #:read-key
    #:read-keys
    #:read-original-range
