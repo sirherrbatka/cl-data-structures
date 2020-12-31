@@ -171,6 +171,7 @@
                              :end (hash-table-count result))))
 
          (iterate
+           (declare (ignorable buffer))
            (for (key group) in-hashtable groups)
            (for (lock buffer aggregator) = group)
            (bt:with-lock-held (lock)

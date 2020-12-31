@@ -7,7 +7,7 @@
              :type vector
              :reader read-content)
    (%function :initarg :function
-              :type 'function
+              :type function
               :reader read-function)))
 
 

@@ -219,9 +219,9 @@
                                :fill-pointer 0))
     (for v in-vector vector)
     (map-into indexes
-              (lambda (vector index) (lower-bound vector v compare-fn))
-              more-vectors
-              indexes)
+              (lambda (vector)
+                (lower-bound vector v compare-fn))
+              more-vectors)
     (for not-present =
          (iterate
            (for other-vector in more-vectors)

@@ -40,10 +40,14 @@
   '(unsigned-byte 32))
 
 
+(declaim (inline qp-trie-node-bitmask))
+(declaim (inline qp-trie-node-content))
+(declaim (inline (setf qp-trie-node-bitmask)))
+(declaim (inline (setf qp-trie-node-content)))
 (cl-ds.common.abstract:define-tagged-untagged-node qp-trie-node
   (bitmask 0 :type full-mask)
   (content (make-array 0 :element-type 'qp-trie-node)
-   :type (simple-array qp-trie-node (*))))
+   :type simple-vector))
 
 
 (defun qp-trie-node-clone (node &optional ownership-tag)
@@ -135,9 +139,9 @@
          (old-content (qp-trie-node-content node))
          (old-size (logcount old-mask))
          (new-size (logcount new-mask))
-         (new-content (make-array new-size
-                                  :element-type 'qp-trie-node)))
+         (new-content (make-array new-size)))
     (declare (type fixnum old-size new-size)
+             (type simple-vector new-content)
              (type node-index effective-index))
     (iterate
       (declare (type fixnum i))
@@ -161,9 +165,9 @@
          (new-index (logcount (ldb (byte index 0) new-mask)))
          (old-content (qp-trie-node-content node))
          (new-size (logcount new-mask))
-         (new-content (make-array new-size
-                                  :element-type 'qp-trie-node)))
+         (new-content (make-array new-size)))
     (declare (type node-mask new-mask)
+             (type simple-array new-content)
              (type fixnum new-size)
              (type node-index new-index))
     (iterate

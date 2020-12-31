@@ -97,18 +97,18 @@
                       (obtain-value read-obtain-value)
                       (container read-container)
                       (key read-key)
-                      (mutex read-mutex)
                       (store-value read-store-value))
           range)
          ((:values stack result found)
-          (read-implementation (bt:with-lock-held (mutex) stack)
-                               obtain-value))
-         (stack-front (first stack)))
-    (when found
-      (funcall store-value container new-value)
-      (setf (elt stack-front 1) t
-            (elt stack-front 2) new-value))
-    (values (when found new-value found))))
+          (read-implementation stack
+                               obtain-value)))
+    (declare (ignore result))
+    (let ((stack-front (first stack)))
+      (when found
+        (funcall store-value container new-value)
+        (setf (elt stack-front 1) t
+              (elt stack-front 2) new-value))
+      (values (when found new-value found)))))
 
 
 (defmethod cl-ds:consume-front ((range forward-tree-range))

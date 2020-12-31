@@ -14,7 +14,7 @@
       (for i from (1- (length stack)) downto 0)
       (for p-i previous i)
       (for cell = (aref stack i))
-      (for (node . s-position) = cell)
+      (for node = (car cell))
       (for position = (if (null p-i)
                           nil
                           (~> stack (aref p-i) cdr)))

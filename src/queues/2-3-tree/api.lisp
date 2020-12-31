@@ -425,7 +425,6 @@
                                operation container
                                bucket location
                                all))
-                       (tail-end head-position)
                        (tail-position 0)
                        (tail head))
                   (if (cl-ds.meta:null-bucket-p shrinked-bucket)
@@ -688,7 +687,7 @@
   (setf (access-head-position queue) 0
         (access-tail-end queue) 0
         (cl-ds.queues:access-size queue) 0
-        (cl-ds.common.2-3:access-root) cl-ds.meta:null-bucket)
+        (cl-ds.common.2-3:access-root queue) cl-ds.meta:null-bucket)
   queue)
 
 
@@ -696,12 +695,12 @@
   (setf (access-head-position queue) 0
         (access-tail-end queue) 0
         (cl-ds.queues:access-size queue) 0
-        (cl-ds.common.2-3:access-root) cl-ds.meta:null-bucket)
+        (cl-ds.common.2-3:access-root queue) cl-ds.meta:null-bucket)
   queue)
 
 
 (defmethod cl-ds:reset! ((range 2-3-queue-range))
-  (setf (access-container container)
+  (setf (access-container range)
         (~> range access-og-container cl-ds:become-transactional))
   range)
 
@@ -776,6 +775,7 @@
                                              container
                                              location
                                              &rest all)
+  (declare (ignore all))
   (let ((lock (read-lock structure)))
     (bt:with-lock-held (lock)
       (iterate
@@ -839,7 +839,7 @@
 
 
 (defmethod cl-ds:size ((container synchronization-primitives-mixin))
-  (bt:with-lock-held ((read-lock structure))
+  (bt:with-lock-held ((read-lock container))
     (call-next-method)))
 
 

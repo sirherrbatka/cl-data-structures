@@ -86,7 +86,7 @@
     (with seen = (cl-ds:become-transactional (read-seen range)))
     (with key = (read-key range))
     (with range = (cl-ds:clone (read-original-range range)))
-    (for (values data more) = (cl-ds:consume-front seen))
+    (for (values data more) = (cl-ds:consume-front range))
     (unless more
       (leave (values nil nil)))
     (for key-value = (funcall key data))

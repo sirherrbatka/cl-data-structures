@@ -5,15 +5,14 @@
     standard-deviation
     standard-deviation-function
 
-    (:range around &key key biased)
-    (:range around &key (key #'identity) (biased t))
+    (:range around &key key after)
+    (:range around &key (key #'identity) (after #'identity))
 
-    (%count %sum %biased %average)
+    (%count %sum %average)
 
     ((setf %count 0
            %average around
-           %sum 0
-           %biased biased))
+           %sum 0))
 
     ((element)
      (incf %count)

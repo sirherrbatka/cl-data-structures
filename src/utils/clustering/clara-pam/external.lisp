@@ -36,7 +36,7 @@
                      :select-medoids-attempts-count select-medoids-attempts-count
                      :cluster-sample-size cluster-sample-size
                      :silhouette-sample-size silhouette-sample-size
-                     :silhouette-sample-count silhouette-sample-size
+                     :silhouette-sample-count silhouette-sample-count
                      :minimal-cluster-size minimal-cluster-size
                      :split-threshold split
                      :merge-threshold merge)))
@@ -45,9 +45,8 @@
     (reassign-data-points-from-subminimal-clusters state)
     (let ((silhouette (silhouette state)))
       (replace-indexes-in-clusters-with-data state)
-      (the clustering-result
-           (obtain-result state
-                          silhouette)))))
+      (obtain-result state
+                     silhouette))))
 
 
 (-> clara (vector
@@ -171,7 +170,6 @@
                  :split split
                  :merge merge))))
         (iterate
-          (with progress-bar = cl-progress-bar:*progress-bar*)
           (for index from 0 below (length vector))
           (for i from from to to)
           (setf (aref vector index) (make-thread i))))

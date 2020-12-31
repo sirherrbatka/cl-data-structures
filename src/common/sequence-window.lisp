@@ -105,7 +105,7 @@
                             from to)
   (make 'list-sequence-window
         :from from :to to
-        :content vector))
+        :content sequence))
 
 
 (defgeneric effective-at (window index)

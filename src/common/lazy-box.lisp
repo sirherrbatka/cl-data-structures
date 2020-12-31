@@ -68,7 +68,7 @@
     instance))
 
 
-(flet ((enclose-wrapper (container t-operation location lazy-status args)
+(flet ((enclose-wrapper (t-operation location lazy-status args)
          (lambda (instance)
            (assert (cl-ds:transactionalp instance))
            (let ((eager-status
@@ -100,8 +100,7 @@
            (next-instance (make (type-of container)
                                 :content content
                                 :operations (add-change operations
-                                                        (enclose-wrapper container
-                                                                         t-operation
+                                                        (enclose-wrapper t-operation
                                                                          location
                                                                          lazy-status
                                                                          args)))))

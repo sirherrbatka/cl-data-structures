@@ -118,13 +118,21 @@ Macros
            :operation ,!rewrite)))))
 
 
-(-> set-in-node-mask (hash-node hash-node-index (integer 0 1)) hash-node)
-(defun set-in-node-mask (node position bit)
-  (declare (optimize (speed 3) (space 0) (safety 1)))
-  (setf (ldb (byte 1 position) (hash-node-node-mask node)) bit)
-  node)
-
-
+(declaim (inline hash-node-node-mask))
+(declaim (inline hash-node-content))
+(declaim (inline (setf hash-node-node-mask)))
+(declaim (inline (setf hash-node-content)))
+(declaim (inline hash-node-access))
+(declaim (inline hash-node-size))
+(declaim (inline hash-node-whole-mask))
+(declaim (inline hash-node-to-masked-index))
+(declaim (inline hash-node-contains))
+(declaim (inline hash-node-contains-leaf))
+(declaim (inline hash-node-contains-node))
+(declaim (inline copy-node))
+(declaim (inline hash-node-replace-in-the-copy))
+(declaim (inline hash-node-insert-into-copy))
+(declaim (inline hash-node-deep-copy))
 (declaim (inline round-size))
 (defun round-size (size)
   (ash (ceiling (/ size 8.0)) 3))
@@ -165,12 +173,17 @@ Functions with basic bit logic.
 
 |#
 
+(-> set-in-node-mask (hash-node hash-node-index (integer 0 1)) hash-node)
+(defun set-in-node-mask (node position bit)
+  (declare (optimize (speed 3) (space 0) (safety 1)))
+  (setf (ldb (byte 1 position) (hash-node-node-mask node)) bit)
+  node)
+
+
+
 (-> hash-node-whole-mask (hash-node) hash-mask)
 (defun hash-node-whole-mask (node)
   (hash-node-node-mask node))
-
-
-(declaim (inline hash-node-whole-mask))
 
 
 (-> hash-node-to-masked-index (hash-node (hash-node-index)) hash-node-index)
@@ -180,9 +193,6 @@ Functions with basic bit logic.
        hash-node-whole-mask
        (ldb (byte index 0))
        logcount))
-
-
-(declaim (inline hash-node-to-masked-index))
 
 
 (-> hash-node-contains (hash-node hash-node-index) boolean)
@@ -199,20 +209,11 @@ Functions with basic bit logic.
        (ldb-test (byte 1 index))))
 
 
-(declaim (inline hash-node-contains))
-(declaim (inline hash-node-contains-leaf))
-(declaim (inline hash-node-contains-node))
-
-
 (-> hash-node-access (hash-node hash-node-index) t)
 (defun hash-node-access (hash-node index)
   (declare (optimize (speed 3) (debug 0) (safety 1) (space 0)))
   (~>> (hash-node-to-masked-index hash-node index)
        (aref (hash-node-content hash-node))))
-
-
-(declaim (inline hash-node-access))
-(declaim (inline hash-node-size))
 
 
 (-> hash-node-size (hash-node) hash-node-size)
@@ -263,7 +264,6 @@ Copy nodes and stuff.
                          (:ownership-tag t)
                          (:content simple-vector))
     hash-node)
-(declaim (inline copy-node))
 (defun copy-node (node &key node-mask ownership-tag content)
   (declare (optimize (speed 3) (debug 0) (safety 1) (space 0)))
   (make-hash-node
@@ -273,7 +273,6 @@ Copy nodes and stuff.
 
 
 (-> hash-node-replace-in-the-copy (hash-node t hash-node-index t) hash-node)
-(declaim (inline hash-node-replace-in-the-copy))
 (defun hash-node-replace-in-the-copy (hash-node item index ownership-tag)
   (declare (optimize (speed 3)
                      (debug 0)
@@ -291,7 +290,6 @@ Copy nodes and stuff.
 
 
 (-> hash-node-insert-into-copy (hash-node t hash-node-index t) hash-node)
-(declaim (inline hash-node-insert-into-copy))
 (defun hash-node-insert-into-copy (hash-node content index ownership-tag)
   (declare (optimize (speed 3)
                      (debug 0)
@@ -545,7 +543,6 @@ Copy nodes and stuff.
       (for i from (- depth 1) downto 0) ;reverse order (starting from deepest node)
       (for node = (path i))
       (for index = (indexes i))
-      (for parent = (and (not (zerop i)) (path (1- i))))
       (for ac
            initially (if (or (cl-ds.meta:null-bucket-p conflict) (null conflict))
            ;;if we didn't find element or element was found but depth was already maximal,
@@ -582,7 +579,6 @@ Copy nodes and stuff.
 
 
 (-> hash-node-deep-copy (hash-node t) hash-node)
-(declaim (inline hash-node-deep-copy))
 (defun hash-node-deep-copy (node ownership-tag)
   (make-hash-node :node-mask (hash-node-node-mask node)
                   :content (copy-array (hash-node-content node))

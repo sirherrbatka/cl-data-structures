@@ -13,6 +13,7 @@
     ((setf %count 0))
 
     ((element)
+     (declare (ignore element))
      (incf %count))
 
     (%count))

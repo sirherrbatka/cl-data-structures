@@ -134,7 +134,8 @@
 
 
 (defmacro with-file-ranges (bindings &body body)
-  (let ((extra-vars (mapcar (lambda (x) (gensym)) bindings))
+  (let ((extra-vars (mapcar (lambda (x) (declare (ignore x)) (gensym))
+                            bindings))
         (prime-vars (mapcar #'first bindings)))
     `(let (,@extra-vars)
        (declare (ignorable ,@extra-vars))

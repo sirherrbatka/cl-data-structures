@@ -177,7 +177,7 @@
 
 
 (defmethod peek-back ((range bidirectional-proxy-range))
-  (peek-back (read-original-range)))
+  (peek-back (read-original-range range)))
 
 
 (defmethod at ((range random-access-proxy-range) location &rest more)

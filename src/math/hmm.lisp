@@ -1,7 +1,7 @@
 (cl:in-package #:cl-data-structures.math)
 
 
-(defun check-probability-in-rows (argument table)
+(defun check-probability-in-rows (table)
   (iterate
     (for i from 0 below (array-dimension table 0))
     (for sum =
@@ -63,8 +63,8 @@
        :parameters '(observations observation-table)
        :format-control "Inconsistent number of model observations in the input arrays."
        :values (list observations observation-table)))
-    (check-probability-in-rows 'trans-table trans-table)
-    (check-probability-in-rows 'observation-table observation-table)
+    (check-probability-in-rows trans-table)
+    (check-probability-in-rows observation-table)
     (when (> initial-state (first dim1))
       (error 'cl-ds:argument-value-out-of-bounds
              :argument 'initial-state

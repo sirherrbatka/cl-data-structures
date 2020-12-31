@@ -28,7 +28,7 @@
     (call-next-method)))
 
 
-(defgeneric clean-sketch (function &rest arguments &key))
+(defgeneric clean-sketch (function &rest arguments &key &allow-other-keys))
 
 
 (defgeneric union (first-sketch &rest more-sketches)

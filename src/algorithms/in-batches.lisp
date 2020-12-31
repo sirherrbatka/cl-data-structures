@@ -36,7 +36,7 @@
                                                   (arguments list))
   (let ((batch-size (read-batch-size range))
         (outer-fn (call-next-method)))
-    (declare (type batch-size positive-integer))
+    (declare (type positive-integer batch-size))
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)

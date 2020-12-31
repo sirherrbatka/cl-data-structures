@@ -20,7 +20,7 @@
 (defclass fundamental-file-range-stack-cell ()
   ((%prev-cell :initarg :prev-cell
                :initform nil
-               :type fundamental-file-range-stack-cell
+               :type (or null fundamental-file-range-stack-cell)
                :accessor access-prev-cell)
    (%predicate :initarg :predicate
                :type function

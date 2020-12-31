@@ -58,7 +58,7 @@
                                                     (function-context #'identity))
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0))
            (type half-matrix matrix)
-           (type sequence vector)
+           (type sequence sequence)
            (type function function))
   (assert (<= (length sequence) (read-size matrix)))
   (let* ((size (length sequence))

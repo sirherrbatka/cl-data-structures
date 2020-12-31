@@ -15,7 +15,7 @@
            (type (vector t) result))
   (assert (array-has-fill-pointer-p result))
   (let* ((node-size (length vector))
-         (sample-size (read-sample-size tree))
+         (sample-size (* node-size (read-sampling-rate tree)))
          (contribution-size (max 1 (/ (* node-size sample-size)
                                       family-size))))
     (declare (type integer sample-size)

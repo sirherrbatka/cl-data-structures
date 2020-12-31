@@ -54,11 +54,7 @@
     (%data %number-of-medoids %sample-size %sample-count %metric-fn
      %select-medoids-attempts-count %attempts %split %merge)
 
-    ((&key number-of-medoids sample-size sample-count
-           metric-fn select-medoids-attempts-count
-           attempts split merge
-           &allow-other-keys)
-     (setf %data (vect)
+    ((setf %data (vect)
            %number-of-medoids number-of-medoids
            %sample-size sample-size
            %sample-count sample-count

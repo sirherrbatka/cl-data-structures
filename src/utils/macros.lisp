@@ -296,7 +296,10 @@
 
 
 (defmacro toggle-vars (bindings &body body)
-  (let ((!vars (mapcar (lambda (x) (gensym)) bindings)))
+  (let ((!vars (mapcar (lambda (x)
+                         (declare (ignore x))
+                         (gensym))
+                       bindings)))
     `(progn
        (let ,(mapcar (lambda (binding symbol)
                        (list binding (car symbol)))

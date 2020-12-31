@@ -9,6 +9,7 @@
 
 (defmethod find-content ((container fundamental-hashing-dictionary)
                          (bucket list) location &rest all &key hash)
+  (declare (ignore all))
   (bind ((equal-fn (read-equal-fn container))
          ((:dflet compare-fn (a b))
           (and (eql (cl-ds.common:hash-content-hash a) hash)
@@ -56,6 +57,7 @@
                                      location
                                      &rest all
                                      &key hash)
+  (declare (ignorable all))
   (bind ((equal-fn (read-equal-fn container))
          ((:dflet location-test (node location))
           (and (eql hash (cl-ds.common:hash-content-hash node))
@@ -85,6 +87,7 @@
                                      location
                                      &rest all
                                      &key hash condition-fn)
+  (declare (ignore all))
   (bind ((equal-fn (read-equal-fn container))
          ((:dflet location-test (node location))
           (when (and (eql hash (cl-ds.common:hash-content-hash node))
@@ -121,6 +124,7 @@
                                    location
                                    &rest all
                                    &key hash value)
+  (declare (ignore all))
   (bucket-growing-macro
       (container bucket location hash value)
 
@@ -138,6 +142,7 @@
                                    location
                                    &rest all
                                    &key hash value)
+  (declare (ignore all))
   (bucket-growing-macro
       (container bucket location hash value)
 
@@ -232,6 +237,7 @@
                                    location
                                    &rest all
                                    &key hash value)
+  (declare (ignore all))
   (bucket-growing-macro
       (container bucket location hash value)
 
@@ -250,7 +256,7 @@
                                    location
                                    &rest all
                                    &key hash value)
-  (declare (ignore hash value location)
+  (declare (ignore all hash value location)
            (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (values nil
           cl-ds.common:empty-eager-modification-operation-status))
@@ -261,6 +267,7 @@
                                    location
                                    &rest all
                                    &key hash value)
+  (declare (ignore all))
   (values (list (cl-ds.common:make-hash-dict-content
                  :location location
                  :value (cl-ds:force value)
@@ -273,6 +280,7 @@
                                    location
                                    &rest all
                                    &key hash value)
+  (declare (ignore all))
   (values (list (cl-ds.common:make-hash-dict-content
                  :location location
                  :value (cl-ds:force value)
@@ -423,6 +431,7 @@
                                       location
                                       &rest all
                                       &key hash value)
+    (declare (ignore all))
     (let* ((tuple (locate-tuple container bucket hash location))
            (old-value (and tuple (cl-ds.common:hash-dict-content-value tuple))))
       (if (null tuple)
@@ -447,6 +456,7 @@
                                       location
                                       &rest all
                                       &key hash value)
+    (declare (ignore all))
     (let* ((tuple (locate-tuple container bucket hash location))
            (old-value (and tuple (cl-ds.common:hash-dict-content-value tuple))))
       (if (null tuple)
@@ -466,6 +476,7 @@
                                       location
                                       &rest all
                                       &key hash value)
+    (declare (ignore all))
     (let* ((tuple (locate-tuple container bucket hash location))
            (old-value (and tuple (cl-ds.common:hash-dict-content-value tuple))))
       (if (null tuple)
@@ -494,6 +505,7 @@
                      (safety 0)
                      (debug 0)
                      (space 0))
+           (ignore all)
            (type fixnum hash))
   (fbind ((comp (read-equal-fn container)))
     (iterate
@@ -523,22 +535,17 @@
                                       location
                                       &rest all
                                       &key hash condition-fn)
-  (declare (optimize (speed 3)
-                     (safety 0)
-                     (debug 0)
-                     (space 0))
+  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0))
            (type fixnum hash)
            (ignore all))
   (fbind ((comp (read-equal-fn container)))
     (iterate
-      (with result = nil)
       (for cell on bucket)
       (for p-cell previous cell)
       (for tuple = (first cell))
       (when (and (eql (cl-ds.common:hash-content-hash tuple) hash)
                  (comp (cl-ds.common:hash-content-location tuple)
                        location))
-        (setf result (cl-ds.common:hash-dict-content-value tuple))
         (if  (funcall condition-fn
                       (cl-ds.common:hash-content-location tuple)
                       (cl-ds.common:hash-dict-content-value tuple))
@@ -584,7 +591,6 @@
   (not
    (iterate
      (for i from 1)
-     (for e in bucket)
      (always (< i (read-bucket-size container))))))
 
 

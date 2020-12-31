@@ -52,7 +52,6 @@
     (iterate
       (for sub on indexes)
       (for index = (car sub))
-      (for next = (or (cadr sub) nvs))
       (replace next-array vector
                :start2 last
                :end2 index
@@ -67,7 +66,6 @@
     next-array))
 
 
-(declaim (inline swapop))
 (-> swapop (extendable-vector index) t)
 (defun swapop (vector index)
   "Swaps element under INDEX with last element of VECTOR. Pops last element and returns removed element.

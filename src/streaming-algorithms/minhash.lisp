@@ -144,6 +144,7 @@
        (with pointers = (make-hash-table :test 'eq))
        (repeat %k)
        (iterate
+         (declare (ignorable key))
          (for i from 0 below corpus-size)
          (for (key . value) in (shuffle input-list))
          (for pointer = (gethash value pointers 0))

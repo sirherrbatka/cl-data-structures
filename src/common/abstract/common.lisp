@@ -80,9 +80,7 @@
                             (setf (,(struct-accessor-name tagged-name slot) argument)
                                    new-value)
                             (setf  (,(struct-accessor-name untagged-name slot) argument)
-                                   new-value))))
-           (collect `(declaim (inline ,fname)))
-           (collect `(declaim (inline (setf ,fname)))))
+                                   new-value)))))
        (defun ,(intern (format nil "MAKE-~a" name))
             (&key ,@(iterate
                       (for slot in slots)

@@ -145,7 +145,6 @@
       (iterate
         (with m = 0)
         (with 2m = 0)
-        (with n = 0)
         (with i = 0)
         (for section-length = (- length i))
         (until (zerop section-length))
@@ -154,7 +153,7 @@
                     (truncate highest-leader 2)
                     1))
         (setf 2m (the fixnum (* 2 m)))
-        (setf n (truncate section-length 2))
+        (truncate section-length 2)
         (iterate
           (with shift = i)
           (with leader = 1)

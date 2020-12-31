@@ -37,13 +37,11 @@
   `(integer 0 ,+maximum-children-count+))
 
 
+(declaim (inline sparse-rrb-node-content))
+(declaim (inline sparse-rrb-node-bitmask))
 (cl-ds.common.abstract:define-tagged-untagged-node sparse-rrb-node
   (content #() :type (simple-array * (*)))
   (bitmask 0 :type sparse-rrb-mask))
-
-
-(defun make-sparse-node-content (content)
-  (make-sparse-node :content content))
 
 
 (defun make-node-content (&optional (element-type t))
@@ -221,7 +219,6 @@
            (old-content (sparse-rrb-node-content node))
            (old-bitmask (sparse-rrb-node-bitmask node))
            (new-bitmask (dpb 0 (byte 1 i) old-bitmask))
-           (old-size (logcount old-bitmask))
            (new-size (logcount new-bitmask))
            (element-type (array-element-type old-content))
            (new-content (make-array new-size :element-type element-type)))

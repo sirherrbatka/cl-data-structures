@@ -386,10 +386,8 @@ Methods. Those will just call non generic functions.
                                              location
                                              &rest all
                                              &key value)
-  (declare (optimize (speed 3)
-                     (safety 1)
-                     (debug 0)
-                     (space 0)))
+  (declare (optimize (speed 3) (safety 1) (debug 0) (space 0))
+           (ignore all))
   (let ((status nil)
         (hash (funcall (the (-> (t) fixnum)
                             (cl-ds.dicts:read-hash-fn structure)) location)))

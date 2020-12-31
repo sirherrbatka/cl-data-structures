@@ -37,12 +37,6 @@
    :data (vect)))
 
 
-(defmethod initialize-instance ((object k-means-algorithm-state)
-                                &rest initargs
-                                &key &allow-other-keys)
-  (call-next-method))
-
-
 (cl-ds.utils:define-list-of-slots k-means-algorithm-state ()
   (%data read-data)
   (%clusters read-clusters)
