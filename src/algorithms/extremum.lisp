@@ -4,8 +4,8 @@
 (cl-ds.alg.meta:define-aggregation-function
     extremum extremum-function
 
-  (:range fn &key key value-key)
-  (:range fn &key (key #'identity) (value-key #'identity))
+  (:range fn &key key value-key after)
+  (:range fn &key (key #'identity) (value-key #'identity) (after #'identity))
 
   (%value %fn %first-iteration %value-key)
 
