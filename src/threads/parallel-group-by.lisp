@@ -115,7 +115,7 @@
                       (gethash selected groups) group))
               (bind (((lock buffer aggregator) group))
                 (vector-push-extend element buffer)
-                (unless (< (length buffer) chunk-size)
+                (unless (< (fill-pointer buffer) chunk-size)
                   (let ((chunk (copy-array buffer)))
                     (setf (fill-pointer buffer) 0)
                     (lparallel.queue:with-locked-queue queue
