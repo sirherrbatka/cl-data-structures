@@ -4,18 +4,37 @@
 (defclass abstract-sliding-window-proxy ()
   ((%window-size :initarg :window-size
                  :reader read-window-size)
+   (%initial-window :initarg :initial-window
+                    :reader read-initial-window)
+   (%initial-current-position :initarg :initial-current-position
+                              :reader read-initial-current-position)
    (%window :initarg :window
             :accessor access-window)
    (%tail :initarg :tail
           :accessor access-tail)
    (%current :initarg :current
-             :accessor access-current)))
+             :accessor access-current))
+  (:initarg :initial-current-position 0))
 
 
 (defclass forward-sliding-window-proxy
     (abstract-sliding-window-proxy
      forward-proxy-range)
   ())
+
+
+(defmethod cl-ds:reset! ((range abstract-sliding-window-proxy))
+  (call-next-method)
+  (with-accessors ((window access-window)
+                   (initial-window read-initial-window)
+                   (tail access-tail)
+                   (current access-current)
+                   (initial-current-position read-initial-current-position))
+      range
+      (setf window (copy-list initial-window)
+            tail (last window)
+            current (nthcdr initial-current-position window)))
+  range)
 
 
 (defmethod clone ((range abstract-sliding-window-proxy))
@@ -30,6 +49,8 @@
          (new-tail (last new-window)))
     (make (class-of range)
           :window new-window
+          :initial-window (copy-list new-window)
+          :initial-current-position old-current-position
           :tail new-tail
           :current new-current
           :window-size (read-window-size range)
@@ -96,6 +117,7 @@
     (check-type window-size positive-integer)
     (make-proxy range 'forward-sliding-window-proxy
                 :window-size window-size
+                :initial-window (copy-list window)
                 :window window
                 :tail (last window)
                 :current window)))
