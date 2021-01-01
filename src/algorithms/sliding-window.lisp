@@ -14,7 +14,7 @@
           :accessor access-tail)
    (%current :initarg :current
              :accessor access-current))
-  (:initarg :initial-current-position 0))
+  (:default-initargs :initial-current-position 0))
 
 
 (defclass forward-sliding-window-proxy
