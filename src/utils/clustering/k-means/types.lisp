@@ -65,8 +65,10 @@
 (defmethod initialize-instance :after ((object k-means-algorithm-state)
                                        &rest all)
   (declare (ignore all))
-  (cl-ds.utils:with-slots-for (object k-means-algorithm-state)
-    (ensure-function %value-key)
-    (check-type %distortion-epsilon single-float)
+  (bind (((:slots %value-key %distortion-epsilon
+                  %medoids-count %iterations)
+          object))
+    (ensure-functionf %value-key)
+    (assert (typep %distortion-epsilon 'single-float))
     (check-type %medoids-count integer)
     (check-type %iterations (or integer null))))

@@ -64,7 +64,6 @@
    #:make-half-matrix
    #:make-new-skip-vector
    #:make-pipe-fragment
-   #:make-skip-vector
    #:merge-ordered-vectors
    #:method-lambda-list-to-function-lambda-list
    #:mref
@@ -93,7 +92,6 @@
    #:scan
    #:select-top
    #:skip-vector-without
-   #:sref
    #:start-execution
    #:swap-if
    #:swapop

@@ -37,7 +37,6 @@
                              (:file "bind")
                              (:file "parallel-tools")
                              (:file "lambda-lists")
-                             (:file "skip-vector")
                              (:file "embedding")
                              (:file "cloning")
                              (:file "numbers")

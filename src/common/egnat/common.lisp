@@ -294,7 +294,6 @@
     container))
 
 
-(declaim (inline make-content-vector))
 (defun make-content-vector (container &rest initial-content)
   (~> (make-array (read-content-count-in-node container)
                   :element-type t
@@ -303,7 +302,6 @@
       (map-into #'identity initial-content)))
 
 
-(declaim (inline make-children-vector))
 (defun make-children-vector (container &rest initial-content)
 (~> (make-array (read-branching-factor container)
                 :element-type t
