@@ -94,6 +94,11 @@
   range)
 
 
+(defmethod cl-ds.alg.meta:across-aggregate ((range restrain-size-proxy) function)
+  (cl-ds:across range function)
+  range)
+
+
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range restrain-size-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
