@@ -5,13 +5,23 @@
   ((%comparsion :initarg :comparsion
                 :reader read-comparsion)
    (%previous :initarg :previous
-              :accessor access-previous)))
+              :accessor access-previous)
+   (%initial-previous :initarg :previous
+                      :accessor read-initial-previous
+                      :initform nil)
+   (%previous-bound :initarg :previous-bound
+                    :accessor access-previous-bound)
+   (%initial-previous-bound :initarg :previous-bound
+                            :accessor read-initial-previous-bound))
+  (:default-initargs :previous-bound nil
+                     :previous nil))
 
 
 (defmethod cl-ds.utils:cloning-information append
     ((proxy only-different-proxy))
   '((:comparsion read-comparsion)
-    (:previous access-previous)))
+    (:previous access-previous)
+    (:previous-bound access-previous-bound)))
 
 
 (defclass forward-only-different-proxy
@@ -20,14 +30,23 @@
   ())
 
 
+(defmethod cl-ds:reset! ((range only-different-proxy))
+  (call-next-method)
+  (setf (access-previous range) (read-initial-previous range)
+        (access-previous-bound range) (read-initial-previous-bound range))
+  range)
+
+
 (defmethod should-skip ((range only-different-proxy)
                         element
                         can-mutate)
-  (prog1 (funcall (read-comparsion range)
-                  element
-                  #1=(access-previous range))
+  (prog1 (and #2=(access-previous-bound range)
+              (funcall (read-comparsion range)
+                       element
+                       #1=(access-previous range)))
     (when can-mutate
-      (setf #1# element))))
+      (setf #2# t
+            #1# element))))
 
 
 (defclass only-different-function (layer-function)
@@ -83,16 +102,17 @@
       (cl-ds.alg.meta:aggregator-constructor
        (read-original-range range)
        (cl-ds.alg.meta:let-aggregator ((inner (cl-ds.alg.meta:call-constructor outer-fn))
-                                       (previous (access-previous range)))
+                                       (previous (access-previous range))
+                                       (previous-bound (access-previous-bound range)))
            ((element)
              (let ((key (funcall key element)))
-               (unless (funcall comparsion previous key)
+               (unless (and previous-bound (funcall comparsion previous key))
                  (cl-ds.alg.meta:pass-to-aggregation inner element)
-                 (setf previous key))))
+                 (setf previous key
+                       previous-bound t))))
 
            ((cl-ds.alg.meta:extract-result inner))
 
          (cl-ds.alg.meta:cleanup inner))
        function
        arguments))))
-
