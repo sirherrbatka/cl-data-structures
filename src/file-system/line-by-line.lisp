@@ -5,7 +5,9 @@
                               file-range-mixin
                               cl-ds:fundamental-forward-range)
   ((%lines-read :initarg :lines-read
-                :accessor access-lines-read))
+                :accessor access-lines-read)
+   (%initial-lines-read :initarg :lines-read
+                        :reader read-initial-lines-read))
   (:default-initargs :initial-position 0 :lines-read 0))
 
 
@@ -42,6 +44,12 @@
       (iterate
         (repeat (access-lines-read range))
         (read-line stream))))
+
+
+(defmethod cl-ds:reset! ((range line-by-line-range))
+  (setf (access-lines-read range) (read-initial-lines-read range))
+  (call-next-method)
+  range)
 
 
 (defmethod cl-ds:consume-front ((range line-by-line-range))
