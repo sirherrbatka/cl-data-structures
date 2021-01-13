@@ -98,7 +98,6 @@
    #:restrain-size
    #:should-skip
    #:shuffled-range
-   #:split-into-chunks
    #:summary
    #:summary-result-range
    #:to-hash-table
