@@ -70,7 +70,7 @@
 
 
 (defmethod cl-ds.alg.meta:across-aggregate ((range multiplex-proxy) function)
-  (cl-ds:across range function))
+  (call-next-method))
 
 
 (defmethod cl-ds:reset! ((range multiplex-proxy))
