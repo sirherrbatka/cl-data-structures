@@ -16,7 +16,7 @@
   (check-type data vector)
   (check-type parallel-samples-count positive-fixnum)
   (check-type parallel-sample-size positive-fixnum)
-  (check-type sampling-rate positive-fixnum)
+  (check-type sampling-rate real)
   (check-type sample-size positive-fixnum)
   (check-type subtree-maximum-arity positive-fixnum)
   (check-type leaf-maximum-size positive-fixnum)
