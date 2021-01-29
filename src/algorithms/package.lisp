@@ -91,6 +91,7 @@
    #:read-functor-constructor
    #:read-functor-prototype
    #:read-function
+   #:read-hash-table
    #:read-key
    #:read-keys
    #:read-original-range
