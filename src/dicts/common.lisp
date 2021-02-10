@@ -275,6 +275,16 @@
           cl-ds.common:empty-changed-eager-modification-operation-status))
 
 
+(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:update-if!-function)
+                                   (container fundamental-hashing-dictionary)
+                                   location
+                                   &rest all
+                                   &key hash value)
+  (declare (ignore all location hash value))
+  (values nil
+          cl-ds.common:empty-eager-modification-operation-status))
+
+
 (defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:insert-function)
                                    (container fundamental-hashing-dictionary)
                                    location
