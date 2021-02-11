@@ -26,7 +26,7 @@
                    `((:import-from ,rpackage ,@rsymbols)
                      (:export ,@rsymbols))))))))
 
-(cl-ds.fancy:defpackage #:cl-data-structures.aux-package
+(defpackage #:cl-data-structures.aux-package
   (:reexport #:alexandria
              #:xor
              #:if-let
