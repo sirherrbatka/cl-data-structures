@@ -43,46 +43,6 @@
                              (:file "bucket-sort")
                              (:file "hashing")
                              (:file "docstrings")
-                             (:module "metric-functions"
-                              :components ((:file "package")
-                                           (:file "levenshtein")
-                                           (:file "hellinger")
-                                           (:file "average-metric")
-                                           (:file "lcs-metric")
-                                           (:file "hausdorff")
-                                           (:file "euclid")
-                                           (:file "earth-mover")
-                                           (:file "svr")
-                                           (:file "docstrings")))
-                             (:module "distance-functions"
-                              :components ((:file "package")
-                                           (:file "sinkhorn")
-                                           (:file "bhattacharyya")
-                                           (:file "docstrings")))
-                             (:module "clustering"
-                              :components ((:file "package")
-                                           (:file "common")
-                                           (:module "k-means"
-                                            :components ((:file "package")
-                                                         (:file "types")
-                                                         (:file "internal")
-                                                         (:file "external")
-                                                         ))
-                                           (:module "clara-pam"
-                                            :components ((:file "package")
-                                                         (:file "types")
-                                                         (:file "internal")
-                                                         (:file "external")
-                                                         (:file "docstrings")
-                                                         ))
-                                           (:module "bubble"
-                                            :components ((:file "package")
-                                                         (:file "cf-tree-protocol")
-                                                         (:file "cf-tree-structure")
-                                                         (:file "cf-tree-implementation")
-                                                         (:file "cf-tree-algorithm")
-                                                         (:file "api")
-                                                         ))))
                              ))
                (:module "api"
                 :components ((:file "meta")
@@ -255,11 +215,6 @@
                              (:file "parallel-group-by")
                              (:file "parallel-on-each")
                              (:file "buffer-range")
-                             (:file "docstrings")))
-               (:module "clustering"
-                :components ((:file "package")
-                             (:file "clara")
-                             (:file "k-means")
                              (:file "docstrings")))
                (:module "math"
                 :components ((:module "aux"

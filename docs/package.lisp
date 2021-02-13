@@ -42,7 +42,6 @@
   @include{cl-ds algorithms}
   @include{cl-ds file system}
   @include{cl-ds math}
-  @include{cl-ds clustering}
   @include{cl-ds threads}
   @include{cl-ds streaming}
   @include{cl-ds internals}
