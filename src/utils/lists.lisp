@@ -183,16 +183,19 @@
 
 
 (defun homogenousp (sequence &key (test 'eql) (key 'identity))
-  (reduce (lambda (prev &optional (next nil next-bound))
-            (if next-bound
-                (if (funcall test
-                             (funcall key prev)
-                             (funcall key next))
-                    next
-                    (return-from homogenousp nil))
-                prev))
-          sequence)
-  t)
+  (if (emptyp sequence)
+      t
+      (progn
+        (reduce (lambda (prev &optional (next nil next-bound))
+                  (if next-bound
+                      (if (funcall test
+                                   (funcall key prev)
+                                   (funcall key next))
+                          next
+                          (return-from homogenousp nil))
+                      prev))
+                sequence)
+        t)))
 
 (declaim (inline transform))
 (defun transform (function sequence &rest more-sequences)
