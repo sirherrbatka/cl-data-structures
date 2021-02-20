@@ -230,7 +230,6 @@
                              (:file "extrema")
                              (:file "extremum")
                              (:file "cumulative-accumulate")
-                             (:file "split-into-chunks")
                              (:file "chain")
                              (:file "frequency")
                              (:file "zip")

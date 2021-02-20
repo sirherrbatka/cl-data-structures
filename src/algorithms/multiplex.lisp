@@ -69,6 +69,10 @@
   range)
 
 
+(defmethod cl-ds.alg.meta:across-aggregate ((range multiplex-proxy) function)
+  (call-next-method))
+
+
 (defmethod cl-ds:reset! ((range multiplex-proxy))
   (setf (access-current range) (let ((current (read-initial-current range)))
                                  (if (null current)

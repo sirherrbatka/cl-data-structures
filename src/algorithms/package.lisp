@@ -91,6 +91,7 @@
    #:read-functor-constructor
    #:read-functor-prototype
    #:read-function
+   #:read-hash-table
    #:read-key
    #:read-keys
    #:read-original-range
@@ -98,7 +99,6 @@
    #:restrain-size
    #:should-skip
    #:shuffled-range
-   #:split-into-chunks
    #:summary
    #:summary-result-range
    #:to-hash-table
