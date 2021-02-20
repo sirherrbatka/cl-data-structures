@@ -40,10 +40,13 @@
 
 
 (defmethod set-stream-position ((range line-by-line-range) stream)
-  (or (ignore-errors (call-next-method range stream))
+  (handler-case
+      (call-next-method range stream)
+    (cl-ds:file-releated-error (e)
+      (declare (ignore e))
       (iterate
         (repeat (access-lines-read range))
-        (read-line stream))))
+        (read-line stream)))))
 
 
 (defmethod cl-ds:reset! ((range line-by-line-range))
