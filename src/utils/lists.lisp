@@ -186,14 +186,14 @@
   (if (emptyp sequence)
       t
       (progn
-        (reduce (lambda (prev &optional (next nil next-bound))
+        (reduce (lambda (&optional (prev nil prev-bound) (next nil next-bound))
                   (if next-bound
                       (if (funcall test
                                    (funcall key prev)
                                    (funcall key next))
                           next
                           (return-from homogenousp nil))
-                      prev))
+                      (return-from homogenousp t)))
                 sequence)
         t)))
 
