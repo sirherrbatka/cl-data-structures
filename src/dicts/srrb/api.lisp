@@ -364,9 +364,11 @@
 
 
 (defmethod cl-ds:across ((vector fundamental-sparse-rrb-vector) function)
-  (declare (optimize (speed 3) (space 0) (safety 0) (debug 0)))
+  (declare (optimize (speed 3)))
   (ensure-functionf function)
-  (labels ((impl (node depth upper-bits)
+  (labels ((impl (node depth upper-bits
+                  &aux (byte-position (* cl-ds.common.rrb:+bit-count+
+                                         depth)))
              (declare (type fixnum depth upper-bits))
              (if (zerop depth)
                  (unless (cl-ds.meta:null-bucket-p node)
@@ -382,7 +384,8 @@
                           from 0
                           below cl-ds.common.rrb:+maximum-children-count+)
                      (when (ldb-test (byte 1 i) bitmask)
-                       (~> (dpb i (byte cl-ds.common.rrb:+bit-count+ 0)
+                       (~> (dpb i (byte cl-ds.common.rrb:+bit-count+
+                                        byte-position)
                                 upper-bits)
                            (list* (aref content j))
                            (funcall function _))
@@ -400,9 +403,10 @@
                         below cl-ds.common.rrb:+maximum-children-count+)
                    (when (ldb-test (byte 1 i) bitmask)
                      (impl (aref content j) (1- depth)
-                           (logior (ash upper-bits
-                                        cl-ds.common.rrb:+bit-count+)
-                                   i))
+                           (dpb i
+                                (byte cl-ds.common.rrb:+bit-count+
+                                      byte-position)
+                                upper-bits))
                      (incf j))))))
     (impl (access-tree vector)
           (access-shift vector)

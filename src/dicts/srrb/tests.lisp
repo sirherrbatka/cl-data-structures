@@ -4,7 +4,7 @@
   (:shadowing-import-from :iterate :collecting :summing :in))
 (cl:in-package :sparse-rrb-vector-tests)
 
-(plan 382797)
+(plan 383297)
 
 (def ok-status (cl-ds.common:make-eager-modification-operation-status
                 t
@@ -299,7 +299,11 @@
                                                       position :value point)))
   (iterate
     (for (position . point) in-vector input-data)
-    (is (cl-ds:at container position) point)))
+    (is (cl-ds:at container position) point))
+  (cl-ds:traverse container
+                  (lambda (index.value)
+                    (is (cl-ds:at container (car index.value))
+                        (cdr index.value)))))
 
 (let* ((count 500)
        (input-data (~>> (cl-ds:iota-range :to count)
