@@ -8,14 +8,14 @@
   :author "Marek Kochanowicz"
   :maintainer "Marek Kochanowicz"
   :description "Data structures, ranges, ranges algorithms."
-  :depends-on ( :iterate          :alexandria
-                :serapeum         :documentation-utils-extensions
-                :more-conditions  :closer-mop
-                :lparallel        :flexichain
-                :metabang-bind    :bordeaux-threads
-                :scribble         :osicat
-                :cl-progress-bar  :cl-ppcre
-                :trivial-garbage  :uiop)
+  :depends-on ( :iterate         :alexandria
+                :serapeum        :documentation-utils-extensions
+                :more-conditions :closer-mop
+                :lparallel       :flexichain
+                :metabang-bind   :bordeaux-threads
+                :scribble        :osicat
+                :cl-ppcre        :trivial-garbage
+                :uiop)
   :serial T
   :pathname "src"
   :components ((:file "aux-package")
