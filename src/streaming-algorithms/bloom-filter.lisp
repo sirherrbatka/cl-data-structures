@@ -4,6 +4,7 @@
 (defclass bloom-filter (fundamental-data-sketch)
   ((%counters :initarg :counters
               :type simple-bit-vector
+              :reader internal-array
               :accessor access-counters)
    (%hashes :initarg :hashes
             :type vector

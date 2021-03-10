@@ -4,7 +4,8 @@
 (defclass approximated-counts (fundamental-data-sketch)
   ((%counters :initarg :counters
               :type (simple-array non-negative-fixnum (* *))
-              :accessor access-counters)
+              :accessor access-counters
+              :reader internal-array)
    (%hashes :initarg :hashes
             :type vector
             :accessor access-hashes)

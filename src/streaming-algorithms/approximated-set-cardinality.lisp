@@ -3,6 +3,7 @@
 
 (defclass approximated-set-cardinality (fundamental-data-sketch)
   ((%registers :initarg :registers
+               :reader internal-array
                :accessor access-registers)))
 
 
@@ -76,4 +77,3 @@
   (check-type a approximated-set-cardinality)
   (check-type b approximated-set-cardinality)
   (hll:jaccard (access-registers a) (access-registers b)))
-

@@ -22,6 +22,7 @@
    #:make-minhash
    #:make-one-bit-minhash
    #:minhash
+   #:internal-array
    #:minhash-jaccard/double-float
    #:minhash-jaccard/fixnum
    #:minhash-jaccard/single-float

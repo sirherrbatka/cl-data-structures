@@ -39,3 +39,6 @@
              :values `(,sketch ,more-sketches)
              :format-control "Sketches passed to the union are not compatible."))
     (call-next-method)))
+
+
+(defgeneric internal-array (sketch))
