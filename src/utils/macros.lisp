@@ -378,3 +378,19 @@
                           forms
                           key-symbols)
              ,@body))))
+
+
+(defun read-new-value ()
+  (format t "Enter a new value: ")
+  (multiple-value-list (eval (read))))
+
+
+(defmacro check-value (value &body body)
+  (with-gensyms (!block)
+    `(flet ((,!block () ,@body))
+       (restart-case (,!block)
+         (use-value (new-value)
+           :interactive read-new-value
+           :report "Read new value"
+           (setf ,value new-value)
+           (,!block))))))

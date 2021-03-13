@@ -39,6 +39,7 @@
    #:fixnum-hash
    #:future-carousel
    #:generator
+   #:check-value
    #:half-matrix
    #:hash-integer
    #:homogenousp
