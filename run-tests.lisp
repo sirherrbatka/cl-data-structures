@@ -10,6 +10,5 @@
               (lambda (c)
                 (declare (ignore c))
                 (invoke-restart 'lparallel.kernel:make-kernel 4))))
-         (prove:run :cl-data-structures-tests
-                    :reporter :dot)))
+         (prove:run :cl-data-structures-tests)))
   (cl-user::quit))

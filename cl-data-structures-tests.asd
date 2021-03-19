@@ -13,15 +13,7 @@
   :serial T
   :pathname "src"
   :components ((:module "utils"
-                :components ((:module "clustering"
-                              :components ((:module "k-means"
-                                            :components ((:test-file "tests")))
-                                           (:module "clara-pam"
-                                            :components ((:test-file "tests")))
-                                           (:module "bubble"
-                                            :components ((:test-file "tests")))))
-                             (:test-file "distances-tests")
-                             (:test-file "ordered-algorithms-tests")
+                :components ((:test-file "ordered-algorithms-tests")
                              (:test-file "lazy-shuffle-tests")))
                (:module "api"
                 :components ((:test-file "expression-tests")))
