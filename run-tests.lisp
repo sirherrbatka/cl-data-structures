@@ -1,5 +1,9 @@
-(ql:quickload :cl-data-structures)
-(ql:quickload :cl-data-structures-tests)
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+                                       (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+    (load quicklisp-init)))
+
+(quicklisp:quickload :cl-data-structures-tests)
 
 (setf prove:*enable-colors* nil)
 

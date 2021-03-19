@@ -1,3 +1,4 @@
 #!/bin/bash
 
-sbcl --load run-tests.lisp
+
+sbcl --no-sysinit --no-userinit --load run-tests.lisp
