@@ -3,7 +3,7 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-(quicklisp:quickload :cl-data-structures-tests)
+(quicklisp:quickload :cl-data-structures-tests :silent t)
 
 (setf prove:*enable-colors* nil)
 
