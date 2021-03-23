@@ -1,7 +1,5 @@
 (cl:in-package #:cl-data-structures.meta)
-(eval-always
-  (scribble:configure-scribble :package :cl-data-structures.meta)
-  (named-readtables:in-readtable :scribble))
+(named-readtables:in-readtable :scribble)
 
 
 (docs:define-docs

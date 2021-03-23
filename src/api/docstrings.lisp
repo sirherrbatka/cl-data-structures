@@ -1,7 +1,5 @@
 (cl:in-package #:cl-data-structures)
-(eval-always
-  (scribble:configure-scribble :package :cl-data-structures)
-  (named-readtables:in-readtable :scribble))
+(named-readtables:in-readtable :scribble)
 
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
@@ -488,7 +486,15 @@
      :arguments ((arguments "Lambda list of the expression, in the form of the plist")
                  (body "Body of the expression."))
      :notes "Objects used as part of the state should be immutable to support RESET! and CLONE operations properly."
-     :description "Constructs expression. Expression is a forward range build around the function closed over the state. State can be modified with SEND-RECUR and RECUR forms. SEND-RECUR modifies state and returns the value. RECUR modifies state but does not return the value."))
+     :description "Constructs expression. Expression is a forward range build around the function closed over the state. State can be modified with SEND-RECUR and RECUR forms. SEND-RECUR modifies state and returns the value. RECUR modifies state but does not return the value."
+     :examples [(let ((iota (cl-ds:xpr (:i 0) ; this will construct iota range with elements 0, 1, 2, 3, 4
+                              (when (< i 5) ; check the stop condition
+                                (cl-ds:send-recur i :i (1+ i)))))) ; yield i and bind (1+ i) to i
+                  (prove:is (cl-ds:consume-front iota) 0)
+                  (prove:is (cl-ds:consume-front iota) 1)
+                  (prove:is (cl-ds:consume-front iota) 2)
+                  (prove:is (cl-ds:consume-front iota) 3)
+                  (prove:is (cl-ds:consume-front iota) 4))]))
 
   (function found
     (:syntax "found status => boolean"

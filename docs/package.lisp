@@ -1,3 +1,4 @@
+(ql:quickload :cl-lore)
 (defpackage :cl-data-structures.documentation
   (:use #:cl #:cl-lore
         #:cl-lore.api.syntax
@@ -5,14 +6,16 @@
         #:cl-lore.extensions.sequence-graphs.api)
   (:export #:build-docs))
 
-
 (in-package #:cl-data-structures.documentation)
+
+(setf documentation-utils-extensions:*documentation* (documentation-utils-extensions:make-documentation-collection))
+(def-chunks *cl-data-structures*)
+(ql:quickload :cl-data-structures)
 
 (cl-lore.api.syntax:syntax
  cl-lore.extensions.documentation.api
  cl-lore.extensions.sequence-graphs.api)
 
-(def-chunks *cl-data-structures*)
 (cl-lore.api.syntax:define-save-output-function
     build-docs
     (:cl-data-structures.documentation
@@ -32,19 +35,19 @@
    "queues.lore"
    "in-depth.lore")
 
-  @title{CL-DATA-STRUCTURES}
-  @include{cl-ds intro}
-  @include{cl-ds API}
-  @include{dicts}
-  @include{sets}
-  @include{queues}
-  @include{sequences}
-  @include{cl-ds algorithms}
-  @include{cl-ds file system}
-  @include{cl-ds math}
-  @include{cl-ds threads}
-  @include{cl-ds streaming}
-  @include{cl-ds internals}
+  (title "CL-DATA-STRUCTURES")
+  (include "cl-ds intro")
+  (include "cl-ds API")
+  (include "dicts")
+  (include "sets")
+  (include "queues")
+  (include "sequences")
+  (include "cl-ds algorithms")
+  (include "cl-ds file system")
+  (include "cl-ds math")
+  (include "cl-ds threads")
+  (include "cl-ds streaming")
+  (include "cl-ds internals")
   )
 
 (build-docs "/home/shka/lore")

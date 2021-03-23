@@ -3,7 +3,6 @@
  cl-lore.extensions.documentation.api
  cl-lore.extensions.sequence-graphs.api)
 
-
 @begin{section}
 @title{Signaling errors}
 @label{Signaling errors}

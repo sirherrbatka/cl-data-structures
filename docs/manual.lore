@@ -76,6 +76,7 @@
 @label{API Macros}
  @begin{documentation}
  @pack{CL-DATA-STRUCTURES}
+ @docmacro['cl-ds:xpr]
  @docmacro['cl-ds:mod-bind]
  @end{documentation}
 @end{section}
@@ -166,7 +167,6 @@
    @docfun['cl-ds.alg:repeat]
    @docfun['cl-ds.alg:latch]
    @docfun['cl-ds.alg:restrain-size]
-   @docfun['cl-ds.alg:split-into-chunks]
   @end{documentation}
  @end{section}
 

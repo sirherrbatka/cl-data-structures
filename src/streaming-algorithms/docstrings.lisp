@@ -1,7 +1,5 @@
 (cl:in-package #:cl-data-structures.streaming-algorithms)
-(eval-always
-  (scribble:configure-scribble :package :cl-data-structures.streaming-algorithms)
-  (named-readtables:in-readtable :scribble))
+(named-readtables:in-readtable :scribble)
 
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
