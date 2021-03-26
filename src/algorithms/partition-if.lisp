@@ -84,16 +84,14 @@
                          (let ((old-chunks chunks)
                                (*current-key* old-key))
                            (setf chunks (vect element))
-                           (~>> old-chunks
-                                (cl-ds.alg.meta:pass-to-aggregation inner))))))))
+                           (cl-ds.alg.meta:pass-to-aggregation inner old-chunks)))))))
 
            ((unless (emptyp chunks)
               (let* ((length (length chunks))
                      (*current-key* (~>> (if on-first 0 (1- length))
                                          (aref chunks)
                                          (funcall partition-key))))
-                (~>> chunks cl-ds:whole-range
-                     (cl-ds.alg.meta:pass-to-aggregation inner))))
+                (cl-ds.alg.meta:pass-to-aggregation inner chunks)))
             (cl-ds.alg.meta:extract-result inner))))
 
      function
