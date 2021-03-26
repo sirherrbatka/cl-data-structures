@@ -84,7 +84,7 @@
                          (let ((old-chunks chunks)
                                (*current-key* old-key))
                            (setf chunks (vect element))
-                           (~>> old-chunks cl-ds:whole-range
+                           (~>> old-chunks
                                 (cl-ds.alg.meta:pass-to-aggregation inner))))))))
 
            ((unless (emptyp chunks)

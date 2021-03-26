@@ -63,7 +63,7 @@
                        (aggregated (cl-ds.alg:to-vector partitioned :element-type 'character
                                                                     :key (alexandria:compose #'alexandria:first-elt
                                                                                              #'second))))
-                  (prove:is (cl-ds.alg:to-vector aggregated) #("word" "as" "law") :test #'equalp))]
+                  (prove:is aggregated #("word" "as" "law") :test #'equalp))]
      :notes ("Aggregation on the returned range is performed eagerly."
              "Can be considered to be alternative to the GROUP-BY, suitable for the ordered data.")
      :returns "ABSTRACT-PARTITION-IF-PROXY instance."
