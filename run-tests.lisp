@@ -3,7 +3,7 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-(quicklisp:quickload :cl-data-structures-tests :silent t)
+(quicklisp:quickload :cl-data-structures/tests :silent t)
 
 (setf prove:*enable-colors* nil)
 
@@ -14,5 +14,5 @@
               (lambda (c)
                 (declare (ignore c))
                 (invoke-restart 'lparallel.kernel:make-kernel 4))))
-         (prove:run :cl-data-structures-tests)))
+         (prove:run :cl-data-structures/tests)))
   (cl-user::quit))
