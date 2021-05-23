@@ -264,17 +264,3 @@
        (setf (aref result i) (aref vector 0))
        (extract-min))
      result)))
-
-
-(-> row-major-index-to-subscripts (simple-array array-index) list)
-(defun row-major-index-to-subscripts (array index)
-  (declare (type fixnum index)
-           (type simple-array array)
-           (optimize (speed 3)))
-  (iterate
-    (declare (type fixnum dimension axis s))
-    (for axis from (1- (array-rank array)) downto 0)
-    (for dimension = (array-dimension array axis))
-    (for s = (mod index dimension))
-    (setf index (truncate (the fixnum (- index s)) dimension))
-    (collect s at start)))
