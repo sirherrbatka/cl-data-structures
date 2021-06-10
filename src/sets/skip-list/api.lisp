@@ -98,7 +98,7 @@
           (values structure
                   (cl-ds.common:make-eager-modification-operation-status
                    nil nil t)))))
-    (bind ((content (cl-ds.common.skip-list:skip-list-node-content result)))
+    (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
       (if (~> structure access-test-function (funcall content location))
           (values structure
                   (cl-ds.common:make-eager-modification-operation-status
@@ -107,10 +107,8 @@
                            (array-dimension pointers 0))))
             (setf (cl-ds.common.skip-list:skip-list-node-content new-node)
                   location)
-            (cl-ds.common.skip-list:insert-node-between!
-             current prev
-             (cl-ds.common.skip-list:read-ordering-function structure)
-             new-node)
+            (cl-ds.common.skip-list:insert-node-between! current prev
+                                                         test new-node)
             (cl-ds.common.skip-list:update-head-pointers! structure new-node)
             (incf (cl-ds.common.skip-list:access-size structure))
             (values structure
