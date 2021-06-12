@@ -74,13 +74,15 @@
   (cl-ds:erase!* set below-range)
   (prove:is (~> set cl-ds.alg:to-list) '(7 8 9 10 11 12 13 14) :test 'equal))
 
-(let* ((set (cl-ds:make-from-traversable (iota 15)
+(let* ((set (cl-ds:make-from-traversable (iota 1000)
                                          'cl-ds.sets.skip-list:mutable-skip-list-set
                                          #'< #'=))
-       (between-range (cl-ds:between* set :low 3 :high 7))
+       (between-range (cl-ds:between* set :low 250 :high 500))
        (between (cl-ds.alg:to-list between-range)))
-  (prove:is between '(3 4 5 6) :test 'equal)
+  (prove:is between (iota 250 :start 250) :test 'equal)
   (cl-ds:erase!* set between-range)
-  (prove:is (~> set cl-ds.alg:to-list) '(0 1 2 7 8 9 10 11 12 13 14) :test 'equal))
+  (prove:is (~> set cl-ds.alg:to-list)
+            (append (iota 250) (iota 500 :start 500))
+            :test 'equal))
 
 (prove:finalize)

@@ -53,8 +53,9 @@
   (values nil (make-hash-table :test 'eq)))
 
 
-(defmethod skip-list-node-clone ((skip-list-node skip-list-node) &aux (table (make-hash-table :test 'eq)))
+(defmethod skip-list-node-clone ((skip-list-node skip-list-node))
   (bind ((stack (vect))
+         (table (make-hash-table :test 'eq))
          ((:labels impl (skip-list-node))
           (if (null skip-list-node)
               nil
@@ -78,8 +79,9 @@
       (finally (return (values result table))))))
 
 
-(defmethod skip-list-node-clone ((skip-list-node assoc-skip-list-node) &aux (table (make-hash-table :test 'eq)))
+(defmethod skip-list-node-clone ((skip-list-node assoc-skip-list-node))
   (bind ((stack (vect))
+         (table (make-hash-table :test 'eq))
          ((:labels impl (skip-list-node))
           (if (null skip-list-node)
               nil
