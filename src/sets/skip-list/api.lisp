@@ -174,10 +174,25 @@
                   cl-ds.common:empty-eager-modification-operation-status)))))
 
 
+(defmethod cl-ds:between* ((container mutable-skip-list-set)
+                           &key (low nil low-bound-p) (high nil high-bound-p))
+  (bind (((:flet node (location boundp default))
+          (if boundp
+              (aref (cl-ds.common.skip-list:skip-list-locate-node container
+                                                                  location)
+                    0)
+              default)))
+    (make-instance 'mutable-skip-list-set-range
+                   :last-node (node high high-bound-p nil)
+                   :current-node (node low low-bound-p
+                                       (~> container
+                                           cl-ds.common.skip-list:read-pointers
+                                           (aref 0))))))
+
+
 (defmethod cl-ds:at ((container mutable-skip-list-set)
                      location
                      &rest more-locations)
-  (declare (optimize (speed 0) (debug 3) (safety 3)))
   (cl-ds:assert-one-dimension more-locations)
   (let* ((pointers (cl-ds.common.skip-list:skip-list-locate-node container
                                                                  location))

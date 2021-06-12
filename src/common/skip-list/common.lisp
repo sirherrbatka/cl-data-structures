@@ -6,6 +6,10 @@
   (content nil :type t))
 
 
+(defstruct (assoc-skip-list-node (:include skip-list-node))
+  (value nil :type t))
+
+
 (defmethod print-object ((object skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
     (format stream "[~a]" (skip-list-node-content object))
@@ -16,6 +20,9 @@
   (pointers skip-list-node-pointers)
   (level skip-list-node-level)
   (content skip-list-node-content))
+
+(cl-ds.utils:define-list-of-slots assoc-skip-list-node (skip-list-node)
+  (value assoc-skip-list-node-value))
 
 
 (-> skip-list-node-level (skip-list-node) fixnum)
@@ -39,12 +46,14 @@
     (setf (aref pointers index) new-value)))
 
 
-(-> skip-list-node-clone ((or null skip-list-node)) (values (or null skip-list-node)
-                                                            hash-table))
-(defun skip-list-node-clone (skip-list-node &aux (table (make-hash-table :test 'eq)))
-  (declare (optimize (speed 3) (debug 0) (safety 0)))
-  (when (null skip-list-node)
-    (return-from skip-list-node-clone (values nil table)))
+(defgeneric skip-list-node-clone (node))
+
+
+(defmethod skip-list-node-clone ((skip-list-node (eql nil)))
+  (values nil (make-hash-table :test 'eq)))
+
+
+(defmethod skip-list-node-clone ((skip-list-node skip-list-node) &aux (table (make-hash-table :test 'eq)))
   (bind ((stack (vect))
          ((:labels impl (skip-list-node))
           (if (null skip-list-node)
@@ -53,6 +62,32 @@
                 existing-node
                 (cl-ds.utils:with-slots-for (skip-list-node skip-list-node)
                   (lret ((result (make-skip-list-node
+                                  :pointers (copy-array pointers)
+                                  :content content)))
+                    (setf (gethash skip-list-node table) result
+                          (gethash result table) result)
+                    (vector-push-extend (skip-list-node-pointers result)
+                                        stack)))))))
+    (iterate
+      (with result = (impl skip-list-node))
+      (for fill-pointer = (fill-pointer stack))
+      (until (zerop fill-pointer))
+      (for pointers = (aref stack (1- fill-pointer)))
+      (decf (fill-pointer stack))
+      (cl-ds.utils:transform #'impl pointers)
+      (finally (return (values result table))))))
+
+
+(defmethod skip-list-node-clone ((skip-list-node assoc-skip-list-node) &aux (table (make-hash-table :test 'eq)))
+  (bind ((stack (vect))
+         ((:labels impl (skip-list-node))
+          (if (null skip-list-node)
+              nil
+              (if-let ((existing-node (gethash skip-list-node table)))
+                existing-node
+                (cl-ds.utils:with-slots-for (skip-list-node assoc-skip-list-node)
+                  (lret ((result (make-assoc-skip-list-node
+                                  :value value
                                   :pointers (copy-array pointers)
                                   :content content)))
                     (setf (gethash skip-list-node table) result
@@ -138,16 +173,18 @@
     (finally (return i))))
 
 
-(-> make-skip-list-node-of-level (fixnum) skip-list-node)
-(defun make-skip-list-node-of-level (level)
+(-> make-skip-list-node-of-level (fixnum &optional boolean) skip-list-node)
+(defun make-skip-list-node-of-level (level &optional assoc)
   (declare (optimize (speed 3) (safety 0) (debug 0)))
-  (make-skip-list-node :pointers (make-array level :initial-element nil)))
+  (if assoc
+      (make-skip-list-node :pointers (make-array level :initial-element nil))
+      (make-assoc-skip-list-node :pointers (make-array level :initial-element nil))))
 
 
-(-> make-skip-list-node-of-random-level (fixnum) skip-list-node)
-(defun make-skip-list-node-of-random-level (maximum-level)
+(-> make-skip-list-node-of-random-level (fixnum &optional boolean) skip-list-node)
+(defun make-skip-list-node-of-random-level (maximum-level &optional assoc)
   (declare (optimize (speed 3) (safety 0) (debug 0)))
-  (make-skip-list-node-of-level (random-level maximum-level)))
+  (make-skip-list-node-of-level (random-level maximum-level) assoc))
 
 
 (declaim (notinline locate-node))
@@ -174,6 +211,27 @@
       (decf i)
       (while (>= i 0))
       (finally (return (values result prev-result))))))
+
+
+(defun gather-pointers (node pointers)
+  (setf (aref pointers 0) node)
+  (iterate
+    (with level = (length pointers))
+    (with current-level = 0)
+    (while (< current-level level))
+    (until (null node))
+    (for node-level = (skip-list-node-level node))
+    (iterate
+      (for i from (1+ current-level) below node-level)
+      (for next = (skip-list-node-at node i))
+      (setf (aref pointers i) next))
+    (when (> node-level (1+ current-level))
+      (setf current-level node-level))
+    (setf node (iterate
+                 (for i from (1- node-level) downto 0)
+                 (for next = (skip-list-node-at node i))
+                 (finding next such-that (not (null next)))))
+    (finally (return pointers))))
 
 
 (-> insert-node-between! (simple-vector simple-vector function skip-list-node) skip-list-node)
@@ -261,15 +319,19 @@
 
 (defclass fundamental-skip-list-range (cl-ds:fundamental-forward-range)
   ((%current-node :initarg :current-node
-                  :reader cl-ds:peek-front
                   :accessor access-current-node)
    (%initial-current-node :initarg :current-node
-                          :reader read-initial-current-node)))
+                          :reader read-initial-current-node)
+   (%last-node :initarg :last-node
+               :reader read-last-node))
+  (:default-initargs
+   :last-node nil))
 
 
 (defmethod cl-ds.utils:cloning-information
     append ((object fundamental-skip-list-range))
-  '((:current-node access-current-node)))
+  '((:current-node access-current-node)
+    (:last-node read-last-node)))
 
 
 (defmethod cl-ds:reset! ((object fundamental-skip-list-range))
@@ -277,11 +339,24 @@
   object)
 
 
+(defmethod cl-ds:peek-front ((object fundamental-skip-list-range))
+  (let* ((result (access-current-node object))
+         (last-node (read-last-node object)))
+    (if (eq result last-node)
+        nil
+        result)))
+
+
 (defmethod cl-ds:consume-front ((object fundamental-skip-list-range))
-  (if-let ((result (cl-ds:peek-front object)))
-    (progn (setf (access-current-node object) (skip-list-node-at result 0))
-           result)
-    nil))
+  (let* ((result (access-current-node object))
+         (last-node (read-last-node object)))
+    (if (eq result last-node)
+        (progn
+          (setf (access-current-node object) nil)
+          nil)
+        (progn
+          (setf (access-current-node object) (skip-list-node-at result 0))
+          result))))
 
 
 (defmethod cl-ds:drop-front ((object fundamental-skip-list-range) count)
@@ -299,8 +374,9 @@
 (defmethod cl-ds:traverse ((object fundamental-skip-list-range) function)
   (ensure-functionf function)
   (iterate
+    (with last-node = (read-last-node object))
     (with result = (access-current-node object))
-    (until (null result))
+    (until (eq last-node result))
     (funcall function result)
     (setf result (skip-list-node-at result 0)
           (access-current-node object) result))
@@ -310,10 +386,11 @@
 (defmethod cl-ds:across ((object fundamental-skip-list-range) function)
   (ensure-functionf function)
   (iterate
+    (with last-node = (read-last-node object))
     (for result
          initially (access-current-node object)
          then (skip-list-node-at result 0))
-    (until (null result))
+    (until (eq last-node result))
     (funcall function result))
   object)
 
@@ -350,3 +427,84 @@
     (setf size 0)
     (cl-ds.utils:transform (constantly nil) pointers)
     container))
+
+
+(defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase!*-function)
+                                             (structure fundamental-skip-list)
+                                             container
+                                             (location fundamental-skip-list-range)
+                                             &rest all)
+  (declare (ignore all container))
+  (bind ((starting-node (access-current-node location))
+         (ending-node (read-last-node location)))
+    (when (eq starting-node ending-node)
+      (return-from cl-ds.meta:position-modification
+        (values structure
+                (cl-ds.common:make-eager-modification-operation-status
+                 nil
+                 location
+                 nil))))
+    (bind ((pointers (read-pointers structure))
+           (level (length pointers))
+           (ordering-function (read-ordering-function structure))
+           ((:values current prev)
+            (locate-node pointers
+                         (skip-list-node-content starting-node)
+                         ordering-function)))
+      (unless (eq starting-node (aref current 0))
+        (return-from cl-ds.meta:position-modification
+          (values structure
+                  (cl-ds.common:make-eager-modification-operation-status
+                   nil
+                   location
+                   nil))))
+      (if (null ending-node)
+          (progn
+            (iterate
+              (for p in-vector prev)
+              (unless (null p)
+                (map-into (skip-list-node-pointers p)
+                          (constantly nil))))
+            (iterate
+              (for i from 0 below level)
+              (for node = (aref pointers i))
+              (when (null node)
+                (next-iteration))
+              (when (funcall ordering-function
+                             (skip-list-node-content starting-node)
+                             (skip-list-node-content node))
+                (setf (aref pointers i) nil))))
+          (let ((nexts (gather-pointers ending-node
+                                        (make-array level :initial-element nil))))
+            (iterate
+              (for p in-vector prev)
+              (unless (null p)
+                (iterate
+                  (with node-pointers = (skip-list-node-pointers p))
+                  (for i from 0 below (length  node-pointers))
+                  (when (eq (aref node-pointers i) starting-node)
+                    (setf (aref node-pointers i) (aref nexts i))))))
+            (iterate
+              (for i from 0 below level)
+              (when (and (not (skip-list-node-compare ordering-function
+                                                      (aref pointers i)
+                                                      starting-node))
+                         (skip-list-node-compare ordering-function
+                                                 (aref pointers i)
+                                                 (aref nexts i)))
+                (setf (aref pointers i) (aref nexts i))))))
+      (values structure
+              (cl-ds.common:make-eager-modification-operation-status
+               t location t)))))
+
+
+(defmethod cl-ds:traverse ((object fundamental-skip-list)
+                           function)
+  (ensure-functionf function)
+  (cl-ds:traverse (cl-ds:whole-range object)
+                  function)
+  object)
+
+(defmethod cl-ds:across ((object fundamental-skip-list)
+                         function)
+  (cl-ds:traverse object function))

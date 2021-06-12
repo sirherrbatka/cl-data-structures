@@ -44,11 +44,16 @@
 
 (defgeneric near (container item maximal-distance))
 
+(defgeneric between* (container &key low high))
+
 (defgeneric add! (container location new-value)
   (:generic-function-class cl-ds.meta:add!-function))
 
 (defgeneric insert (container location new-value)
   (:generic-function-class cl-ds.meta:functional-insert-function))
+
+(defgeneric erase!* (container range)
+  (:generic-function-class cl-ds.meta:erase!*-function))
 
 (defgeneric erase (container location)
   (:generic-function-class cl-ds.meta:functional-erase-function))

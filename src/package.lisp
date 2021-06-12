@@ -13,6 +13,7 @@
    #:argument-value-out-of-bounds
    #:assert-one-dimension
    #:at
+   #:between*
    #:become-functional
    #:become-lazy
    #:become-mutable
@@ -38,6 +39,7 @@
    #:erase
    #:check-argument-bounds
    #:erase!
+   #:erase!*
    #:erase-if
    #:erase-if!
    #:expression
@@ -140,6 +142,7 @@
    #:destructive-function
    #:erase!-function
    #:erase-function
+   #:erase!*-function
    #:erase-if!-function
    #:erase-if-function
    #:full-bucket-p

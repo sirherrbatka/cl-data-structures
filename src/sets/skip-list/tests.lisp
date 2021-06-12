@@ -4,7 +4,7 @@
 (cl:in-package :skip-list-set-tests)
 
 
-(prove:plan 620)
+(prove:plan 624)
 
 (let ((set (cl-ds.sets.skip-list:make-mutable-skip-list-set #'< #'=)))
   (prove:ok (not (cl-ds:at set 1)))
@@ -64,5 +64,23 @@
     (iterate
       (for elt in (rest d))
       (prove:ok (cl-ds:at set elt)))))
+
+(let* ((set (cl-ds:make-from-traversable (iota 15)
+                                         'cl-ds.sets.skip-list:mutable-skip-list-set
+                                         #'< #'=))
+       (below-range (cl-ds:between* set :high 7))
+       (below-7 (cl-ds.alg:to-list below-range)))
+  (prove:is below-7 '(0 1 2 3 4 5 6) :test 'equal)
+  (cl-ds:erase!* set below-range)
+  (prove:is (~> set cl-ds.alg:to-list) '(7 8 9 10 11 12 13 14) :test 'equal))
+
+(let* ((set (cl-ds:make-from-traversable (iota 15)
+                                         'cl-ds.sets.skip-list:mutable-skip-list-set
+                                         #'< #'=))
+       (between-range (cl-ds:between* set :low 3 :high 7))
+       (between (cl-ds.alg:to-list between-range)))
+  (prove:is between '(3 4 5 6) :test 'equal)
+  (cl-ds:erase!* set between-range)
+  (prove:is (~> set cl-ds.alg:to-list) '(0 1 2 7 8 9 10 11 12 13 14) :test 'equal))
 
 (prove:finalize)
