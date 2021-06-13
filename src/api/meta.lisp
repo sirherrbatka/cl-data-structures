@@ -219,7 +219,14 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 
-(defclass erase!*-function (closer-mop:standard-generic-function
+(defclass erase*-function (closer-mop:standard-generic-function
+                           functional-function
+                           erase-function)
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
+
+
+(defclass erase*!-function (closer-mop:standard-generic-function
                             destructive-function
                             erase-function)
   ()

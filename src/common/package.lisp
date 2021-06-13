@@ -26,6 +26,7 @@
    #:hash-dict-content-value
    #:lazy-bidirectional-range
    #:lazy-box-container
+   #:array-to-half-byte-array
    #:lazy-random-access-range
    #:make-dict-content
    #:make-eager-modification-operation-status

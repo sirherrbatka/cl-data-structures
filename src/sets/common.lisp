@@ -22,7 +22,7 @@
                                     container
                                     location))
 
-(defmethod cl-ds:erase!* ((container mutable-set) range)
+(defmethod cl-ds:erase*! ((container mutable-set) range)
   (cl-ds.meta:position-modification #'cl-ds:erase!*
                                     container
                                     container

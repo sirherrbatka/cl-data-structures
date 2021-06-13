@@ -376,6 +376,21 @@
     result))
 
 
+(defun array-to-half-byte-array (array)
+  (declare (type (array (unsigned-byte 8) (*))
+                 array))
+  (iterate
+    (with length = (length array))
+    (with result = (make-array (* 2 length)
+                               :element-type '(unsigned-byte 4)))
+    (for i from 0 below length)
+    (for j from 0 by 2)
+    (for byte = (aref array i))
+    (setf (aref result j) (ldb (byte 4 0) byte))
+    (setf (aref result (1+ j)) (ldb (byte 4 4) byte))
+    (finally (return result))))
+
+
 (defun map-qp-trie-nodes (function node &optional ac)
   (declare (optimize (speed 3))
            (type qp-trie-node node)

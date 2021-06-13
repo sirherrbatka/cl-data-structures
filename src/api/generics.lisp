@@ -52,8 +52,11 @@
 (defgeneric insert (container location new-value)
   (:generic-function-class cl-ds.meta:functional-insert-function))
 
-(defgeneric erase!* (container range)
+(defgeneric erase*! (container range)
   (:generic-function-class cl-ds.meta:erase!*-function))
+
+(defgeneric erase* (container range)
+  (:generic-function-class cl-ds.meta:erase*-function))
 
 (defgeneric erase (container location)
   (:generic-function-class cl-ds.meta:functional-erase-function))
@@ -220,6 +223,10 @@ Range releated functions.
   #'erase)
 
 
+(defmethod cl-ds.meta:functional-counterpart ((operation cl-ds.meta:erase*!-function))
+  #'erase*)
+
+
 (defmethod cl-ds.meta:functional-counterpart ((operation cl-ds.meta:update-if!-function))
   #'update-if)
 
@@ -250,6 +257,10 @@ Range releated functions.
 
 (defmethod cl-ds.meta:destructive-counterpart ((operation cl-ds.meta:take-out-back!-function))
   #'take-out-back)
+
+
+(defmethod cl-ds.meta:destructive-counterpart ((operation cl-ds.meta:erase*-function))
+  #'erase*!)
 
 
 (defmethod cl-ds.meta:destructive-counterpart ((operation cl-ds.meta:take-out-front!-function))

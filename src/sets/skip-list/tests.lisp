@@ -80,7 +80,7 @@
        (between-range (cl-ds:between* set :low 250 :high 500))
        (between (cl-ds.alg:to-list between-range)))
   (prove:is between (iota 250 :start 250) :test 'equal)
-  (cl-ds:erase!* set between-range)
+  (cl-ds:erase*! set between-range)
   (prove:is (~> set cl-ds.alg:to-list)
             (append (iota 250) (iota 500 :start 500))
             :test 'equal))

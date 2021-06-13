@@ -39,7 +39,8 @@
    #:erase
    #:check-argument-bounds
    #:erase!
-   #:erase!*
+   #:erase*!
+   #:erase*
    #:erase-if
    #:erase-if!
    #:expression
@@ -142,7 +143,8 @@
    #:destructive-function
    #:erase!-function
    #:erase-function
-   #:erase!*-function
+   #:erase*!-function
+   #:erase*-function
    #:erase-if!-function
    #:erase-if-function
    #:full-bucket-p
