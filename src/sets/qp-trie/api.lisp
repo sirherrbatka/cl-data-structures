@@ -246,7 +246,6 @@
                   :end (if (null high)
                            nil
                            (cl-ds.common.qp-trie:half-byte-list-to-array high))
-                  :end nil
                   :stack (~> container
                              cl-ds.common.qp-trie:access-root
                              (list 0 '())
