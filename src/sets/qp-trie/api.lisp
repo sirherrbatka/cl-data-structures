@@ -205,7 +205,8 @@
       (iterate
         (declare (type fixnum i))
         (for i from 0 below 16)
-        (when (cl-ds.common.qp-trie:qp-trie-node-leaf-present-p node i)
+        (when (and (cl-ds.common.qp-trie:qp-trie-node-leaf-present-p node i)
+                   (in-range start end i depth t))
           (push (list nil next-depth (cons i parents)) stack))))))
 
 
@@ -221,6 +222,10 @@
 (defmethod cl-ds:across ((object qp-trie-set-range) function)
   (cl-ds:traverse (cl-ds:clone object) function)
   object)
+
+
+(defmethod cl-ds:peek-front ((object qp-trie-set-range))
+  (cl-ds:consume-front (cl-ds:clone object)))
 
 
 (defmethod cl-ds:whole-range ((container fundamental-qp-trie-set))
