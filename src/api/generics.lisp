@@ -53,7 +53,7 @@
   (:generic-function-class cl-ds.meta:functional-insert-function))
 
 (defgeneric erase*! (container range)
-  (:generic-function-class cl-ds.meta:erase!*-function))
+  (:generic-function-class cl-ds.meta:erase*!-function))
 
 (defgeneric erase* (container range)
   (:generic-function-class cl-ds.meta:erase*-function))
