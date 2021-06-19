@@ -159,31 +159,67 @@
         :start (start range)))
 
 
-(defun in-range (start end half-byte i &optional leaf)
-  (and (if leaf
-           (cond ((null start)
-                  t)
-                 ((< (length start) i)
-                  t)
-                 ((= i (1+ (length start)))
-                  (<= (aref start i) half-byte))
-                 (t nil))
-           (if (or (null start) (<= (length start) i))
-               t
-               (<= (aref start i) half-byte)))
-       (if leaf
-           (cond ((null end)
-                  t)
-                 ((< (length end) i)
-                  nil)
-                 ((= i (1+ (length end)))
-                  (< half-byte (aref end i)))
-                 (t t))
-           (cond ((null end)
-                  t)
-                 ((<= (length end) i)
-                  nil)
-                 (t (< half-byte (aref end i)))))))
+(defclass qp-trie-range-stack-cell ()
+  ((%more-checks-start :initarg :more-checks-start
+                       :reader more-checks-start)
+   (%more-checks-end :initarg :more-checks-end
+                     :reader more-checks-end)
+   (%node :initarg :node
+          :reader node)
+   (%depth :initarg :depth
+           :reader depth)
+   (%parents :initarg :parents
+             :reader parents))
+  (:default-initargs :more-checks-start t
+                     :more-checks-end t
+                     :parents '()
+                     :depth 0))
+
+
+(defun new-cell (old-cell start end half-byte &optional leaf)
+  (let* ((node (node old-cell))
+         (more-checks-start (more-checks-start old-cell))
+         (more-checks-end (more-checks-end old-cell))
+         (i (depth old-cell))
+         (parents (parents old-cell))
+         (node-p (cl-ds.common.qp-trie:qp-trie-node-present-p node half-byte))
+         (leaf-p (cl-ds.common.qp-trie:qp-trie-node-leaf-present-p node half-byte)))
+    (when (or (nor node-p leaf-p)
+              (xor leaf-p leaf)
+              (and (not node-p) (not leaf)))
+      (return-from new-cell nil))
+    (if (and (cond ((not more-checks-start)
+                    t)
+                   ((null start)
+                    (setf more-checks-start nil)
+                    t)
+                   ((< (length start) i)
+                    (setf more-checks-start nil)
+                    t)
+                   ((< i (length start))
+                    (setf more-checks-start (= (aref start i) half-byte))
+                    (<= (aref start i) half-byte))
+                   (t nil))
+             (cond ((not more-checks-end)
+                    t)
+                   ((null end)
+                    (setf more-checks-end nil)
+                    t)
+                   ((< i (length end))
+                    (setf more-checks-end (= half-byte (aref end i)))
+                    (if (and leaf (= (1+ i) (length end)))
+                        (< half-byte (aref end i))
+                        (<= half-byte (aref end i))))
+                   (t nil)))
+        (make 'qp-trie-range-stack-cell
+              :parents (cons half-byte parents)
+              :node (if (and leaf leaf-p)
+                        nil
+                        (cl-ds.common.qp-trie:qp-trie-node-ref node half-byte))
+              :depth (1+ i)
+              :more-checks-start more-checks-start
+              :more-checks-end more-checks-end)
+        nil)))
 
 
 (defmethod cl-ds:consume-front ((range qp-trie-set-range))
@@ -193,25 +229,18 @@
       (with start = (start range))
       (when (emptyp stack)
         (leave (values nil nil)))
-      (for (node depth parents) = (pop stack))
+      (for cell = (pop stack))
+      (for node = (node cell))
+      (for parents = (parents cell))
       (when (null node)
         (leave (values (cl-ds.common.qp-trie:half-byte-list-to-array parents) t)))
-      (for next-depth = (1+ depth))
       (iterate
         (declare (type fixnum i))
         (for i from 0 below 16)
-        (when (and (cl-ds.common.qp-trie:qp-trie-node-present-p node i)
-                   (in-range start end i depth))
-          (push (list (cl-ds.common.qp-trie:qp-trie-node-ref node i)
-                      next-depth
-                      (cons i parents))
-                stack)))
-      (iterate
-        (declare (type fixnum i))
-        (for i from 0 below 16)
-        (when (and (cl-ds.common.qp-trie:qp-trie-node-leaf-present-p node i)
-                   (in-range start end i depth t))
-          (push (list nil next-depth (cons i parents)) stack))))))
+        (when-let ((new-cell (new-cell cell start end i)))
+          (push new-cell stack))
+        (when-let ((new-cell (new-cell cell start end i t)))
+          (push new-cell stack))))))
 
 
 (defmethod cl-ds:traverse ((object qp-trie-set-range) function)
@@ -238,7 +267,7 @@
                   :end nil
                   :stack (~> container
                              cl-ds.common.qp-trie:access-root
-                             (list 0 '())
+                             (make 'qp-trie-range-stack-cell :node _)
                              list)))
 
 
@@ -246,11 +275,11 @@
   (make-instance 'qp-trie-set-range
                   :start (if (null low)
                              nil
-                             (cl-ds.common.qp-trie:half-byte-list-to-array low))
+                             (cl-ds.common.qp-trie:array-to-half-byte-array low))
                   :end (if (null high)
                            nil
-                           (cl-ds.common.qp-trie:half-byte-list-to-array high))
+                           (cl-ds.common.qp-trie:array-to-half-byte-array high))
                   :stack (~> container
                              cl-ds.common.qp-trie:access-root
-                             (list 0 '())
+                             (make 'qp-trie-range-stack-cell :node _)
                              list)))

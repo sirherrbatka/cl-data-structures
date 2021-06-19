@@ -7,6 +7,7 @@
   (:export #:qp-trie
            #:qp-trie-find
            #:map-qp-trie-nodes
+           #:array-to-half-byte-array
            #:access-root
            #:make-qp-trie-node
            #:qp-trie-node-clone

@@ -1,11 +1,13 @@
 (cl:in-package #:cl-data-structures.sets.qp-trie)
 
-(prove:plan 503)
+(prove:plan 504)
 
 (let ((trie (make-mutable-qp-trie-set))
+      (sort (curry #'cl-ds.utils:lexicographic-compare #'< #'=))
       (data (make-array 500)))
   (map-into data (lambda () (map-into (make-array 4 :element-type '(unsigned-byte 8))
                                       (lambda () (random #.(expt 2 8))))))
+  (setf data (sort data sort))
   (iterate
     (for vect in-vector data)
     (cl-ds:put! trie vect))
@@ -17,15 +19,14 @@
   (prove:is (cl-ds:size trie) (cl-ds.alg:count-elements trie))
   (prove:is
    (~> trie cl-ds:whole-range cl-ds.alg:to-vector
-       (sort #'> :key (rcurry #'aref 0))
-       (stable-sort #'> :key (rcurry #'aref 1))
-       (stable-sort #'> :key (rcurry #'aref 2))
-       (stable-sort #'> :key (rcurry #'aref 3)))
-   (~> data
-       (sort #'> :key (rcurry #'aref 0))
-       (stable-sort #'> :key (rcurry #'aref 1))
-       (stable-sort #'> :key (rcurry #'aref 2))
-       (stable-sort #'> :key (rcurry #'aref 3)))
+       (sort sort))
+   data
+   :test #'equalp)
+  (prove:is
+   (~> (cl-ds:between* trie :high (aref data 3))
+       cl-ds.alg:to-vector
+       (sort sort))
+   (sort (take 3 data) sort)
    :test #'equalp))
 
 (prove:finalize)
