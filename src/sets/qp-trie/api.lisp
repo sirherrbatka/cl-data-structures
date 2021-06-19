@@ -161,7 +161,9 @@
 
 (defun in-range (start end half-byte i &optional leaf)
   (and (if leaf
-           (cond ((< (length start) i)
+           (cond ((null start)
+                  t)
+                 ((< (length start) i)
                   t)
                  ((= i (1+ (length start)))
                   (<= (aref start i) half-byte))
@@ -170,7 +172,9 @@
                t
                (<= (aref start i) half-byte)))
        (if leaf
-           (cond ((< (length end) i)
+           (cond ((null end)
+                  t)
+                 ((< (length end) i)
                   nil)
                  ((= i (1+ (length end)))
                   (< half-byte (aref end i)))
