@@ -229,6 +229,12 @@
        (ldb-test (byte 1 index))))
 
 
+(declaim (inline split-byte))
+(defun split-byte (byte)
+  (values (ldb (byte 4 4) byte)
+          (ldb (byte 4 0) byte)))
+
+
 (defmacro qp-trie-insert! (qp-trie bytes new-node-form)
   (once-only (qp-trie bytes)
     `(locally (declare (optimize (speed 3) (debug 0) (safety 0))
@@ -242,22 +248,22 @@
          (with length = (length ,bytes))
          (for i from 0 below (the fixnum (1- length)))
          (for byte = (aref ,bytes i))
-         (for half-byte-1 = (ldb (byte 4 0) byte))
-         (for half-byte-2 = (ldb (byte 4 4) byte))
+         (for (values half-byte-1 half-byte-2) = (split-byte byte))
          (setf node (qp-trie-node-get-or-insert-child! node half-byte-1
                                                        ,new-node-form)
                node (qp-trie-node-get-or-insert-child! node half-byte-2
                                                        ,new-node-form))
-         (finally (let* ((last-byte (aref ,bytes (the fixnum (1- length))))
+         (finally (bind ((last-byte (aref ,bytes (the fixnum (1- length))))
+                         ((:values last-half-byte-1 last-half-byte-2)
+                          (split-byte last-byte))
                          (next-node  (qp-trie-node-get-or-insert-child!
                                       node
-                                      (ldb (byte 4 0) last-byte)
+                                      last-half-byte-1
                                       ,new-node-form))
                          (old-mask (qp-trie-node-store-bitmask next-node))
                          (new-mask (qp-trie-node-mark-leaf!
                                     next-node
-                                    (ldb (byte 4 4) last-byte))))
-                    (declare (type (unsigned-byte 8) last-byte))
+                                    last-half-byte-2)))
                     (return (values (not (eql new-mask old-mask))
                                     next-node))))))))
 
@@ -281,17 +287,15 @@
     (with length = (length bytes))
     (for i from 0 below (1- length))
     (for byte = (aref bytes i))
-    (for half-byte-1 = (ldb (byte 4 0) byte))
-    (for half-byte-2 = (ldb (byte 4 4) byte))
+    (for (values half-byte-1 half-byte-2) = (split-byte byte))
     (unless (qp-trie-node-present-p node half-byte-1)
       (leave (values i node)))
     (for next-node = (qp-trie-node-ref node half-byte-1))
     (unless (qp-trie-node-present-p next-node half-byte-2)
       (leave (values i next-node)))
     (setf node (qp-trie-node-ref next-node half-byte-2))
-    (finally (let* ((last-byte (aref bytes (1- length)))
-                    (half-byte-1 (ldb (byte 4 0) last-byte))
-                    (half-byte-2 (ldb (byte 4 4) last-byte))
+    (finally (bind ((last-byte (aref bytes (1- length)))
+                    ((:values half-byte-1 half-byte-2) (split-byte last-byte))
                     (result nil))
                (unless (qp-trie-node-present-p node half-byte-1)
                  (return (1- length)))
@@ -322,8 +326,7 @@
           (declare (type qp-trie-node node)
                    (type fixnum i))
           (bind ((byte (aref bytes i))
-                 (half-byte-1 (ldb (byte 4 0) byte))
-                 (half-byte-2 (ldb (byte 4 4) byte))
+                 ((:values half-byte-1 half-byte-2) (split-byte byte))
                  (node (ref node half-byte-1)))
             (if (eql last-byte-position i)
                 (let ((old-mask (qp-trie-node-store-bitmask node))
@@ -362,15 +365,15 @@
                              :element-type '(unsigned-byte 8))))
     (iterate
       (declare (type fixnum i)
-               (type half-byte half-byte-1 half-byte-2)
+               (type (unsigned-byte 8) half-byte-1 half-byte-2)
                (type (unsigned-byte 8) byte))
       (for i from (1- result-length) downto 0)
       (for half-byte-1 = (first list))
-      (for byte = (ash half-byte-1 4))
+      (for byte = half-byte-1)
       (setf (aref result i) byte)
       (setf list (rest list))
       (until (endp list))
-      (for half-byte-2 = (first list))
+      (for half-byte-2 = (ash (first list) 4))
       (setf byte (logior half-byte-2 byte)
             (aref result i) byte
             list (rest list)))
@@ -387,8 +390,9 @@
     (for i from 0 below length)
     (for j from 0 by 2)
     (for byte = (aref array i))
-    (setf (aref result j) (ldb (byte 4 0) byte))
-    (setf (aref result (1+ j)) (ldb (byte 4 4) byte))
+    (for (values half-byte-1 half-byte-2) = (split-byte byte))
+    (setf (aref result j) half-byte-1)
+    (setf (aref result (1+ j)) half-byte-2)
     (finally (return result))))
 
 
