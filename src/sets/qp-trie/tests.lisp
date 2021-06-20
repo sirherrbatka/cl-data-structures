@@ -22,11 +22,12 @@
        (sort sort))
    data
    :test #'equalp)
-  (prove:is
-   (~> (cl-ds:between* trie :high (aref data 3))
-       cl-ds.alg:to-vector
-       (sort sort))
-   (sort (take 3 data) sort)
-   :test #'equalp))
+  (let ((reference-point (cl-ds.utils:lower-bound data (aref data 10) sort)))
+    (prove:is
+     (~> (cl-ds:between* trie :high (aref data reference-point))
+         cl-ds.alg:to-vector
+         (sort sort))
+     (take reference-point data)
+     :test #'equalp)))
 
 (prove:finalize)
