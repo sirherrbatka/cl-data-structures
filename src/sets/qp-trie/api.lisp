@@ -155,8 +155,8 @@
 (defmethod cl-ds:clone ((range qp-trie-set-range))
   (make (class-of range)
         :stack (stack range)
-        :end (end range)
-        :start (start range)))
+        :start (start range)
+        :end (end range)))
 
 
 (defclass qp-trie-range-stack-cell ()
