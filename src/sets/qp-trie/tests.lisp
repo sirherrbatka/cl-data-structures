@@ -1,6 +1,6 @@
 (cl:in-package #:cl-data-structures.sets.qp-trie)
 
-(prove:plan 504)
+(prove:plan 505)
 
 (let ((trie (make-mutable-qp-trie-set))
       (sort (curry #'cl-ds.utils:lexicographic-compare #'< #'=))
@@ -28,6 +28,13 @@
          cl-ds.alg:to-vector
          (sort sort))
      (take reference-point data)
-     :test #'equalp)))
+     :test #'equalp)
+    (prove:is
+     (~> (cl-ds:between* trie :low (aref data reference-point))
+         cl-ds.alg:to-vector
+         (sort sort))
+     (drop reference-point data)
+     :test #'equalp)
+    ))
 
 (prove:finalize)
