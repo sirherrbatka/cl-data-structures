@@ -230,6 +230,7 @@
 
 
 (declaim (inline split-byte))
+(-> split-byte ((unsigned-byte 8)) (values half-byte half-byte))
 (defun split-byte (byte)
   (values (ldb (byte 4 4) byte)
           (ldb (byte 4 0) byte)))
