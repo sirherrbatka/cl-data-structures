@@ -7,8 +7,6 @@
         #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.common.skip-list)
   (:export
-   #:access-size
-   #:access-size
    #:delete-node-between!
    #:fundamental-skip-list
    #:fundamental-skip-list-range

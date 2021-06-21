@@ -93,7 +93,6 @@
          (cl-ds.common.skip-list:read-ordering-function structure)
          new-node)
         (cl-ds.common.skip-list:update-head-pointers! structure new-node)
-        (incf (cl-ds.common.skip-list:access-size structure))
         (return-from cl-ds.meta:position-modification
           (values structure
                   (cl-ds.common:make-eager-modification-operation-status
@@ -110,7 +109,6 @@
             (cl-ds.common.skip-list:insert-node-between! current prev
                                                          test new-node)
             (cl-ds.common.skip-list:update-head-pointers! structure new-node)
-            (incf (cl-ds.common.skip-list:access-size structure))
             (values structure
                     (cl-ds.common:make-eager-modification-operation-status
                      nil nil t)))))))
@@ -165,7 +163,6 @@
                   (while (eq node-at result))
                   (setf (cl-ds.common.skip-list:skip-list-node-at previous i)
                         rest))))
-            (decf (cl-ds.common.skip-list:access-size structure))
             (values
              structure
              (cl-ds.common:make-eager-modification-operation-status

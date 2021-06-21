@@ -260,11 +260,7 @@
 
 
 (defclass fundamental-skip-list (cl-ds:mutable cl-ds:fundamental-container)
-  ((%size :initarg :size
-          :reader cl-ds:size
-          :type fixnum
-          :accessor access-size)
-   (%ordering-function :initarg :ordering-function
+  ((%ordering-function :initarg :ordering-function
                        :reader read-ordering-function)
    (%pointers :initarg :pointers
               :reader read-pointers
@@ -276,8 +272,17 @@
    :maximum-level 32))
 
 
+(defmethod cl-ds:size ((container fundamental-skip-list))
+  (iterate
+   (for i from 0)
+   (for node
+        initially (~> container pointers (aref 0))
+        then (~> node skip-list-node-pointers (aref 0)))
+   (until (null node))
+   (finally (return 0))))
+
+
 (cl-ds.utils:define-list-of-slots fundamental-skip-list ()
-  (size access-size)
   (ordering-function read-ordering-function)
   (pointers read-pointers)
   (maximum-level access-maximum-level))
