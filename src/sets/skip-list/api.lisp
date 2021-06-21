@@ -222,7 +222,6 @@
 
 
 (defmethod cl-ds:reset! ((container mutable-skip-list-set))
-  (setf (cl-ds.common.skip-list:access-size container) 0)
   (iterate
     (with pointers = (cl-ds.common.skip-list:read-pointers container))
     (for i from 0 below (length pointers))

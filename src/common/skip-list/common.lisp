@@ -268,7 +268,6 @@
    (%maximum-level :initarg :maximum-level
                    :accessor access-maximum-level))
   (:default-initargs
-   :size 0
    :maximum-level 32))
 
 
@@ -276,10 +275,10 @@
   (iterate
    (for i from 0)
    (for node
-        initially (~> container pointers (aref 0))
+        initially (~> container read-pointers (aref 0))
         then (~> node skip-list-node-pointers (aref 0)))
    (until (null node))
-   (finally (return 0))))
+   (finally (return i))))
 
 
 (cl-ds.utils:define-list-of-slots fundamental-skip-list ()

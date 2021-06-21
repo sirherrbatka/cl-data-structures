@@ -71,7 +71,7 @@
        (below-range (cl-ds:between* set :high 7))
        (below-7 (cl-ds.alg:to-list below-range)))
   (prove:is below-7 '(0 1 2 3 4 5 6) :test 'equal)
-  (cl-ds:erase!* set below-range)
+  (cl-ds:erase*! set below-range)
   (prove:is (~> set cl-ds.alg:to-list) '(7 8 9 10 11 12 13 14) :test 'equal))
 
 (let* ((set (cl-ds:make-from-traversable (iota 1000)
