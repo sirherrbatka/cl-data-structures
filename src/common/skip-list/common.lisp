@@ -318,7 +318,6 @@
 
 (defmethod cl-ds.utils:cloning-information append ((object fundamental-skip-list))
   '((:pointers read-pointers)
-    (:size cl-ds:size)
     (:ordering-function read-ordering-function)
     (:maximum-level access-maximum-level)))
 
