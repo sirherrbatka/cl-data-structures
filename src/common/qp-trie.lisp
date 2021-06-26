@@ -19,7 +19,10 @@
            #:make-qp-trie-node
            #:qp-trie-insert!
            #:half-byte-list-to-array
-           #:qp-trie-delete!))
+           #:qp-trie-delete!
+           #:qp-trie-node-delete!
+           #:qp-trie-node-unmark-leaf!
+           #:qp-trie-node-bitmask))
 
 
 (cl:in-package #:cl-ds.common.qp-trie)
@@ -137,23 +140,16 @@
   (let* ((old-mask (qp-trie-node-children-bitmask node))
          (effective-index (logcount (ldb (byte index 0) old-mask)))
          (new-mask (dpb 0 (byte 1 index) old-mask))
-         (old-content (qp-trie-node-content node))
-         (old-size (logcount old-mask))
-         (new-size (logcount new-mask))
-         (new-content (make-array new-size)))
-    (declare (type fixnum old-size new-size)
-             (type simple-vector new-content)
+         (content (qp-trie-node-content node))
+         (old-size (logcount old-mask)))
+    (declare (type fixnum old-size)
              (type node-index effective-index))
-    (iterate
-      (declare (type fixnum i))
-      (for i from 0 below effective-index)
-      (setf (aref new-content i) (aref old-content i)))
+    (setf (aref content effective-index) nil)
     (iterate
       (declare (type fixnum i))
       (for i from (1+ effective-index) below old-size)
-      (setf (aref new-content (1- i)) (aref old-content i)))
-    (setf (qp-trie-node-content node) new-content
-          (qp-trie-node-children-bitmask node) new-mask)
+      (setf (aref content (1- i)) (aref content i)))
+    (setf (qp-trie-node-children-bitmask node) new-mask)
     node))
 
 

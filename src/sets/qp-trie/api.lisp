@@ -212,7 +212,7 @@
                         (<= half-byte (aref end i))))
                    (t nil)))
         (make 'qp-trie-range-stack-cell
-              :parents (cons half-byte parents)
+              :parents (cons (cons half-byte node) parents)
               :node (if (and leaf leaf-p)
                         nil
                         (cl-ds.common.qp-trie:qp-trie-node-ref node half-byte))
@@ -233,7 +233,9 @@
       (for node = (node cell))
       (for parents = (parents cell))
       (when (null node)
-        (leave (values (cl-ds.common.qp-trie:half-byte-list-to-array parents) t)))
+        (leave (values (cl-ds.common.qp-trie:half-byte-list-to-array
+                        parents :key #'car)
+                       t)))
       (iterate
         (declare (type fixnum i))
         (for i from 0 below 16)
@@ -283,3 +285,35 @@
                              cl-ds.common.qp-trie:access-root
                              (make 'qp-trie-range-stack-cell :node _)
                              list)))
+
+
+(defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase*!-function)
+                                             (structure mutable-qp-trie-set)
+                                             container
+                                             (location qp-trie-set-range)
+                                             &rest all)
+  (declare (ignore all))
+  (iterate
+    (with end = (end location))
+    (with start = (start location))
+    (with stack = (stack location))
+    (when (emptyp stack)
+      (leave (values nil nil)))
+    (for cell = (pop stack))
+    (for node = (node cell))
+    (for parents = (parents cell))
+    (if (null node)
+      (bind (((leaf-index . leaf) (first parents)))
+        (cl-ds.common.qp-trie:qp-trie-node-unmark-leaf! leaf leaf-index)
+        (iterate
+          (for (index . node) in (rest parents))
+          (for prev-node previous node initially leaf)
+          (until (~> prev-node cl-ds.common.qp-trie:qp-trie-node-bitmask zerop))
+          (cl-ds.common.qp-trie:qp-trie-node-delete! node index)))
+      (iterate
+        (declare (type fixnum i))
+        (for i from 0 below 16)
+        (when-let ((new-cell (new-cell cell start end i)))
+          (push new-cell stack))
+        (when-let ((new-cell (new-cell cell start end i t)))
+          (push new-cell stack))))))
