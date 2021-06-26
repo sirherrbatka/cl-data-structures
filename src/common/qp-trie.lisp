@@ -5,24 +5,25 @@
   (:use #:common-lisp #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.common.qp-trie)
   (:export #:qp-trie
-           #:qp-trie-find
-           #:map-qp-trie-nodes
-           #:array-to-half-byte-array
            #:access-root
+           #:array-to-half-byte-array
+           #:half-byte-list-to-array
            #:make-qp-trie-node
-           #:qp-trie-node-clone
-           #:qp-trie-node
+           #:map-qp-trie-nodes
+           #:qp-trie-delete!
            #:qp-trie-dict-node
-           #:qp-trie-node-ref
+           #:qp-trie-find
+           #:qp-trie-insert!
+           #:qp-trie-node
+           #:qp-trie-node-bitmask
+           #:qp-trie-node-children-bitmask
+           #:qp-trie-node-clone
+           #:qp-trie-node-content
+           #:qp-trie-node-delete!
            #:qp-trie-node-leaf-present-p
            #:qp-trie-node-present-p
-           #:make-qp-trie-node
-           #:qp-trie-insert!
-           #:half-byte-list-to-array
-           #:qp-trie-delete!
-           #:qp-trie-node-delete!
-           #:qp-trie-node-unmark-leaf!
-           #:qp-trie-node-bitmask))
+           #:qp-trie-node-ref
+           #:qp-trie-node-store-bitmask))
 
 
 (cl:in-package #:cl-ds.common.qp-trie)

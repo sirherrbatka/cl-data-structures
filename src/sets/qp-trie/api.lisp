@@ -7,12 +7,7 @@
 
 
 (defclass fundamental-qp-trie-set (cl-data-structures.common.qp-trie:qp-trie)
-  ((%size :type non-negative-integer
-           :initarg :size
-           :reader cl-ds:size
-           :accessor access-size))
-  (:default-initargs
-   :size 0))
+  ())
 
 
 (defclass mutable-qp-trie-set (fundamental-qp-trie-set
@@ -37,7 +32,6 @@
   (let ((result (cl-ds.common.qp-trie:qp-trie-insert!
                  structure location
                  (cl-ds.common.qp-trie:make-qp-trie-node))))
-    (when result (incf (access-size structure)))
     (values structure
             (cl-ds.common:make-eager-modification-operation-status
              (not result)
@@ -56,7 +50,6 @@
   (when (emptyp location)
     (error 'empty-array-key :value location))
   (let ((result (cl-ds.common.qp-trie:qp-trie-delete! structure location)))
-    (when result (decf (access-size structure)))
     (values structure
             (cl-ds.common:make-eager-modification-operation-status
              result
@@ -100,14 +93,12 @@
 
 (defmethod cl-ds:clone ((object fundamental-qp-trie-set))
   (make (class-of object)
-        :size (cl-ds:size object)
         :root (~> object cl-ds.common.qp-trie:access-root
                   cl-ds.common.qp-trie:qp-trie-node-clone)))
 
 
 (defmethod cl-ds:reset! ((object mutable-qp-trie-set))
-  (setf (access-size object) 0
-        (cl-ds.common.qp-trie:access-root object)
+  (setf (cl-ds.common.qp-trie:access-root object)
         (cl-ds.common.qp-trie:make-qp-trie-node))
   object)
 
@@ -317,3 +308,14 @@
           (push new-cell stack))
         (when-let ((new-cell (new-cell cell start end i t)))
           (push new-cell stack))))))
+
+
+(defmethod cl-ds:size ((set fundamental-qp-trie-set))
+  (bind ((size 0)
+         ((:labels impl (node))
+          (incf size (~> node
+                         cl-ds.common.qp-trie:qp-trie-node-store-bitmask
+                         logcount))
+          (map nil #'impl (cl-ds.common.qp-trie:qp-trie-node-content node))))
+    (impl (cl-ds.common.qp-trie:access-root set))
+    size))
