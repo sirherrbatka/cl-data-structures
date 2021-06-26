@@ -356,8 +356,10 @@
     (the boolean deleted-p)))
 
 
-(-> half-byte-list-to-array (list) (simple-array (unsigned-byte 8) (*)))
-(defun half-byte-list-to-array (list)
+(-> half-byte-list-to-array
+    (list &key (:key function))
+    (simple-array (unsigned-byte 8) (*)))
+(defun half-byte-list-to-array (list &key (key #'identity))
   (declare (optimize (speed 3))
            (type list list))
   (let* ((length (length list))
@@ -369,12 +371,12 @@
                (type (unsigned-byte 8) half-byte-1 half-byte-2)
                (type (unsigned-byte 8) byte))
       (for i from (1- result-length) downto 0)
-      (for half-byte-1 = (first list))
+      (for half-byte-1 = (funcall key (first list)))
       (for byte = half-byte-1)
       (setf (aref result i) byte)
       (setf list (rest list))
       (until (endp list))
-      (for half-byte-2 = (ash (first list) 4))
+      (for half-byte-2 = (ash (funcall key (first list)) 4))
       (setf byte (logior half-byte-2 byte)
             (aref result i) byte
             list (rest list)))
