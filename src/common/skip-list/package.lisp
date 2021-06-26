@@ -27,6 +27,7 @@
    #:skip-list-node-at
    #:skip-list-node-clone
    #:skip-list-node-compare
+   #:assoc-skip-list-node-value
    #:skip-list-node-content
    #:skip-list-node-level
    #:skip-list-node-pointers
