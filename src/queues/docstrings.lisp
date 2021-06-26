@@ -4,11 +4,11 @@
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
 
-  (class fundamental-queue
+  (type fundamental-queue
     (:description "A fundamental base class of all queues."))
 
-  (class fundamental-mutable-queue
+  (type fundamental-mutable-queue
     (:description "A fundamental base class of all mutable queues."))
 
-  (class fundamental-functional-queue
+  (type fundamental-functional-queue
     (:description "A fundamental base class of all functional queues.")))
