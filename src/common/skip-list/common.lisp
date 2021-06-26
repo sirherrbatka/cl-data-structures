@@ -61,14 +61,24 @@
               nil
               (if-let ((existing-node (gethash skip-list-node table)))
                 existing-node
-                (cl-ds.utils:with-slots-for (skip-list-node skip-list-node)
-                  (lret ((result (make-skip-list-node
-                                  :pointers (copy-array pointers)
-                                  :content content)))
-                    (setf (gethash skip-list-node table) result
-                          (gethash result table) result)
-                    (vector-push-extend (skip-list-node-pointers result)
-                                        stack)))))))
+                (if (typep skip-list-node 'assoc-skip-list-node)
+                    (cl-ds.utils:with-slots-for (skip-list-node assoc-skip-list-node)
+                      (lret ((result (make-assoc-skip-list-node
+                                      :pointers (copy-array pointers)
+                                      :value value
+                                      :content content)))
+                        (setf (gethash skip-list-node table) result
+                              (gethash result table) result)
+                        (vector-push-extend (skip-list-node-pointers result)
+                                            stack)))
+                    (cl-ds.utils:with-slots-for (skip-list-node skip-list-node)
+                      (lret ((result (make-skip-list-node
+                                      :pointers (copy-array pointers)
+                                      :content content)))
+                        (setf (gethash skip-list-node table) result
+                              (gethash result table) result)
+                        (vector-push-extend (skip-list-node-pointers result)
+                                            stack))))))))
     (iterate
       (with result = (impl skip-list-node))
       (for fill-pointer = (fill-pointer stack))
