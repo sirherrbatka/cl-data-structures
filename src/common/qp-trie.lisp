@@ -23,6 +23,7 @@
            #:qp-trie-node-leaf-present-p
            #:qp-trie-node-present-p
            #:qp-trie-node-ref
+           #:qp-trie-node-unmark-leaf!
            #:qp-trie-node-store-bitmask))
 
 
