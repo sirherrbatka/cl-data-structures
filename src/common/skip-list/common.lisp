@@ -10,6 +10,12 @@
   (value nil :type t))
 
 
+(defun make-skip-list-node* (assoc &rest initargs)
+  (if assoc
+      (apply #'make-assoc-skip-list-node initargs)
+      (apply #'make-skip-list-node initargs)))
+
+
 (defmethod print-object ((object skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
     (format stream "[~a]" (skip-list-node-content object))
@@ -89,33 +95,6 @@
       (finally (return (values result table))))))
 
 
-(defmethod skip-list-node-clone ((skip-list-node assoc-skip-list-node))
-  (bind ((stack (vect))
-         (table (make-hash-table :test 'eq))
-         ((:labels impl (skip-list-node))
-          (if (null skip-list-node)
-              nil
-              (if-let ((existing-node (gethash skip-list-node table)))
-                existing-node
-                (cl-ds.utils:with-slots-for (skip-list-node assoc-skip-list-node)
-                  (lret ((result (make-assoc-skip-list-node
-                                  :value value
-                                  :pointers (copy-array pointers)
-                                  :content content)))
-                    (setf (gethash skip-list-node table) result
-                          (gethash result table) result)
-                    (vector-push-extend (skip-list-node-pointers result)
-                                        stack)))))))
-    (iterate
-      (with result = (impl skip-list-node))
-      (for fill-pointer = (fill-pointer stack))
-      (until (zerop fill-pointer))
-      (for pointers = (aref stack (1- fill-pointer)))
-      (decf (fill-pointer stack))
-      (cl-ds.utils:transform #'impl pointers)
-      (finally (return (values result table))))))
-
-
 (-> copy-into! (simple-vector simple-vector &optional fixnum fixnum) simple-vector)
 (declaim (inline copy-into!))
 (defun copy-into! (destination source
@@ -185,18 +164,18 @@
     (finally (return i))))
 
 
-(-> make-skip-list-node-of-level (fixnum &optional boolean) skip-list-node)
-(defun make-skip-list-node-of-level (level &optional assoc)
+(-> make-skip-list-node-of-level (fixnum &optional t boolean) skip-list-node)
+(defun make-skip-list-node-of-level (level &optional (value nil value-bound) (assoc value-bound))
   (declare (optimize (speed 3) (safety 0) (debug 0)))
   (if assoc
       (make-skip-list-node :pointers (make-array level :initial-element nil))
-      (make-assoc-skip-list-node :pointers (make-array level :initial-element nil))))
+      (make-assoc-skip-list-node :pointers (make-array level :initial-element nil)
+                                 :value value)))
 
 
-(-> make-skip-list-node-of-random-level (fixnum &optional boolean) skip-list-node)
-(defun make-skip-list-node-of-random-level (maximum-level &optional assoc)
-  (declare (optimize (speed 3) (safety 0) (debug 0)))
-  (make-skip-list-node-of-level (random-level maximum-level) assoc))
+(-> make-skip-list-node-of-random-level (fixnum &optional t) skip-list-node)
+(defun make-skip-list-node-of-random-level (maximum-level &optional (value nil value-bound))
+  (make-skip-list-node-of-level (random-level maximum-level) value value-bound))
 
 
 (declaim (notinline locate-node))
