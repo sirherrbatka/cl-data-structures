@@ -597,3 +597,40 @@
 (defmethod cl-ds:across ((object fundamental-skip-list)
                          function)
   (cl-ds:traverse object function))
+
+
+
+(defun insert-or (structure location callback &optional (value nil value-bound))
+  (bind ((pointers (read-pointers structure))
+         (test (read-ordering-function structure))
+         ((:values current prev)
+          (locate-node pointers location test))
+         (result (aref current 0)))
+    (when (null result)
+      (let ((new-node (if value-bound
+                          (make-skip-list-node-of-random-level (length pointers)
+                           value)
+                          (make-skip-list-node-of-random-level (length pointers)))))
+        (setf (skip-list-node-content new-node) location)
+        (insert-node-between!
+         current prev
+         (read-ordering-function structure)
+         new-node)
+        (update-head-pointers! structure new-node)
+        (return-from insert-or
+          (values structure
+                  (cl-ds.common:make-eager-modification-operation-status
+                   nil nil t)))))
+    (let ((content (skip-list-node-content result)))
+      (if (~> structure cl-ds.common.skip-list:access-test-function
+              (funcall content location))
+          (funcall callback structure prev result)
+          (let ((new-node (make-skip-list-node-of-random-level (array-dimension pointers 0))))
+            (setf (skip-list-node-content new-node)
+                  location)
+            (insert-node-between! current prev
+                                                         test new-node)
+            (update-head-pointers! structure new-node)
+            (values structure
+                    (cl-ds.common:make-eager-modification-operation-status
+                     nil nil t)))))))

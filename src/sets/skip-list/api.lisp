@@ -76,39 +76,15 @@
      location
      &rest all)
   (declare (ignore all container))
-  (bind ((pointers (cl-ds.common.skip-list:read-pointers structure))
-         (test (cl-ds.common.skip-list:read-ordering-function structure))
-         ((:values current prev)
-          (cl-ds.common.skip-list:locate-node pointers location test))
-         (result (aref current 0)))
-    (when (null result)
-      (let ((new-node (cl-ds.common.skip-list:make-skip-list-node-of-random-level
-                       (length pointers))))
-        (setf (cl-ds.common.skip-list:skip-list-node-content new-node) location)
-        (cl-ds.common.skip-list:insert-node-between!
-         current prev
-         (cl-ds.common.skip-list:read-ordering-function structure)
-         new-node)
-        (cl-ds.common.skip-list:update-head-pointers! structure new-node)
-        (return-from cl-ds.meta:position-modification
-          (values structure
-                  (cl-ds.common:make-eager-modification-operation-status
-                   nil nil t)))))
-    (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
-      (if (~> structure cl-ds.common.skip-list:access-test-function (funcall content location))
-          (values structure
-                  (cl-ds.common:make-eager-modification-operation-status
-                   t content nil))
-          (let ((new-node (cl-ds.common.skip-list:make-skip-list-node-of-random-level
-                           (array-dimension pointers 0))))
-            (setf (cl-ds.common.skip-list:skip-list-node-content new-node)
-                  location)
-            (cl-ds.common.skip-list:insert-node-between! current prev
-                                                         test new-node)
-            (cl-ds.common.skip-list:update-head-pointers! structure new-node)
-            (values structure
-                    (cl-ds.common:make-eager-modification-operation-status
-                     nil nil t)))))))
+  (cl-ds.common.skip-list:insert-or
+   structure
+   location
+   (lambda (&rest all)
+     (declare (ignore all))
+     (return-from cl-ds.meta:position-modification
+       (values structure
+               (cl-ds.common:make-eager-modification-operation-status
+                nil nil t))))))
 
 
 (defmethod cl-ds:at ((container mutable-skip-list-set)
