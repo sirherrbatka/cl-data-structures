@@ -58,8 +58,6 @@
     (prove:is (cl-ds:size set) i)
     (prove:ok (cl-ds:at set (first d)))
     (cl-ds:erase! set (first d))
-    (unless (= (cl-ds:size set) (1- i))
-      (break))
     (iterate
       (for e on data)
       (prove:is (cl-ds:at set (car e)) nil)
