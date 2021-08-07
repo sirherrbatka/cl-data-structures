@@ -9,6 +9,7 @@
   (:export
    #:delete-node-between!
    #:access-test-function
+   #:make-range
    #:fundamental-skip-list
    #:fundamental-skip-list-range
    #:insert-node-between!

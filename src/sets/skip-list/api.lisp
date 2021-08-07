@@ -6,18 +6,16 @@
   ())
 
 
-(defmethod cl-ds:clone ((object mutable-skip-list-set))
-  (lret ((result (call-next-method)))
-    (setf (cl-ds.common.skip-list:access-test-function result) (cl-ds.common.skip-list:access-test-function object))))
-
-
-(defmethod cl-ds:empty-clone ((object mutable-skip-list-set))
-  (lret ((result (call-next-method)))
-    (setf (cl-ds.common.skip-list:access-test-function result) (cl-ds.common.skip-list:access-test-function object))))
-
-
 (defclass mutable-skip-list-set-range (cl-ds.common.skip-list:fundamental-skip-list-range)
   ())
+
+
+(defmethod cl-ds.common.skip-list:make-range ((container mutable-skip-list-set)
+                                              current-node
+                                              last-node)
+  (make 'mutable-skip-list-set-range
+        :current-node current-node
+        :last-node last-node))
 
 
 (defmethod cl-ds:whole-range ((object mutable-skip-list-set))
@@ -111,25 +109,6 @@
             (values structure
                     (cl-ds.common:make-eager-modification-operation-status
                      nil nil t)))))))
-
-
-
-
-
-(defmethod cl-ds:between* ((container mutable-skip-list-set)
-                           &key (low nil low-bound-p) (high nil high-bound-p))
-  (bind (((:flet node (location boundp default))
-          (if boundp
-              (aref (cl-ds.common.skip-list:skip-list-locate-node container
-                                                                  location)
-                    0)
-              default)))
-    (make-instance 'mutable-skip-list-set-range
-                   :last-node (node high high-bound-p nil)
-                   :current-node (node low low-bound-p
-                                       (~> container
-                                           cl-ds.common.skip-list:read-pointers
-                                           (aref 0))))))
 
 
 (defmethod cl-ds:at ((container mutable-skip-list-set)

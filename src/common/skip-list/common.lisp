@@ -309,6 +309,7 @@
 
 (defmethod cl-ds.utils:cloning-information append ((object fundamental-skip-list))
   '((:pointers read-pointers)
+    (:test-function access-test-function)
     (:ordering-function read-ordering-function)
     (:maximum-level access-maximum-level)))
 
@@ -480,6 +481,33 @@
               t content t)))
           (values structure
                   cl-ds.common:empty-eager-modification-operation-status)))))
+
+
+(defgeneric make-range (container current-node last-node))
+
+
+(defmethod make-range ((container fundamental-skip-list)
+                       current-node
+                       last-node)
+  (make-instance 'fundamental-skip-list-range
+                 :last-node last-node
+                 :current-node current-node))
+
+
+(defmethod cl-ds:between* ((container fundamental-skip-list)
+                           &key (low nil low-bound-p) (high nil high-bound-p))
+  (bind (((:flet node (location boundp default))
+          (if boundp
+              (aref (skip-list-locate-node container
+                                           location)
+                    0)
+              default)))
+    (make-range container
+                (node low low-bound-p
+                      (~> container
+                          cl-ds.common.skip-list:read-pointers
+                          (aref 0)))
+                (node high high-bound-p nil))))
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase*!-function)
