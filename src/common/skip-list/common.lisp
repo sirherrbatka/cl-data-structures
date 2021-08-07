@@ -486,6 +486,14 @@
 (defgeneric make-range (container current-node last-node))
 
 
+(defmethod cl-ds:reset! ((container fundamental-skip-list))
+  (iterate
+    (with pointers = (read-pointers container))
+    (for i from 0 below (length pointers))
+    (setf (aref pointers i) nil))
+  container)
+
+
 (defmethod make-range ((container fundamental-skip-list)
                        current-node
                        last-node)
