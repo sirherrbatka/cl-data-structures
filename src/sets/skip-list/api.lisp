@@ -3,18 +3,17 @@
 
 (defclass mutable-skip-list-set (cl-ds.sets:mutable-set
                                  cl-ds.common.skip-list:fundamental-skip-list)
-  ((%test-function :initarg :test-function
-                   :accessor access-test-function)))
+  ())
 
 
 (defmethod cl-ds:clone ((object mutable-skip-list-set))
   (lret ((result (call-next-method)))
-    (setf (access-test-function result) (access-test-function object))))
+    (setf (cl-ds.common.skip-list:access-test-function result) (cl-ds.common.skip-list:access-test-function object))))
 
 
 (defmethod cl-ds:empty-clone ((object mutable-skip-list-set))
   (lret ((result (call-next-method)))
-    (setf (access-test-function result) (access-test-function object))))
+    (setf (cl-ds.common.skip-list:access-test-function result) (cl-ds.common.skip-list:access-test-function object))))
 
 
 (defclass mutable-skip-list-set-range (cl-ds.common.skip-list:fundamental-skip-list-range)
@@ -98,7 +97,7 @@
                   (cl-ds.common:make-eager-modification-operation-status
                    nil nil t)))))
     (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
-      (if (~> structure access-test-function (funcall content location))
+      (if (~> structure cl-ds.common.skip-list:access-test-function (funcall content location))
           (values structure
                   (cl-ds.common:make-eager-modification-operation-status
                    t content nil))
@@ -114,61 +113,7 @@
                      nil nil t)))))))
 
 
-(defmethod cl-ds.meta:position-modification
-    ((function cl-ds.meta:erase!-function)
-     (structure mutable-skip-list-set)
-     container
-     location
-     &rest all)
-  (declare (ignore all container))
-  (bind ((pointers (cl-ds.common.skip-list:read-pointers structure))
-         (test (cl-ds.common.skip-list:read-ordering-function structure))
-         ((:values current prev)
-          (cl-ds.common.skip-list:locate-node pointers location test))
-         (result (aref current 0)))
-    (when (null result)
-      (return-from cl-ds.meta:position-modification
-        (values structure
-                cl-ds.common:empty-eager-modification-operation-status)))
-    (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
-      (if (~> structure access-test-function (funcall content location))
-          (let ((rests (cl-ds.common.skip-list:skip-list-node-pointers
-                        result))
-                (level (cl-ds.common.skip-list:skip-list-node-level
-                        result)))
-            (iterate
-              (declare (type fixnum i))
-              (for i from (1- level) downto 0)
-              (if (eq (aref pointers i) result)
-                  (setf (aref pointers i)
-                        (if (< i level)
-                            (aref rests i)
-                            nil))
-                  (finish)))
-            (when (<= level (length pointers))
-              (iterate
-                (declare (type fixnum j))
-                (for j from 0 below (length prev))
-                (for previous = (aref prev j))
-                (when (or (null previous)
-                          (eq previous result))
-                  (next-iteration))
-                (iterate
-                  (declare (type fixnum i))
-                  (for i from 0
-                       below (min (cl-ds.common.skip-list:skip-list-node-level previous)
-                                  (cl-ds.common.skip-list:skip-list-node-level result)))
-                  (for node-at = (cl-ds.common.skip-list:skip-list-node-at previous i))
-                  (for rest = (cl-ds.common.skip-list:skip-list-node-at result i))
-                  (while (eq node-at result))
-                  (setf (cl-ds.common.skip-list:skip-list-node-at previous i)
-                        rest))))
-            (values
-             structure
-             (cl-ds.common:make-eager-modification-operation-status
-              t content t)))
-          (values structure
-                  cl-ds.common:empty-eager-modification-operation-status)))))
+
 
 
 (defmethod cl-ds:between* ((container mutable-skip-list-set)
@@ -197,7 +142,7 @@
     (when (null result)
       (return-from cl-ds:at (values nil nil)))
     (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
-      (if (~> container access-test-function (funcall content location))
+      (if (~> container cl-ds.common.skip-list:access-test-function (funcall content location))
           (values t t)
           (values nil nil)))))
 

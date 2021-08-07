@@ -4,7 +4,7 @@
 (cl:in-package :skip-list-set-tests)
 
 
-(prove:plan 624)
+(prove:plan 625)
 
 (let ((set (cl-ds.sets.skip-list:make-mutable-skip-list-set #'< #'=)))
   (prove:ok (not (cl-ds:at set 1)))
@@ -42,6 +42,7 @@
 
 (let ((set (cl-ds.sets.skip-list:make-mutable-skip-list-set #'< #'=))
       (data (shuffle (iota 15))))
+  (declare (optimize (debug 3)))
   (iterate
     (for i from 0)
     (for d on data)
@@ -57,6 +58,8 @@
     (prove:is (cl-ds:size set) i)
     (prove:ok (cl-ds:at set (first d)))
     (cl-ds:erase! set (first d))
+    (unless (= (cl-ds:size set) (1- i))
+      (break))
     (iterate
       (for e on data)
       (prove:is (cl-ds:at set (car e)) nil)
@@ -64,6 +67,7 @@
     (iterate
       (for elt in (rest d))
       (prove:ok (cl-ds:at set elt)))))
+
 
 (let* ((set (cl-ds:make-from-traversable (iota 15)
                                          'cl-ds.sets.skip-list:mutable-skip-list-set
@@ -73,6 +77,12 @@
   (prove:is below-7 '(0 1 2 3 4 5 6) :test 'equal)
   (cl-ds:erase*! set below-range)
   (prove:is (~> set cl-ds.alg:to-list) '(7 8 9 10 11 12 13 14) :test 'equal))
+
+(let* ((set (cl-ds:make-from-traversable (iota 15)
+                                         'cl-ds.sets.skip-list:mutable-skip-list-set
+                                         #'< #'=)))
+  (cl-ds:erase! set 0)
+  (prove:is (~> set cl-ds.alg:to-list) (iota 14 :start 1) :test 'equal))
 
 (let* ((set (cl-ds:make-from-traversable (iota 1000)
                                          'cl-ds.sets.skip-list:mutable-skip-list-set
