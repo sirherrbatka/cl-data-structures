@@ -416,6 +416,7 @@
           :size 0
           :ordering-function ordering-function
           :pointers (make-array maximum-level :initial-element nil)
+          :test-function (access-test-function container)
           :maximum-level maximum-level)))
 
 
