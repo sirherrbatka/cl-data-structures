@@ -28,6 +28,16 @@
    #:transactional-hashing-dictionary))
 
 
+(defpackage :cl-data-structures.dicts.skip-list
+  (:use #:common-lisp
+        #:cl-data-structures.aux-package
+        #:cl-data-structures.common.skip-list
+        #:cl-data-structures.common.abstract)
+  (:nicknames #:cl-ds.dicts.skip-list)
+  (:export
+   ))
+
+
 (defpackage :cl-data-structures.dicts.hamt
   (:use #:common-lisp
         #:cl-data-structures.aux-package

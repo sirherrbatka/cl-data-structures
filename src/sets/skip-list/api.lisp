@@ -79,12 +79,8 @@
   (cl-ds.common.skip-list:insert-or
    structure
    location
-   (lambda (&rest all)
-     (declare (ignore all))
-     (return-from cl-ds.meta:position-modification
-       (values structure
-               (cl-ds.common:make-eager-modification-operation-status
-                nil nil t))))))
+   t
+   nil))
 
 
 (defmethod cl-ds:at ((container mutable-skip-list-set)
@@ -97,13 +93,13 @@
     (when (null result)
       (return-from cl-ds:at (values nil nil)))
     (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
-      (if (~> container cl-ds.common.skip-list:access-test-function (funcall content location))
+      (if (~> container cl-ds.common.skip-list:access-test-function
+              (funcall content location))
           (values t t)
           (values nil nil)))))
 
 
-(defun make-mutable-skip-list-set (ordering test
-                                   &key (maximum-level 32))
+(defun make-mutable-skip-list-set (ordering test &key (maximum-level 32))
   (check-type maximum-level positive-fixnum)
   (make-instance 'mutable-skip-list-set
                  :ordering-function ordering
