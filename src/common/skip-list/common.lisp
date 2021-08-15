@@ -21,6 +21,13 @@
     (format stream "[~a]" (skip-list-node-content object))
     (print-object (skip-list-node-at object 0) stream)))
 
+(defmethod print-object ((object assoc-skip-list-node) stream)
+  (print-unreadable-object (object stream :type nil :identity nil)
+    (format stream "[~a:~a]"
+            (skip-list-node-content object)
+            (assoc-skip-list-node-value object))
+    (print-object (skip-list-node-at object 0) stream)))
+
 
 (cl-ds.utils:define-list-of-slots skip-list-node ()
   (pointers skip-list-node-pointers)
@@ -168,9 +175,9 @@
 (defun make-skip-list-node-of-level (level &optional (value nil value-bound) (assoc value-bound))
   (declare (optimize (speed 3) (safety 0) (debug 0)))
   (if assoc
-      (make-skip-list-node :pointers (make-array level :initial-element nil))
       (make-assoc-skip-list-node :pointers (make-array level :initial-element nil)
-                                 :value value)))
+                                 :value value)
+      (make-skip-list-node :pointers (make-array level :initial-element nil))))
 
 
 (-> make-skip-list-node-of-random-level (fixnum &optional t) skip-list-node)
@@ -595,10 +602,10 @@
                   function)
   object)
 
+
 (defmethod cl-ds:across ((object fundamental-skip-list)
                          function)
   (cl-ds:traverse object function))
-
 
 
 (defun insert-or (structure location create-if-not-exists-p alter-if-exists-p &optional (value nil value-bound))

@@ -1,7 +1,8 @@
 (cl:in-package #:cl-ds.dicts.skip-list)
 
 
-(defclass mutable-skip-list-dictionary (cl-ds.common.skip-list:fundamental-skip-list)
+(defclass mutable-skip-list-dictionary (cl-ds.dicts:mutable-dictionary
+                                        cl-ds.common.skip-list:fundamental-skip-list)
   ())
 
 
@@ -81,7 +82,7 @@
     (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
       (if (~> container cl-ds.common.skip-list:access-test-function
               (funcall content location))
-          (values t (cl-ds.common.skip-list:assoc-skip-list-node-value content))
+          (values (cl-ds.common.skip-list:assoc-skip-list-node-value result) t)
           (values nil nil)))))
 
 

@@ -35,7 +35,8 @@
         #:cl-data-structures.common.abstract)
   (:nicknames #:cl-ds.dicts.skip-list)
   (:export
-   ))
+   #:make-mutable-skip-list-dictionary
+   #:mutable-skip-list-dictionary))
 
 
 (defpackage :cl-data-structures.dicts.hamt
