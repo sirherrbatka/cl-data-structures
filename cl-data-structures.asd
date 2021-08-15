@@ -107,6 +107,8 @@
                              (:file "common")
                              (:file "api")
                              (:file "docstrings")
+                             (:file "skip-list"
+                              :components ((:file "api")))
                              (:module "hamt"
                               :components ((:file "api")
                                            (:file "docstrings")

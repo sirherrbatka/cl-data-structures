@@ -33,6 +33,8 @@
                               :components ((:test-file "transactions-tests")
                                            (:test-file "range-test")
                                            (:test-file "lazy-tests")))
+                             (:module "skip-list"
+                              :components ((:test-file "tests")))
                              (:module "srrb"
                               :components ((:test-file "tests")))
                              (:test-file "functional-dictionary-test-suite")

@@ -10,9 +10,22 @@
   (value nil :type t))
 
 
+(defun make-skip-list-node* (assoc &rest initargs)
+  (if assoc
+      (apply #'make-assoc-skip-list-node initargs)
+      (apply #'make-skip-list-node initargs)))
+
+
 (defmethod print-object ((object skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
     (format stream "[~a]" (skip-list-node-content object))
+    (print-object (skip-list-node-at object 0) stream)))
+
+(defmethod print-object ((object assoc-skip-list-node) stream)
+  (print-unreadable-object (object stream :type nil :identity nil)
+    (format stream "[~a:~a]"
+            (skip-list-node-content object)
+            (assoc-skip-list-node-value object))
     (print-object (skip-list-node-at object 0) stream)))
 
 
@@ -89,33 +102,6 @@
       (finally (return (values result table))))))
 
 
-(defmethod skip-list-node-clone ((skip-list-node assoc-skip-list-node))
-  (bind ((stack (vect))
-         (table (make-hash-table :test 'eq))
-         ((:labels impl (skip-list-node))
-          (if (null skip-list-node)
-              nil
-              (if-let ((existing-node (gethash skip-list-node table)))
-                existing-node
-                (cl-ds.utils:with-slots-for (skip-list-node assoc-skip-list-node)
-                  (lret ((result (make-assoc-skip-list-node
-                                  :value value
-                                  :pointers (copy-array pointers)
-                                  :content content)))
-                    (setf (gethash skip-list-node table) result
-                          (gethash result table) result)
-                    (vector-push-extend (skip-list-node-pointers result)
-                                        stack)))))))
-    (iterate
-      (with result = (impl skip-list-node))
-      (for fill-pointer = (fill-pointer stack))
-      (until (zerop fill-pointer))
-      (for pointers = (aref stack (1- fill-pointer)))
-      (decf (fill-pointer stack))
-      (cl-ds.utils:transform #'impl pointers)
-      (finally (return (values result table))))))
-
-
 (-> copy-into! (simple-vector simple-vector &optional fixnum fixnum) simple-vector)
 (declaim (inline copy-into!))
 (defun copy-into! (destination source
@@ -167,9 +153,9 @@
       (iterate
         (declare (type fixnum j))
         (for j from (the fixnum (1- (min level spliced-level))) downto 0)
-        (if (or (null (aref pointers j))
-                (skip-list-node-compare test spliced-node
-                                        (aref pointers j)))
+        (if (skip-list-node-compare test
+                                    spliced-node
+                                    (aref pointers j))
             (setf (aref pointers j) spliced-node)
             (finish))))
     (finally (return spliced-node))))
@@ -185,18 +171,18 @@
     (finally (return i))))
 
 
-(-> make-skip-list-node-of-level (fixnum &optional boolean) skip-list-node)
-(defun make-skip-list-node-of-level (level &optional assoc)
+(-> make-skip-list-node-of-level (fixnum &optional t boolean) skip-list-node)
+(defun make-skip-list-node-of-level (level &optional (value nil value-bound) (assoc value-bound))
   (declare (optimize (speed 3) (safety 0) (debug 0)))
   (if assoc
-      (make-skip-list-node :pointers (make-array level :initial-element nil))
-      (make-assoc-skip-list-node :pointers (make-array level :initial-element nil))))
+      (make-assoc-skip-list-node :pointers (make-array level :initial-element nil)
+                                 :value value)
+      (make-skip-list-node :pointers (make-array level :initial-element nil))))
 
 
-(-> make-skip-list-node-of-random-level (fixnum &optional boolean) skip-list-node)
-(defun make-skip-list-node-of-random-level (maximum-level &optional assoc)
-  (declare (optimize (speed 3) (safety 0) (debug 0)))
-  (make-skip-list-node-of-level (random-level maximum-level) assoc))
+(-> make-skip-list-node-of-random-level (fixnum &optional t) skip-list-node)
+(defun make-skip-list-node-of-random-level (maximum-level &optional (value nil value-bound))
+  (make-skip-list-node-of-level (random-level maximum-level) value value-bound))
 
 
 (declaim (notinline locate-node))
@@ -272,6 +258,8 @@
 (defclass fundamental-skip-list (cl-ds:mutable cl-ds:fundamental-container)
   ((%ordering-function :initarg :ordering-function
                        :reader read-ordering-function)
+   (%test-function :initarg :test-function
+                   :accessor access-test-function)
    (%pointers :initarg :pointers
               :reader read-pointers
               :type simple-vector)
@@ -328,6 +316,7 @@
 
 (defmethod cl-ds.utils:cloning-information append ((object fundamental-skip-list))
   '((:pointers read-pointers)
+    (:test-function access-test-function)
     (:ordering-function read-ordering-function)
     (:maximum-level access-maximum-level)))
 
@@ -434,6 +423,7 @@
           :size 0
           :ordering-function ordering-function
           :pointers (make-array maximum-level :initial-element nil)
+          :test-function (access-test-function container)
           :maximum-level maximum-level)))
 
 
@@ -442,6 +432,98 @@
     (setf size 0)
     (cl-ds.utils:transform (constantly nil) pointers)
     container))
+
+
+(defmethod cl-ds.meta:position-modification
+    ((function cl-ds.meta:erase!-function)
+     (structure fundamental-skip-list)
+     container
+     location
+     &rest all)
+  (declare (ignore all container))
+  (bind ((pointers (cl-ds.common.skip-list:read-pointers structure))
+         (test (cl-ds.common.skip-list:read-ordering-function structure))
+         ((:values current prev)
+          (cl-ds.common.skip-list:locate-node pointers location test))
+         (result (aref current 0)))
+    (when (null result)
+      (return-from cl-ds.meta:position-modification
+        (values structure
+                cl-ds.common:empty-eager-modification-operation-status)))
+    (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
+      (if (~> structure access-test-function (funcall content location))
+          (let ((rests (cl-ds.common.skip-list:skip-list-node-pointers
+                        result))
+                (level (cl-ds.common.skip-list:skip-list-node-level
+                        result)))
+            (iterate
+              (declare (type fixnum i))
+              (for i from (1- level) downto 0)
+              (if (eq (aref pointers i) result)
+                  (setf (aref pointers i)
+                        (if (< i level)
+                            (aref rests i)
+                            nil))
+                  (finish)))
+            (when (<= level (length pointers))
+              (iterate
+                (declare (type fixnum j))
+                (for j from 0 below (length prev))
+                (for previous = (aref prev j))
+                (when (or (null previous)
+                          (eq previous result))
+                  (next-iteration))
+                (iterate
+                  (declare (type fixnum i))
+                  (for i from 0
+                       below (min (cl-ds.common.skip-list:skip-list-node-level previous)
+                                  (cl-ds.common.skip-list:skip-list-node-level result)))
+                  (for node-at = (cl-ds.common.skip-list:skip-list-node-at previous i))
+                  (for rest = (cl-ds.common.skip-list:skip-list-node-at result i))
+                  (when (eq node-at result)
+                    (setf (cl-ds.common.skip-list:skip-list-node-at previous i)
+                          rest)))))
+            (values
+             structure
+             (cl-ds.common:make-eager-modification-operation-status
+              t content t)))
+          (values structure
+                  cl-ds.common:empty-eager-modification-operation-status)))))
+
+
+(defgeneric make-range (container current-node last-node))
+
+
+(defmethod cl-ds:reset! ((container fundamental-skip-list))
+  (iterate
+    (with pointers = (read-pointers container))
+    (for i from 0 below (length pointers))
+    (setf (aref pointers i) nil))
+  container)
+
+
+(defmethod make-range ((container fundamental-skip-list)
+                       current-node
+                       last-node)
+  (make-instance 'fundamental-skip-list-range
+                 :last-node last-node
+                 :current-node current-node))
+
+
+(defmethod cl-ds:between* ((container fundamental-skip-list)
+                           &key (low nil low-bound-p) (high nil high-bound-p))
+  (bind (((:flet node (location boundp default))
+          (if boundp
+              (aref (skip-list-locate-node container
+                                           location)
+                    0)
+              default)))
+    (make-range container
+                (node low low-bound-p
+                      (~> container
+                          cl-ds.common.skip-list:read-pointers
+                          (aref 0)))
+                (node high high-bound-p nil))))
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase*!-function)
@@ -520,6 +602,56 @@
                   function)
   object)
 
+
 (defmethod cl-ds:across ((object fundamental-skip-list)
                          function)
   (cl-ds:traverse object function))
+
+
+(defun insert-or (structure location create-if-not-exists-p alter-if-exists-p &optional (value nil value-bound))
+  (bind ((pointers (read-pointers structure))
+         (test (read-ordering-function structure))
+         ((:values current prev)
+          (locate-node pointers location test))
+         (result (aref current 0)))
+    (when (null result)
+      (unless create-if-not-exists-p
+        (return-from insert-or
+          (values structure cl-ds.common:empty-eager-modification-operation-status)))
+      (let ((new-node (if value-bound
+                          (make-skip-list-node-of-random-level (length pointers)
+                           value)
+                          (make-skip-list-node-of-random-level (length pointers)))))
+        (setf (skip-list-node-content new-node) location)
+        (insert-node-between!
+         current prev
+         (read-ordering-function structure)
+         new-node)
+        (update-head-pointers! structure new-node)
+        (return-from insert-or
+          (values structure
+                  (cl-ds.common:make-eager-modification-operation-status
+                   nil nil t)))))
+    (bind ((content (skip-list-node-content result))
+           (found (~> structure cl-ds.common.skip-list:access-test-function
+                      (funcall content location)))
+           ((:flet result-status (changed))
+            (if value-bound
+                (cl-ds.common:make-eager-modification-operation-status
+                 found (assoc-skip-list-node-value result) changed)
+                (cl-ds.common:make-eager-modification-operation-status
+                 found t changed))))
+      (if found
+          (if alter-if-exists-p
+              (let ((status (result-status t)))
+                (setf (assoc-skip-list-node-value result) value)
+                (values structure status))
+              (values structure (result-status nil)))
+          (let ((new-node (make-skip-list-node-of-random-level (array-dimension pointers 0)
+                                                               value)))
+            (setf (skip-list-node-content new-node)
+                  location)
+            (insert-node-between! current prev
+                                  test new-node)
+            (update-head-pointers! structure new-node)
+            (values structure (result-status t)))))))
