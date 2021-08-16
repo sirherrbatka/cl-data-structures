@@ -107,19 +107,16 @@
                              (:file "common")
                              (:file "api")
                              (:file "docstrings")
-                             (:file "skip-list"
+                             (:module "skip-list"
                               :components ((:file "api")))
                              (:module "hamt"
                               :components ((:file "api")
-                                           (:file "docstrings")
-                                           ))
+                                           (:file "docstrings")))
                              (:module "srrb"
                               :components ((:file "types")
                                            (:file "internal")
                                            (:file "api")
-                                           (:file "docstrings")
-                                           ))
-                             ))
+                                           (:file "docstrings")))))
                (:module "sequences"
                 :components ((:file "packages")
                              (:file "common")
