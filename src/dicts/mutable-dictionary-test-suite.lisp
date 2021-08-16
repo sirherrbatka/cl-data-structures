@@ -125,11 +125,11 @@
 
 (defun run-suite ()
   (insert-every-word (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'string=) 100)
-  ;; (insert-every-word (cl-ds.dicts.skip-list:make-mutable-skip-list-dictionary #'string< #'string=) 100)
+  (insert-every-word (cl-ds.dicts.skip-list:make-mutable-skip-list-dictionary #'string< #'string=) 100)
   )
 
 
 (progn
-  (plan 3571)
+  (plan 7142)
   (run-suite)
   (finalize))

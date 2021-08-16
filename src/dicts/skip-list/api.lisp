@@ -149,3 +149,60 @@
    t
    nil
    value))
+
+
+(defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase-if!-function)
+                                             (structure mutable-skip-list-dictionary)
+                                             container
+                                             location
+                                             &rest all &key condition-fn)
+  (declare (ignore all container))
+  (bind ((pointers (cl-ds.common.skip-list:read-pointers structure))
+         (test (cl-ds.common.skip-list:read-ordering-function structure))
+         ((:values current prev)
+          (cl-ds.common.skip-list:locate-node pointers location test))
+         (result (aref current 0)))
+    (unless (and result
+                 (funcall condition-fn
+                          (cl-ds.common.skip-list:skip-list-node-content result)
+                          (cl-ds.common.skip-list:assoc-skip-list-node-value result)))
+      (return-from cl-ds.meta:position-modification
+        (values structure
+                cl-ds.common:empty-eager-modification-operation-status)))
+    (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
+      (if (~> structure access-test-function (funcall content location))
+          (let ((rests (cl-ds.common.skip-list:skip-list-node-pointers result))
+                (level (cl-ds.common.skip-list:skip-list-node-level result)))
+            (iterate
+              (declare (type fixnum i))
+              (for i from (1- level) downto 0)
+              (if (eq (aref pointers i) result)
+                  (setf (aref pointers i)
+                        (if (< i level)
+                            (aref rests i)
+                            nil))
+                  (finish)))
+            (when (<= level (length pointers))
+              (iterate
+                (declare (type fixnum j))
+                (for j from 0 below (length prev))
+                (for previous = (aref prev j))
+                (when (or (null previous)
+                          (eq previous result))
+                  (next-iteration))
+                (iterate
+                  (declare (type fixnum i))
+                  (for i from 0
+                       below (min (cl-ds.common.skip-list:skip-list-node-level previous)
+                                  (cl-ds.common.skip-list:skip-list-node-level result)))
+                  (for node-at = (cl-ds.common.skip-list:skip-list-node-at previous i))
+                  (for rest = (cl-ds.common.skip-list:skip-list-node-at result i))
+                  (when (eq node-at result)
+                    (setf (cl-ds.common.skip-list:skip-list-node-at previous i)
+                          rest)))))
+            (values
+             structure
+             (cl-ds.common:make-eager-modification-operation-status
+              t content t)))
+          (values structure
+                  cl-ds.common:empty-eager-modification-operation-status)))))
