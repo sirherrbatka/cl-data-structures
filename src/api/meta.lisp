@@ -253,26 +253,11 @@
 (defgeneric pass-bucket-query (container &rest arguments))
 
 
-(defgeneric grow-bucket (operation container bucket location
-                         &rest all
-                         &key &allow-other-keys)
-  (:method (operation container bucket location &rest all)
-    (apply #'pass-bucket-operation container operation
-           bucket location all)))
-
-
-(defgeneric shrink-bucket (operation container bucket location
-                           &rest all
-                           &key &allow-other-keys)
-  (:method (operation container bucket location &rest all)
-    (apply #'pass-bucket-operation container operation
-           bucket location all)))
-
-
-(defgeneric make-bucket (operation container location
+(defgeneric make-bucket (operation container value
                          &rest all)
-  (:method (operation container location &rest all)
-    (apply #'pass-bucket-operation container operation location all)))
+  (:method (operation container value &rest all)
+    (declare (ignore all container operation))
+    (cl-ds:force value)))
 
 
 (defgeneric make-bucket-from-multiple (operation container data
@@ -280,22 +265,6 @@
                                        &key &allow-other-keys)
   (:method (operation container data &rest all)
     (apply #'pass-bucket-operation container operation data all)))
-
-
-(defgeneric grow-bucket! (operation container bucket location
-                          &rest all
-                          &key &allow-other-keys)
-  (:method (operation container bucket location &rest all)
-    (apply #'pass-bucket-operation container operation
-           bucket location all)))
-
-
-(defgeneric shrink-bucket! (operation container bucket location
-                            &rest all
-                            &key &allow-other-keys)
-  (:method (operation container bucket location &rest all)
-    (apply #'pass-bucket-operation container operation
-           bucket location all)))
 
 
 (define-constant null-bucket 'null-bucket)
@@ -308,11 +277,6 @@
     (funcall function bucket))
   (:method (container (bucket sequence) function)
     (map nil function bucket)))
-
-
-(defgeneric full-bucket-p (container bucket)
-  (:method (container bucket)
-    (pass-bucket-query container bucket)))
 
 
 (defgeneric position-modification (operation

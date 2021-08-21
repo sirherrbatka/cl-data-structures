@@ -94,10 +94,10 @@
       (hash-do
           (node index)
           (root hash)
-          :on-leaf (cl-ds.dicts:find-content container
-                                             node
-                                             location
-                                             :hash hash)
+          :on-leaf (find-content container
+                                 node
+                                 location
+                                 hash)
           :on-nil (values nil nil)))))
 
 
@@ -137,13 +137,13 @@ Methods. Those will just call non generic functions.
            (hash (hash-fn location))
            ((:dflet grow-bucket (bucket))
             (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:grow-bucket
+                (apply #'grow
                        operation
                        container
                        bucket
                        location
-                       :hash hash
-                       :value value
+                       hash
+                       value
                        all)
               (setf changed (cl-ds:changed b))
               (values a b changed)))
@@ -159,12 +159,15 @@ Methods. Those will just call non generic functions.
                 (apply #'cl-ds.meta:make-bucket
                        operation
                        container
-                       location
-                       :hash hash
-                       :value value
+                       value
                        all)
               (setf changed (cl-ds:changed b))
-              (values a b changed)))
+              (values (list (cl-ds.common:make-hash-dict-content
+                             :location location
+                             :value a
+                             :hash hash))
+                      b
+                      changed)))
            ((:values new-root status)
             (go-down-on-path structure
                              hash
@@ -214,11 +217,14 @@ Methods. Those will just call non generic functions.
                        operation
                        container
                        location
-                       :hash hash
-                       :value value
                        all)
               (setf changed (cl-ds:changed b))
-              (values a b changed)))
+              (values (list (cl-ds.common:make-hash-dict-content
+                             :location location
+                             :value a
+                             :hash hash))
+                      b
+                      changed)))
            ((:dflet copy-on-write (indexes path depth conflict))
             (transactional-copy-on-write structure
                                          (read-ownership-tag structure)
@@ -256,12 +262,12 @@ Methods. Those will just call non generic functions.
            (changed nil)
            ((:dflet shrink-bucket (bucket))
             (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:shrink-bucket
+                (apply #'shrink
                        operation
                        container
                        bucket
                        location
-                       :hash hash
+                       hash
                        all)
               (setf changed (cl-ds:changed b))
               (values a b changed)))
@@ -308,11 +314,12 @@ Methods. Those will just call non generic functions.
            (changed nil)
            ((:dflet shrink-bucket (bucket))
             (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:shrink-bucket
+                (apply #'shrink
                        operation
                        container
                        bucket
-                       location :hash hash
+                       location
+                       hash
                        all)
               (setf changed (cl-ds:changed b))
               (values a b changed)))
@@ -357,12 +364,12 @@ Methods. Those will just call non generic functions.
              (with-destructive-erase-hamt node structure hash
                :on-leaf
                (multiple-value-bind (bucket status)
-                   (apply #'cl-ds.meta:shrink-bucket!
+                   (apply #'shrink
                           operation
                           container
                           node
                           location
-                          :hash hash
+                          hash
                           all)
                  (unless (cl-ds:changed status)
                    (return-from cl-ds.meta:position-modification
@@ -386,8 +393,7 @@ Methods. Those will just call non generic functions.
                                              location
                                              &rest all
                                              &key value)
-  (declare (optimize (speed 3) (safety 1) (debug 0) (space 0))
-           (ignore all))
+  (declare (optimize (speed 0) (safety 1) (debug 3) (space 0)))
   (let ((status nil)
         (hash (funcall (the (-> (t) fixnum)
                             (cl-ds.dicts:read-hash-fn structure)) location)))
@@ -400,10 +406,23 @@ Methods. Those will just call non generic functions.
                                 s)))
                     (setf status s)
                     bucket)))
-      (let* ((prev-node nil)
+      (bind ((prev-node nil)
              (prev-index 0)
              (root (access-root structure))
              (tag (read-ownership-tag structure))
+             ((:dflet make-bucket ())
+              (let ((a (apply #'cl-ds.meta:make-bucket
+                              operation
+                              container
+                              value
+                              all))
+                    (b (fresh-bucket-status operation value)))
+                (values
+                 (list (cl-ds.common:make-hash-dict-content
+                        :location location
+                        :value a
+                        :hash hash))
+                 b)))
              (result
                (hash-do
                    (node index c)
@@ -416,33 +435,19 @@ Methods. Those will just call non generic functions.
                                   (rebuild-rehashed-node
                                    structure
                                    c
-                                   (handle-bucket
-                                    (cl-ds.meta:make-bucket operation
-                                                            container
-                                                            location
-                                                            :hash hash
-                                                            :value value))
+                                   (handle-bucket (make-bucket))
                                    tag)
                                   prev-index)
                                  root)
-                               (handle-bucket
-                                (cl-ds.meta:make-bucket operation
-                                                        container
-                                                        location
-                                                        :hash hash
-                                                        :value value)))
+                               (handle-bucket (make-bucket)))
                    :on-leaf (if prev-node
                                 (progn
                                   (hash-node-replace!
                                    prev-node
                                    (rebuild-rehashed-node structure c
                                                           (handle-bucket
-                                                           (cl-ds.meta:grow-bucket! operation
-                                                                                    container
-                                                                                    node
-                                                                                    location
-                                                                                    :hash hash
-                                                                                    :value value))
+                                                           (grow operation container node
+                                                                 location hash value))
                                                           tag)
                                    prev-index)
                                   root)
@@ -450,12 +455,8 @@ Methods. Those will just call non generic functions.
                                  structure
                                  c
                                  (handle-bucket
-                                  (cl-ds.meta:grow-bucket! operation
-                                                           container
-                                                           node
-                                                           location
-                                                           :hash hash
-                                                           :value value))
+                                  (grow operation container node
+                                        location hash value))
                                  tag)))))
         (setf (access-root structure) result)
         (unless (cl-ds:found status)

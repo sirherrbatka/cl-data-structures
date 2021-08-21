@@ -9,8 +9,6 @@
    #:fundamental-dictionary
    #:fundamental-hashing-dictionary
    #:fundamental-sparse-vector
-   #:bucket
-   #:find-content
    #:functional-sparse-vector
    #:mutable-sparse-vector
    #:transactional-sparse-vector

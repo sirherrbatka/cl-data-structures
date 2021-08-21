@@ -13,12 +13,7 @@
    (%equal-fn
     :type (-> (t t) boolean)
     :initarg :equal-fn
-    :reader read-equal-fn)
-   (%bucket-size
-    :type positive-fixnum
-    :initarg :bucket-size
-    :reader read-bucket-size
-    :initform 3)))
+    :reader read-equal-fn)))
 
 
 (defclass fundamental-sparse-vector (fundamental-dictionary)

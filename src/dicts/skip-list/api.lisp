@@ -151,6 +151,14 @@
    value))
 
 
+(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
+                                   (container mutable-skip-list-dictionary)
+                                   value
+                                   &rest all)
+  (declare (ignore all))
+  )
+
+
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase-if!-function)
                                              (structure mutable-skip-list-dictionary)
                                              container

@@ -110,7 +110,8 @@
                              (:module "skip-list"
                               :components ((:file "api")))
                              (:module "hamt"
-                              :components ((:file "api")
+                              :components ((:file "internal")
+                                           (:file "api")
                                            (:file "docstrings")))
                              (:module "srrb"
                               :components ((:file "types")

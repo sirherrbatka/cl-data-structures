@@ -147,7 +147,6 @@
    #:erase*-function
    #:erase-if!-function
    #:erase-if-function
-   #:full-bucket-p
    #:functional-add-function
    #:functional-counterpart
    #:functional-erase-function

@@ -165,7 +165,12 @@ Interface class.
           :initform 0
           :type non-negative-fixnum
           :accessor access-size
-          :documentation "How many elements are in there?")))
+          :documentation "How many elements are in there?")
+   (%bucket-size
+    :type positive-fixnum
+    :initarg :bucket-size
+    :reader read-bucket-size
+    :initform 3)))
 
 #|
 
@@ -357,11 +362,18 @@ Copy nodes and stuff.
                       :content array))))
 
 
+(defun full-bucket-p (container bucket)
+  (not
+   (iterate
+     (declare (ignorable elt))
+     (with bucket-size = (read-bucket-size container))
+     (for i from 1)
+     (for elt in bucket)
+     (always (< i bucket-size)))))
+
+
 (defun rebuild-rehashed-node (container depth conflict ownership-tag)
-  (declare (optimize (speed 3)
-                     (safety 1)
-                     (debug 0)
-                     (space 0))
+  (declare (optimize (speed 0) (safety 1) (debug 3) (space 0))
            (type fixnum depth))
   (flet ((cont (array)
            (build-rehashed-node container (1+ depth) array ownership-tag)))
@@ -369,7 +381,7 @@ Copy nodes and stuff.
     (bind (((:accessors (lock hash-node-lock)
                         (tag hash-node-ownership-tag))
             conflict))
-      (if (or (>= depth +depth+) (not (cl-ds.meta:full-bucket-p container conflict)))
+      (if (or (>= depth +depth+) (not (full-bucket-p container conflict)))
           conflict
           (rehash conflict
                   depth
