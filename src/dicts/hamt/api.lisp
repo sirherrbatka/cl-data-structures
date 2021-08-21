@@ -155,12 +155,12 @@ Methods. Those will just call non generic functions.
                            depth
                            conflict))
            ((:dflet make-bucket ())
-            (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:make-bucket
-                       operation
-                       container
-                       value
-                       all)
+            (let ((a (apply #'cl-ds.meta:make-bucket
+                            operation
+                            container
+                            value
+                            all))
+                  (b (fresh-bucket-status operation value)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
                              :location location
@@ -201,23 +201,23 @@ Methods. Those will just call non generic functions.
            (changed nil)
            ((:dflet grow-bucket (bucket))
             (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:grow-bucket
+                (apply #'grow
                        operation
                        container
                        bucket
                        location
-                       :hash hash
-                       :value value
+                       hash
+                       value
                        all)
               (setf changed (cl-ds:changed b))
               (values a b changed)))
            ((:dflet make-bucket ())
-            (multiple-value-bind (a b)
-                (apply #'cl-ds.meta:make-bucket
-                       operation
-                       container
-                       location
-                       all)
+            (let ((a (apply #'cl-ds.meta:make-bucket
+                            operation
+                            container
+                            value
+                            all))
+                  (b (fresh-bucket-status operation value)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
                              :location location
@@ -393,7 +393,7 @@ Methods. Those will just call non generic functions.
                                              location
                                              &rest all
                                              &key value)
-  (declare (optimize (speed 0) (safety 1) (debug 3) (space 0)))
+  (declare (optimize (speed 3) (safety 1) (debug 0) (space 0)))
   (let ((status nil)
         (hash (funcall (the (-> (t) fixnum)
                             (cl-ds.dicts:read-hash-fn structure)) location)))

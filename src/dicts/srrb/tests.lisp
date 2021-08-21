@@ -11,45 +11,6 @@
                 :ok
                 t))
 
-(defmethod cl-ds.meta:grow-bucket! ((operation cl-ds.meta:grow-function)
-                                    (container (eql :mock))
-                                    bucket
-                                    location
-                                    &rest all)
-  (declare (ignore all))
-  (assert location)
-  (values location ok-status))
-
-(defmethod cl-ds.meta:shrink-bucket! ((opreation cl-ds.meta:shrink-function)
-                                      (container (eql :mock))
-                                      bucket
-                                      location
-                                      &rest all)
-  (declare (ignore all))
-  (values cl-ds.meta:null-bucket ok-status))
-
-(defmethod cl-ds.meta:shrink-bucket ((opreation cl-ds.meta:shrink-function)
-                                     (container (eql :mock))
-                                     bucket
-                                     location
-                                     &rest all)
-  (declare (ignore all))
-  (values cl-ds.meta:null-bucket ok-status))
-
-(defmethod cl-ds.meta:grow-bucket ((operation cl-ds.meta:grow-function)
-                                   (container (eql :mock))
-                                   bucket
-                                   location
-                                   &rest all)
-  (declare (ignore all))
-  (values location ok-status))
-
-(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
-                                   (container (eql :mock))
-                                   location
-                                   &rest all)
-  (declare (ignore all))
-  (values location ok-status))
 
 (bind ((vector (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector
                               :tail nil))

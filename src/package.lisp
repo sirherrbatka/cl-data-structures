@@ -161,8 +161,6 @@
    #:functional-take-out-function
    #:functional-update-function
    #:functional-update-if-function
-   #:grow-bucket
-   #:grow-bucket!
    #:grow-function
    #:grow-function
    #:insert!-function
@@ -179,8 +177,6 @@
    #:put-back!-function
    #:put-front!-function
    #:put-function
-   #:shrink-bucket
-   #:shrink-bucket!
    #:shrink-function
    #:take-out!-function
    #:take-out-back!-function
