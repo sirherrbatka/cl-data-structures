@@ -6,12 +6,6 @@
 
 (plan 383297)
 
-(def ok-status (cl-ds.common:make-eager-modification-operation-status
-                t
-                :ok
-                t))
-
-
 (bind ((vector (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector
                               :tail nil))
        ((:values structure status)
@@ -19,7 +13,7 @@
        (tail (cl-ds.dicts.srrb::access-tail vector))
        (tail-mask (cl-ds.dicts.srrb::access-tail-mask vector)))
   (is structure vector)
-  (is status ok-status)
+  (ok (cl-ds:changed status))
   (is (aref tail 5) 5)
   (is tail-mask (ash 1 5)))
 
@@ -31,7 +25,7 @@
   (iterate
     (for (position . point) in-vector input-data)
     (cl-ds.meta:position-modification
-     #'(setf cl-ds:at) container :mock position :value point))
+     #'(setf cl-ds:at) container container position :value point))
   (iterate
     (for (position . point) in-vector input-data)
     (is (cl-ds:at container position) point))
@@ -114,7 +108,7 @@
     (for (values structure status) = (cl-ds.meta:position-modification
                                       #'cl-ds:erase! container :mock position))
     (is structure container)
-    (is status ok-status)
+    (ok (cl-ds:changed status))
     (is (nth-value 1 (cl-ds:at container position)) nil)
     (cl-ds.utils:swapop input-data 0)
     (iterate
@@ -290,7 +284,7 @@
     (for (values structure status) = (cl-ds.meta:position-modification
                                       #'cl-ds:erase container :mock position))
     (setf container structure)
-    (is status ok-status)
+    (ok (cl-ds:changed status))
     (is (nth-value 1 (cl-ds:at container position)) nil)
     (cl-ds.utils:swapop input-data 0)
     (iterate

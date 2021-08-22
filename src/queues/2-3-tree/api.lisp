@@ -267,39 +267,51 @@
                              +buffer-size+
                              :element-type element-type))
                   (head-position 1)
-                  (size (1+ size)))
-             (setf (aref new-head 0) (apply #'cl-ds.meta:make-bucket
-                                            operation
-                                            container
-                                            location
-                                            all))
-             (values (make (type-of structure)
-                           :head new-head
-                           :size size
-                           :element-type element-type
-                           :head-position head-position
-                           :tail (access-tail structure)
-                           :tail-position (access-tail-position structure)
-                           :root new-root
-                           :tail-end (access-tail-end structure))
-                     cl-ds.common:empty-eager-modification-operation-status)))
+                  (size (1+ size))
+                  ((:values bucket status) (apply #'cl-ds.meta:make-bucket
+                                                  operation
+                                                  container
+                                                  location
+                                                  (cl-ds.meta:fresh-bucket-status operation location)
+                                                  all)))
+             (if (cl-ds:changed status)
+                 (progn
+                   (setf (aref new-head 0) bucket)
+                   (values (make (type-of structure)
+                                 :head new-head
+                                 :size size
+                                 :element-type element-type
+                                 :head-position head-position
+                                 :tail (access-tail structure)
+                                 :tail-position (access-tail-position structure)
+                                 :root new-root
+                                 :tail-end (access-tail-end structure))
+                           cl-ds.common:empty-eager-modification-operation-status))
+                 structure)))
           (t (bind ((head (or (copy-array-if-not-nil head)
                               (make-array +buffer-size+
                                           :element-type element-type)))
-                    (size (1+ size)))
-               (setf (aref head head-position)
-                     (cl-ds.meta:make-bucket operation container location))
-               (values
-                (make (type-of structure)
-                      :head head
-                      :element-type element-type
-                      :size size
-                      :head-position (1+ head-position)
-                      :tail (access-tail structure)
-                      :tail-position (access-tail-position structure)
-                      :root (cl-ds.common.2-3:access-root structure)
-                      :tail-end (access-tail-end structure))
-                cl-ds.common:empty-eager-modification-operation-status))))))
+                    (size (1+ size))
+                    ((:values bucket status) (apply #'cl-ds.meta:make-bucket
+                                                    operation
+                                                    container
+                                                    location
+                                                    (cl-ds.meta:fresh-bucket-status operation location)
+                                                    all)))
+               (if (cl-ds:changed status)
+                   (progn
+                     (setf (aref head head-position) bucket)
+                     (values (make (type-of structure)
+                                   :head head
+                                   :element-type element-type
+                                   :size size
+                                   :head-position (1+ head-position)
+                                   :tail (access-tail structure)
+                                   :tail-position (access-tail-position structure)
+                                   :root (cl-ds.common.2-3:access-root structure)
+                                   :tail-end (access-tail-end structure))
+                             cl-ds.common:empty-eager-modification-operation-status))
+                   (values structure status)))))))
 
 
 (defmethod cl-ds.meta:position-modification
@@ -325,13 +337,17 @@
                                       operation
                                       container
                                       location
+                                      (cl-ds.meta:fresh-bucket-status operation location)
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
                    cl-ds.common:empty-eager-modification-operation-status))
-          (t (setf (aref head head-position) (cl-ds.meta:make-bucket operation
-                                                                     container
-                                                                     location)
+          (t (setf (aref head head-position) (apply #'cl-ds.meta:make-bucket
+                                                    operation
+                                                    container
+                                                    location
+                                                    (cl-ds.meta:fresh-bucket-status operation location)
+                                                    all)
                    (access-head-position structure) (1+ head-position)
                    (cl-ds.queues:access-size structure) (1+ size))
              (values
@@ -363,13 +379,17 @@
                                       operation
                                       container
                                       location
+                                      (cl-ds.meta:fresh-bucket-status operation location)
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
                    cl-ds.common:empty-eager-modification-operation-status))
-          (t (setf (aref head head-position) (cl-ds.meta:make-bucket operation
-                                                                     container
-                                                                     location)
+          (t (setf (aref head head-position) (apply #'cl-ds.meta:make-bucket
+                                                    operation
+                                                    container
+                                                    location
+                                                    (cl-ds.meta:fresh-bucket-status operation location)
+                                                    all)
                    (access-head-position structure) (1+ head-position)
                    (cl-ds.queues:access-size structure) (1+ size))
              (values

@@ -156,7 +156,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
                                              (structure mutable-rrb-vector)
                                              container
-                                             index &rest rest &key &allow-other-keys)
+                                             index &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (safety 1)
                      (space 0) (debug 0)))
   (bind ((size (cl-ds.common.rrb:access-size structure))
@@ -164,11 +164,11 @@
          (last-index (ldb (byte cl-ds.common.rrb:+bit-count+ 0) index))
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
-              (apply #'cl-ds.meta:grow-bucket!
+              (apply #'cl-ds.meta:alter-bucket!
                      operation
                      container
+                     value
                      bucket
-                     index
                      rest)
             (unless (cl-ds:changed status)
               (return-from cl-ds.meta:position-modification
@@ -207,7 +207,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
                                              (structure mutable-rrb-vector)
                                              container
-                                             location &rest rest &key &allow-other-keys)
+                                             location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (safety 1)
                      (debug 0) (space 0)))
   (bind ((tail-size (cl-ds.common.rrb:access-tail-size structure))
@@ -215,7 +215,8 @@
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
                                              operation
                                              container
-                                             location
+                                             value
+                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))
@@ -247,7 +248,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:functional-put-function)
                                              (structure functional-rrb-vector)
                                              container
-                                             location &rest rest &key &allow-other-keys)
+                                             location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
   (bind ((tail-size (cl-ds.common.rrb:access-tail-size structure))
@@ -256,7 +257,8 @@
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
                                              operation
                                              container
-                                             location
+                                             value
+                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))
@@ -303,7 +305,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
                                              (structure transactional-rrb-vector)
                                              container
-                                             location &rest rest &key &allow-other-keys)
+                                             location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
   (bind ((tail-size (cl-ds.common.rrb:access-tail-size structure))
@@ -312,7 +314,8 @@
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
                                              operation
                                              container
-                                             location
+                                             value
+                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))
@@ -430,7 +433,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
                                              (structure transactional-rrb-vector)
                                              container
-                                             index &rest rest &key &allow-other-keys)
+                                             index &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (safety 1) (debug 0)))
   (bind ((tag (cl-ds.common.abstract:read-ownership-tag structure))
@@ -440,9 +443,10 @@
          (result-status nil)
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
-              (apply #'cl-ds.meta:grow-bucket
+              (apply #'cl-ds.meta:alter-bucket
                      operation
                      container
+                     value
                      bucket
                      index
                      rest)
@@ -509,7 +513,7 @@
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
                                              (structure functional-rrb-vector)
                                              container
-                                             index &rest rest &key &allow-other-keys)
+                                             index &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (safety 1) (debug 0)))
   (bind ((tail-size (cl-ds.common.rrb:access-tail-size structure))
@@ -520,11 +524,11 @@
          (result-status nil)
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
-              (apply #'cl-ds.meta:grow-bucket
+              (apply #'cl-ds.meta:alter-bucket
                      operation
                      container
+                     value
                      bucket
-                     index
                      rest)
             (unless (cl-ds:changed status)
               (return-from cl-ds.meta:position-modification

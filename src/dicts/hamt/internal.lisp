@@ -1,64 +1,12 @@
 (cl:in-package #:cl-ds.dicts.hamt)
 
 
-(defun make-hash-dict-content (operation container location value hash)
-  (bind ((bucket (cl-ds.meta:make-bucket operation container value)))
-    (cl-ds.common:make-hash-dict-content
-     :hash hash
-     :location location
-     :value bucket)))
-
-
-(defgeneric fresh-bucket-status (operation value))
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-if-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update!-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-if!-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status (operation value)
-  (cl-ds.common:make-eager-modification-operation-status
-   nil nil t))
-
-
-(defmacro bucket-growing-macro ((container list location hash value)
-                                result status changed)
-  (with-gensyms (!bucket !equal-fn !compare-fn !status)
-    (once-only (container list location hash value)
-      `(let ((,!equal-fn (cl-ds.dicts:read-equal-fn ,container)))
-         (flet ((,!compare-fn (a b)
-                  (and (eql (cl-ds.common:hash-content-hash a)
-                            (cl-ds.common:hash-content-hash b))
-                       (funcall ,!equal-fn
-                                (cl-ds.common:hash-content-location a)
-                                (cl-ds.common:hash-content-location b)))))
-           (declare (dynamic-extent (function ,!compare-fn)))
-           (bind (((:values ,!bucket ,!status) (make-hash-dict-content operation container location value hash)))
-             (if (null ,!bucket)
-                 (values ,list ,!status)
-                 (multiple-value-bind (^next-list ^replaced ^old-value)
-                     (cl-ds.utils:insert-or-replace ,list
-                                                    ,!bucket
-                                                    :test (function ,!compare-fn))
-                   (when ,changed
-                     (setf (cl-ds.common:hash-dict-content-value ,!bucket)
-                           (~> ,!bucket
-                               cl-ds.common:hash-dict-content-value
-                               cl-ds:force)))
-                   (values ,result
-                           ,status)))))))))
+(defun make-hash-dict-content (operation container location value hash status)
+  (bind (((:values bucket status) (cl-ds.meta:make-bucket operation container value status)))
+    (values (cl-ds.common:make-hash-dict-content :hash hash
+                                                 :location location
+                                                 :value bucket)
+            status)))
 
 
 (defgeneric shrink (operation container list location hash &rest all))
@@ -146,7 +94,6 @@
                 f)))
 
 
-
 (defmethod grow ((operation cl-ds.meta:insert-function)
                  container
                  bucket
@@ -155,15 +102,29 @@
                  value
                  &rest all)
   (declare (ignore all))
-  (bucket-growing-macro
-      (container bucket location hash value)
-
-      ^next-list
-      (cl-ds.common:make-eager-modification-operation-status
-       ^replaced
-       (and ^replaced (cl-ds.common:hash-dict-content-value ^old-value))
-       t)
-      t))
+  (bind ((result '())
+         (rest (iterate
+                 (with equal-fn = (cl-ds.dicts:read-equal-fn container))
+                 (for rc on bucket)
+                 (for c = (first rc))
+                 (for l = (cl-ds.common:hash-content-location c))
+                 (for h = (cl-ds.common:hash-content-hash c))
+                 (finding rc such-that (and (= h hash) (funcall equal-fn l location)))
+                 (push c result))))
+    (bind (((:values new-node status)
+            (make-hash-dict-content operation container location value hash
+                                    (if (endp rest)
+                                        (cl-ds.common:make-eager-modification-operation-status
+                                         nil
+                                         nil
+                                         t)
+                                        (cl-ds.common:make-eager-modification-operation-status
+                                         t
+                                         (cl-ds.common:hash-dict-content-value (first rest))
+                                         t)))))
+      (values (cons new-node
+                    (nconc result (rest rest)))
+              status))))
 
 
 (defmethod grow ((operation cl-ds.meta:add-function)
@@ -188,12 +149,11 @@
                  t
                  (cl-ds.common:hash-dict-content-value c)
                  nil)))))
-  (let ((new-node (make-hash-dict-content operation container location value hash)))
+  (bind (((:values new-node status)
+          (make-hash-dict-content operation container location value hash
+                                  (cl-ds.common:make-eager-modification-operation-status nil nil t))))
     (values (cons new-node bucket)
-            (cl-ds.common:make-eager-modification-operation-status
-             nil
-             nil
-             t))))
+            status)))
 
 
 (defmethod grow ((operation cl-ds.meta:update-if-function)
@@ -230,17 +190,19 @@
             (setf tail r))
           (finally
            (setf (cdr tail) (cdr result))
-           (return
-             (values
-              (cons (cl-ds.common:make-hash-dict-content
-                     :hash (cl-ds.common:hash-content-hash node)
-                     :location location
-                     :value (cl-ds:force value))
-                    r)
-              (cl-ds.common:make-eager-modification-operation-status
-               t
-               (cl-ds.common:hash-dict-content-value node)
-               t))))))))
+           (bind (((:values node status)
+                   (make-hash-dict-content operation
+                                           container
+                                           location
+                                           value
+                                           hash
+                                           (cl-ds.common:make-eager-modification-operation-status
+                                            t
+                                            (cl-ds.common:hash-dict-content-value node)
+                                            t))))
+             (return
+               (values (cons node r)
+                       status))))))))
 
 
 (defmethod grow ((operation cl-ds.meta:update-if!-function)
@@ -296,10 +258,11 @@
                  (push c result))))
     (if (endp rest)
         (values bucket cl-ds.common:empty-eager-modification-operation-status)
-        (let ((new-node (make-hash-dict-content operation container location value hash)))
-          (values (cons new-node
-                        (nconc result (rest rest)))
-                  (cl-ds.common:make-eager-modification-operation-status
-                   t
-                   (cl-ds.common:hash-dict-content-value new-node)
-                   t))))))
+        (bind (((:values new-node status)
+                (make-hash-dict-content operation container location value hash
+                                        (cl-ds.common:make-eager-modification-operation-status
+                                         t
+                                         (~> rest first cl-ds.common:hash-dict-content-value)
+                                         t))))
+          (values (cons new-node (nconc result (rest rest)))
+                  status)))))

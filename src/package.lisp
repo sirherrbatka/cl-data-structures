@@ -178,6 +178,9 @@
    #:put-front!-function
    #:put-function
    #:shrink-function
+   #:fresh-bucket-status
+   #:alter-bucket!
+   #:alter-bucket
    #:take-out!-function
    #:take-out-back!-function
    #:take-out-front!-function

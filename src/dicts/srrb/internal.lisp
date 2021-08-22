@@ -460,22 +460,23 @@
              (type boolean present))
     (if present
         (bind ((old-bucket (aref (the simple-vector tail) offset))
-               ((:values bucket status)
-                (apply #'cl-ds.meta:grow-bucket! operation
-                       container old-bucket value all)))
+               ((:values bucket status) ; TODO change for alter bucket
+                (apply #'cl-ds.meta:alter-bucket! operation
+                       container value old-bucket all)))
           (when (cl-ds:changed status)
             (setf (aref tail offset) bucket))
           (values structure status))
-        (bind (((:values bucket status)
-                (apply #'cl-ds.meta:make-bucket
-                       operation container
-                       value all)))
+        (bind ((status (cl-ds.meta:fresh-bucket-status operation value)))
           (when (cl-ds:changed status)
             (let ((tail-array
                     (or tail
                         (make-array
                          cl-ds.common.rrb:+maximum-children-count+
-                         :element-type t))))
+                         :element-type t)))
+                  (bucket (apply #'cl-ds.meta:make-bucket
+                                 operation container value
+                                 cl-ds.common:empty-eager-modification-operation-status
+                                 all)))
               (setf (aref tail-array offset) bucket
                     %tail-mask (dpb 1 (byte 1 offset) tail-mask))
               (unless (eq tail tail-array)
@@ -511,16 +512,17 @@
     (if present
         (bind ((old-bucket (aref tail offset))
                ((:values bucket status)
-                (apply #'cl-ds.meta:grow-bucket! operation
-                       container old-bucket value all)))
+                (apply #'cl-ds.meta:alter-bucket operation
+                       container value old-bucket all)))
           (when (cl-ds:changed status)
             (setf final-status status
                   new-tail (tail-copy tail t)
                   (aref new-tail offset) bucket)))
         (bind (((:values bucket status)
                 (apply #'cl-ds.meta:make-bucket
-                       operation container
-                       value all)))
+                       operation container value
+                       (cl-ds.meta:fresh-bucket-status operation value)
+                       all)))
           (setf final-status status)
           (when (cl-ds:changed status)
             (setf new-tail (tail-copy tail t)
@@ -606,8 +608,8 @@
                 (if present
                     (bind ((current (cl-ds.common.rrb:sparse-nref node i))
                            ((:values new-bucket status)
-                            (apply #'cl-ds.meta:grow-bucket operation
-                                   container current value all)))
+                            (apply #'cl-ds.meta:alter-bucket operation
+                                   container value current all)))
                       (if (cl-ds:changed status)
                           (progn
                             (if (cl-ds.common.abstract:acquire-ownership
@@ -623,7 +625,9 @@
                     (bind (((:values new-bucket status)
                             (apply #'cl-ds.meta:make-bucket
                                    operation container
-                                   value all))
+                                   value
+                                   (cl-ds.meta:fresh-bucket-status operation value)
+                                   all))
                            (node (if (cl-ds.meta:null-bucket-p node)
                                      (cl-ds.common.rrb:make-sparse-rrb-node
                                            :content (make-array
@@ -703,8 +707,8 @@
                 (if present
                     (bind ((current (cl-ds.common.rrb:sparse-nref node i))
                            ((:values new-bucket status)
-                            (apply #'cl-ds.meta:grow-bucket operation
-                                   container current value all)))
+                            (apply #'cl-ds.meta:alter-bucket operation
+                                   container value current all)))
                       (if (cl-ds:changed status)
                           (progn
                             (setf node (cl-ds.common.rrb:deep-copy-sparse-rrb-node
@@ -716,8 +720,9 @@
                             (values structure status))))
                     (bind (((:values new-bucket status)
                             (apply #'cl-ds.meta:make-bucket
-                                   operation container
-                                   value all)))
+                                   operation container value
+                                   (cl-ds.meta:fresh-bucket-status operation value)
+                                   all)))
                       (if (cl-ds:changed status)
                           (progn
                             (setf node (if (cl-ds.meta:null-bucket-p node)
@@ -803,8 +808,8 @@
                 (if present
                     (bind ((current (cl-ds.common.rrb:sparse-nref node i))
                            ((:values new-bucket status)
-                            (apply #'cl-ds.meta:grow-bucket! operation
-                                   container current value all)))
+                            (apply #'cl-ds.meta:alter-bucket operation
+                                   container value current all)))
                       (if (cl-ds:changed status)
                           (progn
                             (setf (cl-ds.common.rrb:sparse-nref node i)
@@ -816,7 +821,9 @@
                     (bind (((:values new-bucket status)
                             (apply #'cl-ds.meta:make-bucket
                                    operation container
-                                   value all))
+                                   value
+                                   (cl-ds.meta:fresh-bucket-status operation value)
+                                   all))
                            (node (if (cl-ds.meta:null-bucket-p node)
                                      (cl-ds.common.rrb:make-sparse-rrb-node
                                       :content (make-array
@@ -876,8 +883,8 @@
              (last-node-mask (cl-ds.common.rrb:sparse-rrb-node-bitmask
                               last-node))
              ((:values new-bucket status)
-              (apply #'cl-ds.meta:shrink-bucket
-                     operation container current-bucket nil all))
+              (apply #'cl-ds.meta:alter-bucket
+                     operation container nil current-bucket all))
              (last-node-size (logcount last-node-mask)))
         (declare (type fixnum last-node-size last-node-mask))
         (unless (cl-ds:changed status)
@@ -934,8 +941,8 @@
                             (tree access-tree))
                 structure)
                ((:values new-bucket status)
-                (apply #'cl-ds.meta:shrink-bucket
-                       operation container current-bucket offset all)))
+                (apply #'cl-ds.meta:alter-bucket
+                       operation container nil current-bucket all)))
           (if (cl-ds:changed status)
               (let ((tail-mask (dpb (if (cl-ds.meta:null-bucket-p new-bucket)
                                         0 1)
@@ -966,8 +973,8 @@
         (bind ((tail (access-tail structure))
                (current-bucket (aref tail offset))
                ((:values new-bucket status)
-                (apply #'cl-ds.meta:shrink-bucket!
-                       operation container current-bucket nil all)))
+                (apply #'cl-ds.meta:alter-bucket!
+                       operation container nil current-bucket all)))
           (if (cl-ds:changed status)
               (progn
                 (if (cl-ds.meta:null-bucket-p new-bucket)
@@ -1094,8 +1101,8 @@
              (last-node-mask (cl-ds.common.rrb:sparse-rrb-node-bitmask last-node))
              (last-node-size (logcount last-node-mask))
              ((:values new-bucket status)
-              (apply #'cl-ds.meta:shrink-bucket!
-                     operation container current-bucket nil all)))
+              (apply #'cl-ds.meta:alter-bucket!
+                     operation container nil current-bucket all)))
         (unless (cl-ds:changed status)
           (return-from shrink-tree!
             (values structure status)))
@@ -1139,8 +1146,8 @@
              (last-node-size (logcount last-node-mask))
              (tail (access-tail structure))
              ((:values new-bucket status)
-              (apply #'cl-ds.meta:shrink-bucket
-                     operation container current-bucket nil all)))
+              (apply #'cl-ds.meta:alter-bucket
+                     operation container nil current-bucket all)))
         (unless (cl-ds:changed status)
           (return-from shrink-tree
             (values structure status)))
@@ -1196,7 +1203,9 @@
                          value all))
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
-                            operation container value all)))
+                            operation container value
+                            (cl-ds.meta:fresh-bucket-status operation value)
+                            all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (when (cl-ds:changed status)
                  (let ((ownership-tag (cl-ds.common.abstract:read-ownership-tag
@@ -1249,7 +1258,9 @@
                          value all))
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
-                            operation container value all)))
+                            operation container value
+                            (cl-ds.meta:fresh-bucket-status operation value)
+                            all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (when (cl-ds:changed status)
                  (insert-tail! structure)
@@ -1300,7 +1311,9 @@
                         value all))
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
-                            operation container value all)))
+                            operation container value
+                            (cl-ds.meta:fresh-bucket-status operation value)
+                            all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (if (cl-ds:changed status)
                    (let ((new-structure (insert-tail structure)))

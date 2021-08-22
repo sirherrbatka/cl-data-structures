@@ -155,12 +155,12 @@ Methods. Those will just call non generic functions.
                            depth
                            conflict))
            ((:dflet make-bucket ())
-            (let ((a (apply #'cl-ds.meta:make-bucket
-                            operation
-                            container
-                            value
-                            all))
-                  (b (fresh-bucket-status operation value)))
+            (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
+                                         operation
+                                         container
+                                         value
+                                         (fresh-bucket-status operation value)
+                                         all)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
                              :location location
@@ -212,12 +212,12 @@ Methods. Those will just call non generic functions.
               (setf changed (cl-ds:changed b))
               (values a b changed)))
            ((:dflet make-bucket ())
-            (let ((a (apply #'cl-ds.meta:make-bucket
-                            operation
-                            container
-                            value
-                            all))
-                  (b (fresh-bucket-status operation value)))
+            (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
+                                         operation
+                                         container
+                                         value
+                                         (fresh-bucket-status operation value)
+                                         all)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
                              :location location
@@ -411,12 +411,12 @@ Methods. Those will just call non generic functions.
              (root (access-root structure))
              (tag (read-ownership-tag structure))
              ((:dflet make-bucket ())
-              (let ((a (apply #'cl-ds.meta:make-bucket
-                              operation
-                              container
-                              value
-                              all))
-                    (b (fresh-bucket-status operation value)))
+              (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
+                                           operation
+                                           container
+                                           value
+                                           (fresh-bucket-status operation value)
+                                           all)))
                 (values
                  (list (cl-ds.common:make-hash-dict-content
                         :location location
