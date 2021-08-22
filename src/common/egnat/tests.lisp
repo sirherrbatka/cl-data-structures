@@ -3,12 +3,6 @@
 (cl:in-package :egnat-tests)
 
 
-(defmethod cl-ds.meta:make-bucket (operation container content
-                                   &rest all)
-  (declare (ignore all))
-  content)
-
-
 (defmethod cl-ds.common.egnat:distance ((container cl-ds.common.egnat:mutable-egnat-container)
                                         bucket item)
   (logxor bucket item))

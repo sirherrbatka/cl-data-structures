@@ -368,6 +368,7 @@
                                 operation
                                 container
                                 item
+                                (cl-ds.meta:fresh-bucket-status operation item)
                                 additional-arguments))))
 
 
@@ -424,6 +425,7 @@
                                                   operation
                                                   container
                                                   item
+                                                  (cl-ds.meta:fresh-bucket-status operation item)
                                                   additional-arguments)))
                                (read-children node))))))
   node)
@@ -431,7 +433,9 @@
 
 (defun push-content (node container operation item additional-arguments)
   (vector-push-extend (apply #'cl-ds.meta:make-bucket operation container
-                             item additional-arguments)
+                             item
+                             (cl-ds.meta:fresh-bucket-status operation item)
+                             additional-arguments)
                       (read-content node))
   t)
 
