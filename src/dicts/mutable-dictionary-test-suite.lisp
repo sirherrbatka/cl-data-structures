@@ -102,20 +102,20 @@
        (iterate
          (for s from 1 below ,limit)
          (for word in-vector *all-words*)
-         (cl-ds:mod-bind (v r o) (erase-if! dict word (lambda (key value)
-                                                        (is key word :test #'string=)
-                                                        (is value word :test #'string=)
-                                                        nil))
-           (ok (null r))
-           (is o nil)))
+         (cl-ds:mod-bind (v r o changed) (erase-if! dict word (lambda (value)
+                                                                (is value word :test #'string=)
+                                                                nil))
+           (is r t)
+           (is o word)
+           (is changed nil)))
        (iterate
          (for s from 1 below ,limit)
          (for word in-vector *all-words*)
          (for old-size = (size dict))
-         (cl-ds:mod-bind (v r o) (erase-if! dict word (lambda (key value)
-                                                        (is key word :test #'string=)
-                                                        (is value word :test #'string=)
-                                                        t))
+         (cl-ds:mod-bind (v r o changed) (erase-if! dict word (lambda (value)
+                                                                (is value word :test #'string=)
+                                                                t))
+           (ok changed)
            (ok r)
            (is o word :test #'string=)
            (is (1+ (size dict)) old-size)
@@ -125,7 +125,8 @@
 
 (defun run-suite ()
   (insert-every-word (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'string=) 100)
-  (insert-every-word (cl-ds.dicts.skip-list:make-mutable-skip-list-dictionary #'string< #'string=) 100))
+  (insert-every-word (cl-ds.dicts.skip-list:make-mutable-skip-list-dictionary #'string< #'string=) 100)
+  )
 
 
 (progn

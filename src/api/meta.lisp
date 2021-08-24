@@ -294,26 +294,6 @@
 (defgeneric fresh-bucket-status (operation value))
 
 
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-if-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update!-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status ((operation cl-ds.meta:update-if!-function) value)
-  cl-ds.common:empty-eager-modification-operation-status)
-
-
-(defmethod fresh-bucket-status (operation value)
-  (cl-ds.common:make-eager-modification-operation-status
-   nil nil t))
-
 
 (defgeneric make-bucket (operation container value status
                          &rest all)
@@ -326,73 +306,4 @@
 (defgeneric alter-bucket! (operation container value bucket &rest all &key &allow-other-keys))
 
 
-(defmethod alter-bucket! ((operation cl-ds.meta:update!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:insert!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:add!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values null-bucket
-          (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:erase!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values null-bucket (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:erase-if!-function) container value bucket
-                          &rest all &key condition-fn)
-  (declare (ignore all))
-  (if (funcall condition-fn bucket)
-      (values null-bucket (cl-ds.common:make-eager-modification-operation-status t bucket t))
-      (values bucket (cl-ds.common:make-eager-modification-operation-status t bucket nil))))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:insert!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket! ((operation cl-ds.meta:add!-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values null-bucket
-          (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
-
-
 (defgeneric alter-bucket (operation container value bucket &rest all &key &allow-other-keys))
-
-
-(defmethod alter-bucket ((operation cl-ds.meta:update-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket ((operation cl-ds.meta:insert-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket ((operation cl-ds.meta:add-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values null-bucket
-          (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
-
-
-(defmethod alter-bucket ((operation cl-ds.meta:erase-function) container value bucket &rest all)
-  (declare (ignore all))
-  (values null-bucket (cl-ds.common:make-eager-modification-operation-status t bucket t)))
-
-
-(defmethod alter-bucket ((operation cl-ds.meta:erase-if-function) container value bucket
-                          &rest all &key condition-fn)
-  (declare (ignore all))
-  (if (funcall condition-fn bucket)
-      (values null-bucket (cl-ds.common:make-eager-modification-operation-status t bucket t))
-      (values bucket (cl-ds.common:make-eager-modification-operation-status t bucket nil))))

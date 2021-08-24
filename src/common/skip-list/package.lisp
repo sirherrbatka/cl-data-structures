@@ -19,7 +19,7 @@
    #:make-range
    #:make-skip-list-node-of-level
    #:make-skip-list-node-of-random-level
-   #:maximum-level
+   #:access-maximum-level
    #:new-node-update-pointers!
    #:pointers
    #:random-level

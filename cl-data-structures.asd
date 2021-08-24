@@ -100,7 +100,8 @@
                                            (:file "methods")
                                            (:file "docstrings")
                                            ))
-                             (:file "qp-trie")))
+                             (:file "qp-trie")
+                             (:file "meta")))
                (:module "dicts"
                 :components ((:file "packages")
                              (:file "trait-classes")

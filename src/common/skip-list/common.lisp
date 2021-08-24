@@ -608,21 +608,16 @@
   (cl-ds:traverse object function))
 
 
-(defun insert-or (structure location create-if-not-exists-p alter-if-exists-p &optional (value nil value-bound))
+(defun insert-or (structure location callback)
   (bind ((pointers (read-pointers structure))
          (test (read-ordering-function structure))
          ((:values current prev)
           (locate-node pointers location test))
          (result (aref current 0)))
     (when (null result)
-      (unless create-if-not-exists-p
-        (return-from insert-or
-          (values structure cl-ds.common:empty-eager-modification-operation-status)))
-      (let ((new-node (if value-bound
-                          (make-skip-list-node-of-random-level (length pointers)
-                           value)
-                          (make-skip-list-node-of-random-level (length pointers)))))
-        (setf (skip-list-node-content new-node) location)
+      (bind (((:values new-node status) (funcall callback result)))
+        (unless (cl-ds:changed status)
+          (return-from insert-or (values structure status)))
         (insert-node-between!
          current prev
          (read-ordering-function structure)
@@ -635,23 +630,10 @@
     (bind ((content (skip-list-node-content result))
            (found (~> structure cl-ds.common.skip-list:access-test-function
                       (funcall content location)))
-           ((:flet result-status (changed))
-            (if value-bound
-                (cl-ds.common:make-eager-modification-operation-status
-                 found (assoc-skip-list-node-value result) changed)
-                (cl-ds.common:make-eager-modification-operation-status
-                 found t changed))))
-      (if found
-          (if alter-if-exists-p
-              (let ((status (result-status t)))
-                (setf (assoc-skip-list-node-value result) value)
-                (values structure status))
-              (values structure (result-status nil)))
-          (let ((new-node (make-skip-list-node-of-random-level (array-dimension pointers 0)
-                                                               value)))
-            (setf (skip-list-node-content new-node)
-                  location)
-            (insert-node-between! current prev
-                                  test new-node)
+           ((:values new-node status) (funcall callback (if found result nil))))
+      (if (or found (not (cl-ds:changed status)))
+          (values structure status)
+          (progn
+            (insert-node-between! current prev test new-node)
             (update-head-pointers! structure new-node)
-            (values structure (result-status t)))))))
+            (values structure status))))))

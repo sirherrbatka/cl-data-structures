@@ -31,11 +31,11 @@
          (tail-change 0)
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
-              (apply #'cl-ds.meta:shrink-bucket
+              (apply #'cl-ds.meta:alter-bucket
                      operation
                      container
-                     bucket
                      location
+                     bucket
                      rest)
             (setf result-status status)
             (unless (cl-ds:changed status)
@@ -98,11 +98,11 @@
          (tail-change 0)
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
-              (apply #'cl-ds.meta:shrink-bucket!
+              (apply #'cl-ds.meta:alter-bucket!
                      operation
                      container
-                     bucket
                      location
+                     bucket
                      rest)
             (setf result-status status)
             (unless (cl-ds:changed status)
@@ -362,11 +362,11 @@
          (tail-change 0)
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
-              (apply #'cl-ds.meta:shrink-bucket
+              (apply #'cl-ds.meta:alter-bucket
                      operation
                      container
-                     bucket
                      location
+                     bucket
                      rest)
             (setf result-status status)
             (unless (cl-ds:changed status)

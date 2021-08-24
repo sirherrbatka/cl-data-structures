@@ -414,9 +414,9 @@
         (bind ((bucket (aref tail tail-position))
                (tail-position (access-tail-position structure))
                ((:values new-buffer status)
-                (apply #'cl-ds.meta:shrink-bucket
+                (apply #'cl-ds.meta:alter-bucket
                        operation container
-                       bucket location all)))
+                       location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
                 (decf size)
@@ -441,9 +441,9 @@
                        (bucket (aref head 0))
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
-                        (apply #'cl-ds.meta:shrink-bucket
+                        (apply #'cl-ds.meta:alter-bucket
                                operation container
-                               bucket location
+                               location bucket
                                all))
                        (tail-position 0)
                        (tail head))
@@ -466,9 +466,9 @@
                     (cl-ds.common.2-3:delete-back-from-tree
                      (cl-ds.common.2-3:access-root structure)))
                    ((:values new-bucket status)
-                    (apply #'cl-ds.meta:shrink-bucket
+                    (apply #'cl-ds.meta:alter-bucket
                            operation container
-                           (aref buffer 0) location
+                           location (aref buffer 0)
                            all))
                    (tail buffer)
                    (tail-end +buffer-size+)
@@ -507,9 +507,9 @@
     (if (< tail-position tail-end)
         (bind ((bucket (aref tail tail-position))
                ((:values new-buffer status)
-                (apply #'cl-ds.meta:shrink-bucket
+                (apply #'cl-ds.meta:alter-bucket
                        operation container
-                       bucket location all)))
+                       location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
                 (decf (cl-ds.queues:access-size structure))
@@ -524,11 +524,11 @@
                        (bucket (aref head 0))
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
-                        (apply #'cl-ds.meta:shrink-bucket
+                        (apply #'cl-ds.meta:alter-bucket
                                operation
                                container
-                               bucket
                                location
+                               bucket
                                all)))
                   (setf (access-tail-end structure) head-position
                         (access-head-position structure) 0
@@ -545,11 +545,11 @@
                     (cl-ds.common.2-3:transactional-delete-back-from-tree!
                      structure))
                    ((:values new-bucket status)
-                    (apply #'cl-ds.meta:shrink-bucket
+                    (apply #'cl-ds.meta:alter-bucket
                            operation
                            container
-                           (aref buffer 0)
                            location
+                           (aref buffer 0)
                            all)))
               (setf (access-tail-position structure) 0
                     (access-tail-end structure) +buffer-size+
@@ -577,9 +577,9 @@
     (if (< tail-position tail-end)
         (bind ((bucket (aref tail tail-position))
                ((:values new-buffer status)
-                (apply #'cl-ds.meta:shrink-bucket!
+                (apply #'cl-ds.meta:alter-bucket!
                        operation container
-                       bucket location all)))
+                       location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
                 (decf (cl-ds.queues:access-size structure))
@@ -594,11 +594,11 @@
                        (bucket (aref head 0))
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
-                        (apply #'cl-ds.meta:shrink-bucket!
+                        (apply #'cl-ds.meta:alter-bucket!
                                operation
                                container
-                               bucket
                                location
+                               bucket
                                all)))
                   (setf (access-tail-end structure) head-position
                         (access-head-position structure) 0
@@ -614,11 +614,11 @@
             (bind (((:values _ buffer)
                     (cl-ds.common.2-3:delete-back-from-tree! structure))
                    ((:values new-bucket status)
-                    (apply #'cl-ds.meta:shrink-bucket!
+                    (apply #'cl-ds.meta:alter-bucket!
                            operation
                            container
-                           (aref buffer 0)
                            location
+                           (aref buffer 0)
                            all)))
               (setf (access-tail-position structure) 0
                     (access-tail-end structure) +buffer-size+

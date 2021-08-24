@@ -106,73 +106,65 @@
                         (setf (cl-ds:at result key) value))))))
 
 
-(defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:insert!-function)
+
+(defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
                                              (structure mutable-skip-list-dictionary)
                                              container
                                              location
                                              &rest all
                                              &key value)
-  (declare (ignore all))
-  (cl-ds.common.skip-list:insert-or
-   structure
-   location
-   t
-   t
-   value))
+  (cl-ds.common.skip-list:insert-or structure location
+                                    (lambda (node)
+                                      (if (null node)
+                                          (bind (((:values bucket status) (apply #'cl-ds.meta:make-bucket
+                                                                                 operation
+                                                                                 container
+                                                                                 value
+                                                                                 (cl-ds.meta:fresh-bucket-status operation value)
+                                                                                 all)))
+                                            (if (cl-ds:changed status)
+                                                (let ((result (~> container
+                                                                  cl-ds.common.skip-list:access-maximum-level
+                                                                  (cl-ds.common.skip-list:make-skip-list-node-of-random-level value))))
+                                                  (setf (cl-ds.common.skip-list:skip-list-node-content result) location)
+                                                  (values result status))
+                                                (values nil status)))
+                                          (bind (((:values bucket status) (apply #'cl-ds.meta:alter-bucket!
+                                                                                 operation container
+                                                                                 value
+                                                                                 (cl-ds.common.skip-list:assoc-skip-list-node-value node)
+                                                                                 all)))
+                                            (when (cl-ds:changed status)
+                                              (setf (cl-ds.common.skip-list:assoc-skip-list-node-value node) bucket))
+                                            (values node status))))))
 
 
-(defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:update!-function)
+(defmethod cl-ds.meta:position-modification ((function cl-ds.meta:shrink-function)
                                              (structure mutable-skip-list-dictionary)
                                              container
                                              location
-                                             &rest all
-                                             &key value)
-  (declare (ignore all))
-  (cl-ds.common.skip-list:insert-or
-   structure
-   location
-   nil
-   t
-   value))
-
-
-(defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:add!-function)
-                                             (structure mutable-skip-list-dictionary)
-                                             container
-                                             location
-                                             &rest all
-                                             &key value)
-  (declare (ignore all))
-  (cl-ds.common.skip-list:insert-or
-   structure
-   location
-   t
-   nil
-   value))
-
-
-(defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase-if!-function)
-                                             (structure mutable-skip-list-dictionary)
-                                             container
-                                             location
-                                             &rest all &key condition-fn)
-  (declare (ignore all container))
+                                             &rest all)
   (bind ((pointers (cl-ds.common.skip-list:read-pointers structure))
          (test (cl-ds.common.skip-list:read-ordering-function structure))
          ((:values current prev)
           (cl-ds.common.skip-list:locate-node pointers location test))
          (result (aref current 0)))
-    (unless (and result
-                 (funcall condition-fn
-                          (cl-ds.common.skip-list:skip-list-node-content result)
-                          (cl-ds.common.skip-list:assoc-skip-list-node-value result)))
+    (when (null result)
       (return-from cl-ds.meta:position-modification
         (values structure
                 cl-ds.common:empty-eager-modification-operation-status)))
     (let ((content (cl-ds.common.skip-list:skip-list-node-content result)))
       (if (~> structure access-test-function (funcall content location))
-          (let ((rests (cl-ds.common.skip-list:skip-list-node-pointers result))
-                (level (cl-ds.common.skip-list:skip-list-node-level result)))
+          (bind ((rests (cl-ds.common.skip-list:skip-list-node-pointers result))
+                 (level (cl-ds.common.skip-list:skip-list-node-level result))
+                 (value (cl-ds.common.skip-list:assoc-skip-list-node-value result))
+                 ((:values new-value status)
+                  (apply #'cl-ds.meta:alter-bucket! function container nil value all)))
+            (unless (cl-ds:changed status)
+              (return-from cl-ds.meta:position-modification (values structure status)))
+            (unless (cl-ds.meta:null-bucket-p new-value)
+              (setf (cl-ds.common.skip-list:assoc-skip-list-node-value result) new-value)
+              (return-from cl-ds.meta:position-modification (values structure status)))
             (iterate
               (declare (type fixnum i))
               (for i from (1- level) downto 0)
@@ -200,9 +192,6 @@
                   (when (eq node-at result)
                     (setf (cl-ds.common.skip-list:skip-list-node-at previous i)
                           rest)))))
-            (values
-             structure
-             (cl-ds.common:make-eager-modification-operation-status
-              t content t)))
+            (values structure status))
           (values structure
                   cl-ds.common:empty-eager-modification-operation-status)))))

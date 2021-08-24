@@ -159,7 +159,7 @@ Methods. Those will just call non generic functions.
                                          operation
                                          container
                                          value
-                                         (fresh-bucket-status operation value)
+                                         (cl-ds.meta:fresh-bucket-status operation value)
                                          all)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
@@ -216,7 +216,7 @@ Methods. Those will just call non generic functions.
                                          operation
                                          container
                                          value
-                                         (fresh-bucket-status operation value)
+                                         (cl-ds.meta:fresh-bucket-status operation value)
                                          all)))
               (setf changed (cl-ds:changed b))
               (values (list (cl-ds.common:make-hash-dict-content
@@ -415,7 +415,7 @@ Methods. Those will just call non generic functions.
                                            operation
                                            container
                                            value
-                                           (fresh-bucket-status operation value)
+                                           (cl-ds.meta:fresh-bucket-status operation value)
                                            all)))
                 (values
                  (list (cl-ds.common:make-hash-dict-content
