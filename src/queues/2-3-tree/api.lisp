@@ -272,7 +272,6 @@
                                                   operation
                                                   container
                                                   location
-                                                  (cl-ds.meta:fresh-bucket-status operation location)
                                                   all)))
              (if (cl-ds:changed status)
                  (progn
@@ -296,7 +295,6 @@
                                                     operation
                                                     container
                                                     location
-                                                    (cl-ds.meta:fresh-bucket-status operation location)
                                                     all)))
                (if (cl-ds:changed status)
                    (progn
@@ -337,7 +335,6 @@
                                       operation
                                       container
                                       location
-                                      (cl-ds.meta:fresh-bucket-status operation location)
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
@@ -346,7 +343,6 @@
                                                     operation
                                                     container
                                                     location
-                                                    (cl-ds.meta:fresh-bucket-status operation location)
                                                     all)
                    (access-head-position structure) (1+ head-position)
                    (cl-ds.queues:access-size structure) (1+ size))
@@ -379,7 +375,6 @@
                                       operation
                                       container
                                       location
-                                      (cl-ds.meta:fresh-bucket-status operation location)
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
@@ -388,7 +383,6 @@
                                                     operation
                                                     container
                                                     location
-                                                    (cl-ds.meta:fresh-bucket-status operation location)
                                                     all)
                    (access-head-position structure) (1+ head-position)
                    (cl-ds.queues:access-size structure) (1+ size))

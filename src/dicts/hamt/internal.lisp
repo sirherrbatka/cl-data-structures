@@ -155,7 +155,6 @@
          (node (first result))
          ((:values new-value status) (if (null result)
                                         (apply #'cl-ds.meta:make-bucket operation container value
-                                                 (cl-ds.meta:fresh-bucket-status operation value)
                                                  all)
                                         (apply #'cl-ds.meta:alter-bucket!
                                                  operation container value

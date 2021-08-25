@@ -120,7 +120,6 @@
                                                                                  operation
                                                                                  container
                                                                                  value
-                                                                                 (cl-ds.meta:fresh-bucket-status operation value)
                                                                                  all)))
                                             (if (cl-ds:changed status)
                                                 (let ((result (~> container

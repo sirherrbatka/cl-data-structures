@@ -109,3 +109,15 @@
 (defmethod cl-ds.meta:fresh-bucket-status (operation value)
   (cl-ds.common:make-eager-modification-operation-status
    nil nil t))
+
+
+(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
+                                   container
+                                   value
+                                   &rest all)
+  (declare (ignore all))
+  (let ((status (cl-ds.meta:fresh-bucket-status operation value)))
+    (values (if (cl-ds:changed status)
+                (cl-ds:force value)
+                cl-ds.meta:null-bucket)
+            status)))

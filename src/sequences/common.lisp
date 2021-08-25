@@ -17,15 +17,6 @@
   ())
 
 
-(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
-                                   (container fundamental-sequence)
-                                   location
-                                   status
-                                   &key value &allow-other-keys)
-  (values (cl-ds:force value)
-          status))
-
-
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:put-back!-function)
                                              (structure mutable-sequence)
                                              container

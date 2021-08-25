@@ -216,7 +216,6 @@
                                              operation
                                              container
                                              value
-                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))
@@ -258,7 +257,6 @@
                                              operation
                                              container
                                              value
-                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))
@@ -315,7 +313,6 @@
                                              operation
                                              container
                                              value
-                                             (cl-ds.meta:fresh-bucket-status operation value)
                                              rest)))
     (unless (cl-ds:changed status)
       (return-from cl-ds.meta:position-modification (values structure status)))

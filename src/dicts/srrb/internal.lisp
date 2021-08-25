@@ -466,17 +466,17 @@
           (when (cl-ds:changed status)
             (setf (aref tail offset) bucket))
           (values structure status))
-        (bind ((status (cl-ds.meta:fresh-bucket-status operation value)))
+        (bind (((:values bucket status)
+                (apply #'cl-ds.meta:make-bucket
+                       operation container value
+                       cl-ds.common:empty-eager-modification-operation-status
+                       all)))
           (when (cl-ds:changed status)
             (let ((tail-array
                     (or tail
                         (make-array
                          cl-ds.common.rrb:+maximum-children-count+
-                         :element-type t)))
-                  (bucket (apply #'cl-ds.meta:make-bucket
-                                 operation container value
-                                 cl-ds.common:empty-eager-modification-operation-status
-                                 all)))
+                         :element-type t))))
               (setf (aref tail-array offset) bucket
                     %tail-mask (dpb 1 (byte 1 offset) tail-mask))
               (unless (eq tail tail-array)
@@ -521,7 +521,6 @@
         (bind (((:values bucket status)
                 (apply #'cl-ds.meta:make-bucket
                        operation container value
-                       (cl-ds.meta:fresh-bucket-status operation value)
                        all)))
           (setf final-status status)
           (when (cl-ds:changed status)
@@ -626,7 +625,6 @@
                             (apply #'cl-ds.meta:make-bucket
                                    operation container
                                    value
-                                   (cl-ds.meta:fresh-bucket-status operation value)
                                    all))
                            (node (if (cl-ds.meta:null-bucket-p node)
                                      (cl-ds.common.rrb:make-sparse-rrb-node
@@ -721,7 +719,6 @@
                     (bind (((:values new-bucket status)
                             (apply #'cl-ds.meta:make-bucket
                                    operation container value
-                                   (cl-ds.meta:fresh-bucket-status operation value)
                                    all)))
                       (if (cl-ds:changed status)
                           (progn
@@ -822,7 +819,6 @@
                             (apply #'cl-ds.meta:make-bucket
                                    operation container
                                    value
-                                   (cl-ds.meta:fresh-bucket-status operation value)
                                    all))
                            (node (if (cl-ds.meta:null-bucket-p node)
                                      (cl-ds.common.rrb:make-sparse-rrb-node
@@ -1204,7 +1200,6 @@
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
                             operation container value
-                            (cl-ds.meta:fresh-bucket-status operation value)
                             all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (when (cl-ds:changed status)
@@ -1259,7 +1254,6 @@
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
                             operation container value
-                            (cl-ds.meta:fresh-bucket-status operation value)
                             all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (when (cl-ds:changed status)
@@ -1312,7 +1306,6 @@
           (t (bind (((:values bucket status)
                      (apply #'cl-ds.meta:make-bucket
                             operation container value
-                            (cl-ds.meta:fresh-bucket-status operation value)
                             all)))
                (check-type position cl-ds.common.rrb:rrb-index)
                (if (cl-ds:changed status)
