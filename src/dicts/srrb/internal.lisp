@@ -805,7 +805,7 @@
                 (if present
                     (bind ((current (cl-ds.common.rrb:sparse-nref node i))
                            ((:values new-bucket status)
-                            (apply #'cl-ds.meta:alter-bucket operation
+                            (apply #'cl-ds.meta:alter-bucket! operation
                                    container value current all)))
                       (if (cl-ds:changed status)
                           (progn
@@ -1147,7 +1147,7 @@
         (unless (cl-ds:changed status)
           (return-from shrink-tree
             (values structure status)))
-        (when (cl-ds.meta:null-bucket-p new-bucket)
+        (when (cl-ds:changed status)
           (decf last-node-size)
           (decf (the fixnum (access-tree-size structure))))
         (setf (svref path (1- length)) new-bucket)
