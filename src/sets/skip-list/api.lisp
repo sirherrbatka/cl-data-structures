@@ -81,11 +81,12 @@
    location
    (lambda (node)
      (if (null node)
-         (values (lret ((result
-                         (cl-ds.common.skip-list:make-skip-list-node-of-random-level
-                          (cl-ds.common.skip-list:access-maximum-level structure))))
-                   (setf (cl-ds.common.skip-list:skip-list-node-content result) location))
-                 cl-ds.common:empty-changed-eager-modification-operation-status)
+         (let ((result
+                 (cl-ds.common.skip-list:make-skip-list-node-of-random-level
+                  (cl-ds.common.skip-list:access-maximum-level structure))))
+           (setf (cl-ds.common.skip-list:skip-list-node-content result) location)
+           (values result
+                   cl-ds.common:empty-changed-eager-modification-operation-status))
          (values nil cl-ds.common:empty-eager-modification-operation-status)))))
 
 
