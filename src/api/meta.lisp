@@ -294,12 +294,7 @@
 (defgeneric fresh-bucket-status (operation value))
 
 
-
-(defgeneric make-bucket (operation container value &rest all)
-  (:method (operation container value &rest all)
-    (declare (ignore all container))
-    (values (cl-ds:force value)
-            (fresh-bucket-status operation value))))
+(defgeneric make-bucket (operation container value &rest all))
 
 
 (defgeneric alter-bucket! (operation container value bucket &rest all &key &allow-other-keys))

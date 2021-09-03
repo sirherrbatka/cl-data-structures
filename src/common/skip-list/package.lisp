@@ -8,6 +8,7 @@
   (:nicknames #:cl-ds.common.skip-list)
   (:export
    #:access-test-function
+   #:make-skip-list-node
    #:assoc-skip-list-node-value
    #:delete-node-between!
    #:fundamental-skip-list

@@ -201,7 +201,7 @@ Methods. Those will just call non generic functions.
            ((:dflet grow-bucket (bucket))
             (multiple-value-bind (a b)
                 (apply #'grow
-                       operation
+                       (cl-ds.meta:functional-counterpart operation)
                        container
                        bucket
                        location
@@ -313,7 +313,7 @@ Methods. Those will just call non generic functions.
            ((:dflet shrink-bucket (bucket))
             (multiple-value-bind (a b)
                 (apply #'shrink
-                       operation
+                       (cl-ds.meta:functional-counterpart operation)
                        container
                        bucket
                        location

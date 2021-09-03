@@ -92,27 +92,30 @@
          (iterate
            (for s from 1 below ,limit)
            (for word in-vector *all-words*)
-           (cl-ds:mod-bind (v r o) (erase-if dict word (lambda (key value)
-                                                         (is key word :test #'string=)
-                                                         (is value word :test #'string=)
-                                                         t))
+           (cl-ds:mod-bind (v r o change) (erase-if dict word
+                                                    (lambda (value)
+                                                      (is value word :test #'string=)
+                                                      t))
+             (ok change)
              (ok r)
              (is o word :test #'string=)
              (is (1- (size dict)) (size v))
-             (is nil (at v word))
+             (is (at v word) nil)
+             (is (at dict word) word)
              (setf dict v))))
        (let ((dict dict))
          (iterate
            (for s from 1 below ,limit)
            (for word in-vector *all-words*)
-           (cl-ds:mod-bind (v r o) (erase-if dict word (lambda (key value)
-                                                         (is key word :test #'string=)
-                                                         (is value word :test #'string=)
-                                                         nil))
-             (ok (null r))
-             (is o nil)
+           (cl-ds:mod-bind (v r o change) (erase-if dict word
+                                                    (lambda (value)
+                                                      (is value word :test #'string=)
+                                                      nil))
+             (is change nil)
+             (ok r)
+             (is o word :test #'string=)
              (is (size dict) (size v))
-             (is word (at v word) :test #'string=)))))))
+             (is (at v word) word :test #'string=)))))))
 
 (defun run-suite ()
   (diag "Testing functional implementation.")
@@ -137,6 +140,6 @@
 
 
 (progn
-  (plan 6346)
+  (plan 6544)
   (run-suite)
   (finalize))

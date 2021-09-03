@@ -21,7 +21,7 @@
                       (repeat 50)
                       (collect (funcall generator)))
                     'vector)))
-  (let ((root (cl-ds.common.egnat::make-egnat-tree container nil nil data)))
+  (let ((root (cl-ds.common.egnat::make-egnat-tree container #'cl-ds:put! nil data)))
     (setf (cl-ds.common.egnat::access-root container) root)
     (is (length (cl-ds.common.egnat::read-children root)) 5))
   (let ((near (cl-ds.alg:to-vector (cl-ds:near container (aref data 0) 3))))

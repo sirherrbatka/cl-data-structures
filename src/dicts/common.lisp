@@ -27,8 +27,9 @@
                                   function)
   (map nil
        (lambda (x) (funcall function
-                       (cl-ds.common:hash-content-location x)
-                       (cl-ds.common:hash-dict-content-value x)))
+                       (cons
+                        (cl-ds.common:hash-content-location x)
+                        (cl-ds.common:hash-dict-content-value x))))
        bucket)
   bucket)
 

@@ -128,7 +128,7 @@
   (function erase-if
     (:syntax "erase-if container location condition => new-instance status"
      :description
-     "Functional API: non-destructively removes an element at LOCATION from the CONTAINER, but only when the CONDITION function returns true. The CONDITION will be called with location that matches according to comparsion function used to construct container, and with a value."
+     "Functional API: non-destructively removes an element at LOCATION from the CONTAINER, but only when the CONDITION function returns true. The CONDITION will be called with with a value."
 
      :returns
      ("Instance of the same type as CONTAINER, without value at LOCATION"
@@ -157,14 +157,14 @@
      :arguments
      (("CONTAINER" "Container that shall be modified.")
       ("LOCATION" "Designates place in returned instance that will be changed.")
-      ("CONDITION" "Function of two arguments, should return boolean."))
+      ("CONDITION" "Function of one arguments, should return boolean."))
 
      :notes "This is the functional counterpart to the ERASE-IF! function."))
 
   (function erase-if!
     (:syntax "erase-if! container location condition => same-instance status"
      :description
-     "Functional API: destructively remove element at LOCATION from the CONTAINER, only when CONDITION function returns true. CONDITION will be called with location that matches according to comparsion function, and with value."
+     "Functional API: destructively remove element at LOCATION from the CONTAINER, only when CONDITION function returns true. CONDITION will be called with with value."
 
      :returns
      ("CONTAINER"
@@ -189,7 +189,7 @@
 
      :arguments (("CONTAINER" "Container that shall be modified.")
                  ("LOCATION" "Designates place in returned instance that will be changed.")
-                 ("CONDITION" "Function of two arguments, should return boolean."))
+                 ("CONDITION" "Function of one argument, should return boolean."))
 
      :notes "This is the destructive counterpart to the ERASE-IF function."))
 

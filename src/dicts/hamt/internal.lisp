@@ -21,15 +21,16 @@
                    &rest all)
   (bind ((equal-fn (cl-ds.dicts:read-equal-fn container))
          ((prev . result)
-          (iterate
-            (for elt on bucket)
-            (for p-elt previous elt)
-            (for node = (car elt))
-            (finding (cons p-elt elt) such-that
-                     (and (eql hash (cl-ds.common:hash-content-hash node))
-                          (funcall equal-fn
-                                   location
-                                   (cl-ds.common:hash-content-location node))))))
+          (or (iterate
+                (for elt on bucket)
+                (for p-elt previous elt)
+                (for node = (car elt))
+                (finding (cons p-elt elt) such-that
+                         (and (eql hash (cl-ds.common:hash-content-hash node))
+                              (funcall equal-fn
+                                       location
+                                       (cl-ds.common:hash-content-location node)))))
+              (cons nil nil)))
          (node (first result))
          ((:values new-value status) (if (null result)
                                          (return-from shrink
@@ -124,8 +125,10 @@
                                          nil nil t)
                                         all)
                 (bind (((:values altered-bucket status)
-                        (apply #'cl-ds.meta:alter-bucket operation container value (first rest)
-                                 all)))
+                        (apply #'cl-ds.meta:alter-bucket operation container
+                               value
+                               (cl-ds.common:hash-dict-content-value (first rest))
+                               all)))
                   (values (if (cl-ds:changed status)
                               (cl-ds.common:make-hash-dict-content :hash hash
                                                                    :location location
