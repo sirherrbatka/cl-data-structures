@@ -194,3 +194,15 @@
             (values structure status))
           (values structure
                   cl-ds.common:empty-eager-modification-operation-status)))))
+
+
+(defmethod cl-ds:lower-bound ((container mutable-skip-list-dictionary)
+                              location)
+  (if-let ((result-node (aref (cl-ds.common.skip-list:skip-list-locate-node
+                               container
+                               location)
+                              0)))
+    (values (cl-ds.common.skip-list:skip-list-node-content result-node)
+            t
+            (cl-ds.common.skip-list:assoc-skip-list-node-value result-node))
+    (values nil nil nil)))

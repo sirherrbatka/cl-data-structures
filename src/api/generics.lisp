@@ -1,6 +1,8 @@
 (cl:in-package #:cl-data-structures)
 
 
+(defgeneric lower-bound (container location))
+
 (defgeneric at (container location &rest more-locations))
 
 (defgeneric (setf at) (new-value container location &rest more-locations)

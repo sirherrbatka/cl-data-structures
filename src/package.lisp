@@ -40,6 +40,7 @@
    #:check-argument-bounds
    #:erase!
    #:erase*!
+   #:lower-bound
    #:erase*
    #:erase-if
    #:erase-if!

@@ -122,3 +122,13 @@
   (lret ((result (apply #'make-mutable-skip-list-set arguments)))
     (cl-ds:traverse traversable
                     (lambda (x) (cl-ds:put! result x)))))
+
+
+(defmethod cl-ds:lower-bound ((container mutable-skip-list-set)
+                              location)
+  (if-let ((result-node (aref (cl-ds.common.skip-list:skip-list-locate-node
+                               container
+                               location)
+                              0)))
+    (values (cl-ds.common.skip-list:skip-list-node-content result-node) t)
+    (values nil nil)))
