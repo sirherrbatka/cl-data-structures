@@ -127,7 +127,7 @@
 
 
 (defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
-                                   container
+                                   (container cl-ds:fundamental-container)
                                    value
                                    &rest all)
   (declare (ignore all))
@@ -139,7 +139,7 @@
 
 
 (defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:shrink-function)
-                                   container
+                                   (container cl-ds:fundamental-container)
                                    value
                                    &rest all)
   (declare (ignore all))

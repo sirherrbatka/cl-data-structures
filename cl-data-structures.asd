@@ -153,6 +153,9 @@
                              (:module "egnat"
                               :components ((:file "api")
                                            ))))
+               (:module "composite"
+                :components ((:file "package")
+                             (:file "implementation")))
                (:module "algorithms"
                 :components ((:file "package")
                              (:module "meta"

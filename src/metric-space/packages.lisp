@@ -1,7 +1,4 @@
-(cl:in-package #:cl-user)
-
-
-(defpackage :cl-data-structures.metric-space
+(cl:defpackage :cl-data-structures.metric-space
   (:use #:common-lisp
         #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.ms)
@@ -13,7 +10,7 @@
    #:mutable-metric-space-set))
 
 
-(defpackage :cl-data-structures.metric-space.egnat
+(cl:defpackage :cl-data-structures.metric-space.egnat
   (:use #:common-lisp
         #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.ms.egnat)

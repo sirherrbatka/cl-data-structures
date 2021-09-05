@@ -13,6 +13,7 @@
    #:argument-value-out-of-bounds
    #:assert-one-dimension
    #:at
+   #:insert!
    #:between*
    #:become-functional
    #:become-lazy

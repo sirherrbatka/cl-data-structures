@@ -448,7 +448,6 @@
                   list)
     (values mutable-sparse-rrb-vector t))
 (defun set-in-tail! (structure operation container offset value all)
-  (declare (optimize (debug 3) (speed 0)))
   (bind (((:accessors (element-type read-element-type)
                       (%tail-mask access-tail-mask)
                       (%tail access-tail))

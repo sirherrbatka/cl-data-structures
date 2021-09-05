@@ -8,6 +8,12 @@
 (defgeneric (setf at) (new-value container location &rest more-locations)
   (:generic-function-class cl-ds.meta:insert!-function))
 
+(defgeneric insert! (container location value)
+  (:generic-function-class cl-ds.meta:insert!-function)
+  (:method (container location value)
+    (values container
+            (nth-value 1 (setf (at container location) value)))))
+
 (defgeneric add (container location new-value)
   (:generic-function-class cl-ds.meta:functional-add-function))
 
@@ -302,7 +308,7 @@ Range releated functions.
 
 
 (defmethod cl-ds.meta:destructive-counterpart ((operation cl-ds.meta:functional-insert-function))
-  #'(setf at))
+  #'insert!)
 
 
 (defmethod cl-ds.meta:destructive-counterpart ((operation cl-ds.meta:functional-take-out-function))

@@ -294,7 +294,7 @@
 (defgeneric fresh-bucket-status (operation value))
 
 
-(defgeneric make-bucket (operation container value &rest all))
+(defgeneric make-bucket (operation container value &rest all &key &allow-other-keys))
 
 
 (defgeneric alter-bucket! (operation container value bucket &rest all &key &allow-other-keys))
