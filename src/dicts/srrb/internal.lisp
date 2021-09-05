@@ -448,6 +448,7 @@
                   list)
     (values mutable-sparse-rrb-vector t))
 (defun set-in-tail! (structure operation container offset value all)
+  (declare (optimize (debug 3) (speed 0)))
   (bind (((:accessors (element-type read-element-type)
                       (%tail-mask access-tail-mask)
                       (%tail access-tail))
@@ -460,7 +461,7 @@
              (type boolean present))
     (if present
         (bind ((old-bucket (aref (the simple-vector tail) offset))
-               ((:values bucket status) ; TODO change for alter bucket
+               ((:values bucket status)
                 (apply #'cl-ds.meta:alter-bucket! operation
                        container value old-bucket all)))
           (when (cl-ds:changed status)
@@ -469,7 +470,6 @@
         (bind (((:values bucket status)
                 (apply #'cl-ds.meta:make-bucket
                        operation container value
-                       cl-ds.common:empty-eager-modification-operation-status
                        all)))
           (when (cl-ds:changed status)
             (let ((tail-array
