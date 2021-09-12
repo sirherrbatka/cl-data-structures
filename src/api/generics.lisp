@@ -9,10 +9,7 @@
   (:generic-function-class cl-ds.meta:insert!-function))
 
 (defgeneric insert! (container location value)
-  (:generic-function-class cl-ds.meta:insert!-function)
-  (:method (container location value)
-    (values container
-            (nth-value 1 (setf (at container location) value)))))
+  (:generic-function-class cl-ds.meta:insert!-function))
 
 (defgeneric add (container location new-value)
   (:generic-function-class cl-ds.meta:functional-add-function))

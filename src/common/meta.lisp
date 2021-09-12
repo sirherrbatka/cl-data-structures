@@ -1,28 +1,38 @@
 (in-package #:cl-ds.common)
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:update!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:update!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:insert!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (continer
+                                     (operation cl-ds.meta:insert!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:add!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:add!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:erase!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:erase!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:erase-if!-function) container value bucket
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:erase-if!-function)
+                                     value bucket
                                      &rest all &key condition-fn)
   (declare (ignore all))
   (if (funcall condition-fn bucket)
@@ -30,18 +40,24 @@
       (values bucket (cl-ds.common:make-eager-modification-operation-status t bucket nil))))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:insert!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:insert!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values (cl-ds:force value) (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:add!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:add!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:update-if!-function) container value bucket &rest all &key condition-fn)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:update-if!-function)
+                                     value bucket &rest all &key condition-fn)
   (declare (ignore all))
   (let ((effective-value (cl-ds:force value)))
     (if (funcall condition-fn bucket effective-value)
@@ -49,7 +65,9 @@
         (values bucket (cl-ds.common:make-eager-modification-operation-status t bucket nil)))))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:update-function) container value bucket &rest all &key condition-fn)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:update-function)
+                                    value bucket &rest all &key condition-fn)
   (declare (ignore all))
   (let ((effective-value (cl-ds:force value)))
     (if (funcall condition-fn bucket effective-value)
@@ -57,43 +75,57 @@
         (values bucket (cl-ds.common:make-eager-modification-operation-status t bucket nil)))))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:update-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:update-function)
+                                    value bucket &rest all)
   (declare (ignore all))
   (values (cl-ds:force value)
           (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:insert-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:insert-function)
+                                    value bucket &rest all)
   (declare (ignore all))
   (values (cl-ds:force value)
           (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:add-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:add-function)
+                                    value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket nil)))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:erase-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:erase-function)
+                                    value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:take-out-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:take-out-function)
+                                    value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket! ((operation cl-ds.meta:take-out!-function) container value bucket &rest all)
+(defmethod cl-ds.meta:alter-bucket! (container
+                                     (operation cl-ds.meta:take-out!-function)
+                                     value bucket &rest all)
   (declare (ignore all))
   (values cl-ds.meta:null-bucket
           (cl-ds.common:make-eager-modification-operation-status t bucket t)))
 
 
-(defmethod cl-ds.meta:alter-bucket ((operation cl-ds.meta:erase-if-function) container value bucket
+(defmethod cl-ds.meta:alter-bucket (container
+                                    (operation cl-ds.meta:erase-if-function)
+                                    value bucket
                                     &rest all &key condition-fn)
   (declare (ignore all))
   (if (funcall condition-fn bucket)
@@ -126,8 +158,8 @@
    nil nil t))
 
 
-(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:grow-function)
-                                   (container cl-ds:fundamental-container)
+(defmethod cl-ds.meta:make-bucket ((container cl-ds:fundamental-container)
+                                   (operation cl-ds.meta:grow-function)
                                    value
                                    &rest all)
   (declare (ignore all))
@@ -138,8 +170,8 @@
             status)))
 
 
-(defmethod cl-ds.meta:make-bucket ((operation cl-ds.meta:shrink-function)
-                                   (container cl-ds:fundamental-container)
+(defmethod cl-ds.meta:make-bucket ((container cl-ds:fundamental-container)
+                                   (operation cl-ds.meta:shrink-function)
                                    value
                                    &rest all)
   (declare (ignore all))

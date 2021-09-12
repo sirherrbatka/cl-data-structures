@@ -3,8 +3,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:grow-function)
-     (structure transactional-sparse-rrb-vector)
      container
+     (structure transactional-sparse-rrb-vector)
      position &rest all &key value)
   (transactional-sparse-rrb-vector-grow
    operation structure container position all value))
@@ -17,8 +17,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:grow-function)
-     (structure mutable-sparse-rrb-vector)
      container
+     (structure mutable-sparse-rrb-vector)
      position &rest all &key value)
   (mutable-sparse-rrb-vector-grow
    operation structure container position all value))
@@ -26,8 +26,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:grow-function)
-     (structure functional-sparse-rrb-vector)
      container
+     (structure functional-sparse-rrb-vector)
      position &rest all &key value)
   (functional-sparse-rrb-vector-grow
    operation structure container position all value))
@@ -35,8 +35,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:shrink-function)
-     (structure mutable-sparse-rrb-vector)
      container
+     (structure mutable-sparse-rrb-vector)
      position &rest all)
   (declare (optimize (speed 3) (space 0) (debug 0))
            (type integer position))
@@ -62,8 +62,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:shrink-function)
-     (structure transactional-sparse-rrb-vector)
      container
+     (structure transactional-sparse-rrb-vector)
      position &rest all)
   (declare (optimize (speed 3) (space 0) (debug 0))
            (type integer position))
@@ -89,8 +89,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:shrink-function)
-     (structure functional-sparse-rrb-vector)
      container
+     (structure functional-sparse-rrb-vector)
      position &rest all)
   (declare (optimize (speed 3) (space 0) (debug 0))
            (type integer position))

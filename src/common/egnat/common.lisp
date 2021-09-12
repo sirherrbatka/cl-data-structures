@@ -365,8 +365,8 @@
                                    item additional-arguments)
   (make 'egnat-node
         :content (vector (apply #'cl-ds.meta:make-bucket
-                                operation
                                 container
+                                operation
                                 item
                                 additional-arguments))))
 
@@ -421,8 +421,8 @@
           (finally
            (vector-push-extend (make 'egnat-node :content
                                      (vect (apply #'cl-ds.meta:make-bucket
-                                                  operation
                                                   container
+                                                  operation
                                                   item
                                                   additional-arguments)))
                                (read-children node))))))
@@ -430,7 +430,8 @@
 
 
 (defun push-content (node container operation item additional-arguments)
-  (vector-push-extend (apply #'cl-ds.meta:make-bucket operation container
+  (vector-push-extend (apply #'cl-ds.meta:make-bucket container
+                             operation
                              item additional-arguments)
                       (read-content node))
   t)

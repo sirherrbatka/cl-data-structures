@@ -3,7 +3,7 @@
 
 (defclass composite-container ()
   ((%root :initarg :root
-          :reader root)
+          :accessor root)
    (%make-bucket-callbacks :initarg :make-bucket-callbacks
                            :reader make-bucket-callbacks)))
 
@@ -16,25 +16,81 @@
   ())
 
 
+(defun make-mutable-composite-container (root &rest make-bucket-callbacks)
+  (make 'mutable-composite-container
+        :root root
+        :make-bucket-callbacks make-bucket-callbacks))
+
+
+(defun make-functional-composite-container (root &rest make-bucket-callbacks)
+  (make 'mutable-composite-container
+        :root root
+        :make-bucket-callbacks make-bucket-callbacks))
+
+
+(defun separate-operations/arguments (operations)
+  (iterate
+    (for op in operations)
+    (if (listp op)
+        (progn
+          (collecting (first op) into just-operations)
+          (collecting (rest op) into just-arguments))
+        (collecting op into just-operations))
+    (finally (return (values just-operations just-arguments)))))
+
+
 (defun position-modification (operations container locations value &rest all)
-  (apply #'cl-ds.meta:position-modification (first operations)
-           (root container)
-           container
-           (first locations)
-           :value value
-           :composite-container-locations (rest locations)
-           :composite-container-make-bucket-callbacks (make-bucket-callbacks container)
-           :composite-container-operations (rest operations)
-           all))
+  (bind (((:values just-operations just-arguments)
+          (separate-operations/arguments operations))
+         ((:values new-root status)
+          (apply #'cl-ds.meta:position-modification (first just-operations)
+                 container
+                 (root container)
+                 (first locations)
+                 :value value
+                 :composite-container-locations (rest locations)
+                 :composite-container-make-bucket-callbacks (make-bucket-callbacks container)
+                 :composite-container-operations (rest just-operations)
+                 :composite-container-rest-arguments (rest just-arguments)
+                 :composite-container-arguments (first just-arguments)
+                 all)))
+    (if (cl-ds:changed status)
+        (values (make (class-of container)
+                      :root new-root
+                      :make-bucket-callbacks (make-bucket-callbacks container))
+                status)
+        (values container status))))
 
 
-(defmethod cl-ds.meta:alter-bucket (operation
-                                    (container functional-composite-container)
+(defun position-modification! (operations container locations value &rest all)
+  (bind (((:values just-operations just-arguments)
+          (separate-operations/arguments operations))
+         ((:values new-root status)
+          (apply #'cl-ds.meta:position-modification
+                 (first just-operations)
+                 container
+                 (root container)
+                 (first locations)
+                 :value value
+                 :composite-container-locations (rest locations)
+                 :composite-container-make-bucket-callbacks (make-bucket-callbacks container)
+                 :composite-container-operations (rest just-operations)
+                 :composite-container-rest-arguments (rest just-arguments)
+                 :composite-container-arguments (first just-arguments)
+                 all)))
+    (setf (root container) new-root)
+    (values container status)))
+
+
+(defmethod cl-ds.meta:alter-bucket ((container functional-composite-container)
+                                    operation
                                     value bucket
                                     &rest all
                                     &key
                                       composite-container-operations
                                       composite-container-make-bucket-callbacks
+                                      composite-container-rest-arguments
+                                      composite-container-arguments
                                       composite-container-locations)
   (if (~> composite-container-make-bucket-callbacks rest endp)
       (apply #'cl-ds.meta:position-modification
@@ -42,28 +98,29 @@
                bucket
                bucket
                (first composite-container-locations)
-               :composite-container-locations (rest composite-container-locations)
-               :composite-container-make-bucket-callbacks (rest composite-container-make-bucket-callbacks)
-               :composite-container-operations (rest composite-container-operations)
-               all)
+               :value value
+               composite-container-arguments)
       (apply #'cl-ds.meta:alter-bucket
-               operation
                container
+               operation
                value
                bucket
                :composite-container-locations (rest composite-container-locations)
                :composite-container-make-bucket-callbacks (rest composite-container-make-bucket-callbacks)
                :composite-container-operations (rest composite-container-operations)
+               :composite-container-rest-arguments (rest composite-container-rest-arguments)
                all)))
 
 
-(defmethod cl-ds.meta:alter-bucket! (operation
-                                     (container mutable-composite-container)
+(defmethod cl-ds.meta:alter-bucket! ((container mutable-composite-container)
+                                     operation
                                      value bucket
                                      &rest all
                                      &key
                                        composite-container-operations
                                        composite-container-make-bucket-callbacks
+                                       composite-container-rest-arguments
+                                       composite-container-arguments
                                        composite-container-locations)
   (if (~> composite-container-make-bucket-callbacks rest endp)
       (apply #'cl-ds.meta:position-modification
@@ -71,18 +128,17 @@
                bucket
                bucket
                (first composite-container-locations)
-               :composite-container-locations (rest composite-container-locations)
-               :composite-container-make-bucket-callbacks (rest composite-container-make-bucket-callbacks)
-               :composite-container-operations (rest composite-container-operations)
-               all)
+               :value value
+               composite-container-arguments)
       (apply #'cl-ds.meta:alter-bucket!
-               operation
                container
+               operation
                value
                bucket
                :composite-container-locations (rest composite-container-locations)
                :composite-container-make-bucket-callbacks (rest composite-container-make-bucket-callbacks)
                :composite-container-operations (rest composite-container-operations)
+               :composite-container-rest-arguments (rest composite-container-rest-arguments)
                all)))
 
 
@@ -101,15 +157,17 @@
              (values cl-ds.meta:null-bucket ,!fresh-status))))))
 
 
-(defmethod cl-ds.meta:make-bucket (operation
-                                   (container composite-container)
+(defmethod cl-ds.meta:make-bucket ((container composite-container)
+                                   operation
                                    value
                                    &rest all
                                    &key
                                      composite-container-operations
                                      composite-container-make-bucket-callbacks
+                                     composite-container-rest-arguments
+                                     composite-container-arguments
                                      composite-container-locations)
-  (declare (optimize (debug 3) (speed 0)))
+  (declare (ignore all composite-container-rest-arguments))
   (iterate
     (with v = value)
     (for operation in (reverse composite-container-operations))
@@ -117,7 +175,7 @@
     (for location in (reverse composite-container-locations))
     (for (values bucket status) = (funcall make-bucket-callback
                                            operation location
-                                           v all))
+                                           v composite-container-arguments))
     (unless (cl-ds:changed status)
       (return (values cl-ds.meta:null-bucket status)))
     (setf v bucket)
@@ -127,7 +185,6 @@
 
 (defmethod cl-ds:at ((container composite-container)
                      location &rest more-locations)
-  (break)
   (unless (= (length more-locations)
              (~> container
                  make-bucket-callbacks

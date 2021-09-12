@@ -88,8 +88,8 @@
                  (setf (access-eager-status lazy-status) eager-status))
              eager-status))))
   (defmethod cl-ds.meta:position-modification (operation
-                                               (structure lazy-box-container)
                                                container
+                                               (structure lazy-box-container)
                                                location &rest args
                                                &key &allow-other-keys)
     (bind (((:accessors (operations access-operations)

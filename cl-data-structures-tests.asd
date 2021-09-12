@@ -66,6 +66,8 @@
                              (:test-file "chain-test")
                              (:test-file "on-each-test")
                              (:test-file "zip-test")))
+               (:module "composite"
+                :components ((:test-file "tests")))
                (:module "math"
                 :components ((:test-file "moments-tests")
                              (:test-file "mutual-information-tests")

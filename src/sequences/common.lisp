@@ -18,35 +18,35 @@
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:put-back!-function)
-                                             (structure mutable-sequence)
                                              container
+                                             (structure mutable-sequence)
                                              location
                                              &key value)
-  (cl-ds.meta:position-modification #'cl-ds:put! structure container nil :value value))
+  (cl-ds.meta:position-modification #'cl-ds:put! container structure nil :value value))
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:functional-put-back-function)
-                                             (structure functional-sequence)
                                              container
+                                             (structure functional-sequence)
                                              location
                                              &key value)
-  (cl-ds.meta:position-modification #'cl-ds:put structure container nil :value value))
+  (cl-ds.meta:position-modification #'cl-ds:put container structure nil :value value))
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:functional-take-out-back-function)
-                                             (structure functional-sequence)
                                              container
+                                             (structure functional-sequence)
                                              location
                                              &key value)
-  (cl-ds.meta:position-modification #'cl-ds:take-out structure container nil :value value))
+  (cl-ds.meta:position-modification #'cl-ds:take-out container structure nil :value value))
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:take-out-back!-function)
-                                             (structure mutable-sequence)
                                              container
+                                             (structure mutable-sequence)
                                              location
                                              &key value)
-  (cl-ds.meta:position-modification #'cl-ds:take-out! structure container nil :value value))
+  (cl-ds.meta:position-modification #'cl-ds:take-out! container structure nil :value value))
 
 
 (defmethod cl-ds:put-back ((container functional-sequence) item)

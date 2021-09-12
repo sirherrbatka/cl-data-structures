@@ -9,7 +9,7 @@
 (bind ((vector (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector
                               :tail nil))
        ((:values structure status)
-        (cl-ds.dicts.srrb::set-in-tail! vector #'cl-ds:add! :mock 5 5 nil))
+        (cl-ds.dicts.srrb::set-in-tail! vector #'cl-ds:add! vector 5 5 nil))
        (tail (cl-ds.dicts.srrb::access-tail vector))
        (tail-mask (cl-ds.dicts.srrb::access-tail-mask vector)))
   (is structure vector)
@@ -34,7 +34,7 @@
                         cl-ds.alg:to-vector))
   (iterate
     (for (position . point) in-vector input-data)
-    (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+    (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
@@ -59,7 +59,7 @@
        (container (cl-ds.dicts.srrb:make-transactional-sparse-rrb-vector)))
   (iterate
     (for (position . point) in-vector input-data)
-    (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+    (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
@@ -68,7 +68,7 @@
     (repeat (length input-data))
     (for position = (car (aref input-data 0)))
     (for (values structure status) = (cl-ds.meta:position-modification
-                                      #'cl-ds:erase! container :mock position))
+                                      #'cl-ds:erase! container container position))
     (is structure container)
     (is (nth-value 1 (cl-ds:at container position)) nil)
     (cl-ds.utils:swapop input-data 0)
@@ -79,10 +79,10 @@
 
 (let* ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
   (declare (optimize (debug 3)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     0 :value 1)
   (is (cl-ds:at container 0) 1)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     456 :value 2)
   (is (cl-ds:at container 0) 1)
   (is (cl-ds:at container 456) 2))
@@ -97,7 +97,7 @@
   (declare (optimize (debug 3)))
   (iterate
     (for (position . point) in-vector input-data)
-    (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+    (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
@@ -106,7 +106,7 @@
     (repeat (length input-data))
     (for position = (car (aref input-data 0)))
     (for (values structure status) = (cl-ds.meta:position-modification
-                                      #'cl-ds:erase! container :mock position))
+                                      #'cl-ds:erase! container container position))
     (is structure container)
     (ok (cl-ds:changed status))
     (is (nth-value 1 (cl-ds:at container position)) nil)
@@ -116,35 +116,35 @@
       (is (cl-ds:at container position) point))))
 
 (let ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     800 :value 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1024 :value 0)
   (is (cl-ds:at container 800) 5)
   (is (cl-ds:at container 1024) 0)
   (is (cl-ds:size container) 2)
   (cl-ds.meta:position-modification
-   #'cl-ds:erase! container :mock 800)
+   #'cl-ds:erase! container container 800)
   (is (cl-ds:at container 800) nil)
   (is (cl-ds:size container) 1)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     800 :value 5)
   (is (cl-ds:size container) 2)
   (is (cl-ds:at container 1024) 0))
 
 
 (let ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     82 :value 1)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     53 :value 2)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     417 :value 3)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     114 :value 4)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     0 :value 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     486 :value 6)
   (is (cl-ds:at container 82) 1)
   (is (cl-ds:at container 53) 2)
@@ -152,43 +152,43 @@
   (is (cl-ds:at container 114) 4)
   (is (cl-ds:at container 0) 5)
   (is (cl-ds:at container 486) 6)
-  (cl-ds.meta:position-modification #'cl-ds:erase! container :mock
+  (cl-ds.meta:position-modification #'cl-ds:erase! container container
                                     82)
   (is (cl-ds:at container 114) 4))
 
 (let ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1024 :value 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     5 :value 0)
   (is (cl-ds:size container) 2)
   (is (cl-ds:at container 1024) 5)
   (is (cl-ds:at container 5) 0)
   (cl-ds.meta:position-modification
-   #'cl-ds:erase! container :mock 5)
+   #'cl-ds:erase! container container 5)
   (is (cl-ds:at container 5) nil)
   (is (cl-ds:size container) 1)
   (is (cl-ds:at container 1024) 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     2000 :value 10)
   (is (cl-ds:size container) 2)
   (is (cl-ds:at container 2000) 10)
   (is (cl-ds:at container 5) nil))
 
 (let ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1024 :value 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1023 :value 0)
   (is (cl-ds:size container) 2)
   (is (cl-ds:at container 1024) 5)
   (is (cl-ds:at container 1023) 0)
   (cl-ds.meta:position-modification
-   #'cl-ds:erase! container :mock 1023)
+   #'cl-ds:erase! container container 1023)
   (is (cl-ds:at container 1023) nil)
   (is (cl-ds:size container) 1)
   (is (cl-ds:at container 1024) 5)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1023 :value 5)
   (is (cl-ds:size container) 2)
   (is (cl-ds:at container 1023) 5)
@@ -204,7 +204,7 @@
                                  :ownership-tag (cl-ds.common.abstract:make-ownership-tag))))
   (iterate
     (for (position . point) in-vector input-data)
-    (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+    (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
@@ -218,7 +218,7 @@
   (iterate
     (for (position . point) in-vector input-data)
     (setf container (cl-ds.meta:position-modification #'cl-ds:insert
-                                                      container :mock
+                                                      container container
                                                       position :value point)))
   (iterate
     (for (position . point) in-vector input-data)
@@ -231,7 +231,7 @@
   (iterate
     (for (position . point) in-vector input-data)
     (setf container (cl-ds.meta:position-modification #'cl-ds:insert
-                                                      container :mock
+                                                      container container
                                                       position :value point))
     (is (cl-ds.dicts.srrb::access-tree-index-bound container)
         (cl-ds.dicts.srrb::scan-index-bound container)))
@@ -250,7 +250,7 @@
   (iterate
     (for (position . point) in-vector input-data)
     (setf container (cl-ds.meta:position-modification #'cl-ds:insert
-                                                      container :mock
+                                                      container container
                                                       position :value point)))
   (iterate
     (for (position . point) in-vector input-data)
@@ -271,7 +271,7 @@
   (diag "Testing insert.")
   (iterate
     (for (position . point) in-vector input-data)
-    (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+    (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (setf container (cl-ds:become-functional container))
   (iterate
@@ -282,7 +282,7 @@
     (repeat (length input-data))
     (for position = (car (aref input-data 0)))
     (for (values structure status) = (cl-ds.meta:position-modification
-                                      #'cl-ds:erase container :mock position))
+                                      #'cl-ds:erase container container position))
     (setf container structure)
     (ok (cl-ds:changed status))
     (is (nth-value 1 (cl-ds:at container position)) nil)
@@ -293,11 +293,11 @@
 
 (let* ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
   (declare (optimize (debug 3)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     32 :value 32)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     64 :value 64)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     512 :value 512)
   (is (cl-ds:at container 32) 32)
   (is (cl-ds:at container 64) 64)
@@ -306,9 +306,9 @@
 
 (let* ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
   (declare (optimize (debug 3)))
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     1 :value 1)
-  (cl-ds.meta:position-modification #'(setf cl-ds:at) container :mock
+  (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                     64 :value 64)
   (is (cl-ds:at container 1) 1)
   (is (cl-ds:at container 64) 64)

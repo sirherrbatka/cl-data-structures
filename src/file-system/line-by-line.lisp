@@ -12,7 +12,6 @@
 
 
 (defmethod cl-ds:clone ((range line-by-line-range))
-  (declare (optimize (debug 3)))
   (let ((current-position (access-current-position range)))
     (close-stream range)
     (make 'line-by-line-range

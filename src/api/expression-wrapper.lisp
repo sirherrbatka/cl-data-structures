@@ -99,7 +99,6 @@
 
 
 (defmethod reset! ((obj expression))
-  (declare (optimize (debug 3)))
   (bind (((:slots %construct-function %arguments %closure
                   %arguments-closure %finished-closure)
           obj)

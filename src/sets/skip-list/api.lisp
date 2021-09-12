@@ -71,8 +71,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((function cl-ds.meta:put!-function)
-     (structure mutable-skip-list-set)
      container
+     (structure mutable-skip-list-set)
      location
      &rest all)
   (declare (ignore all container))

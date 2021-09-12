@@ -273,8 +273,8 @@
 
 
 (defgeneric position-modification (operation
-                                   structure
                                    container
+                                   structure
                                    location
                                    &rest all
                                    &key &allow-other-keys))
@@ -294,10 +294,10 @@
 (defgeneric fresh-bucket-status (operation value))
 
 
-(defgeneric make-bucket (operation container value &rest all &key &allow-other-keys))
+(defgeneric make-bucket (container operation value &rest all &key &allow-other-keys))
 
 
-(defgeneric alter-bucket! (operation container value bucket &rest all &key &allow-other-keys))
+(defgeneric alter-bucket! (container operation value bucket &rest all &key &allow-other-keys))
 
 
-(defgeneric alter-bucket (operation container value bucket &rest all &key &allow-other-keys))
+(defgeneric alter-bucket (container operation value bucket &rest all &key &allow-other-keys))

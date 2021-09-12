@@ -436,8 +436,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((function cl-ds.meta:erase!-function)
-     (structure fundamental-skip-list)
      container
+     (structure fundamental-skip-list)
      location
      &rest all)
   (declare (ignore all container))
@@ -527,8 +527,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase*!-function)
-                                             (structure fundamental-skip-list)
                                              container
+                                             (structure fundamental-skip-list)
                                              (location fundamental-skip-list-range)
                                              &rest all)
   (declare (ignore all container))

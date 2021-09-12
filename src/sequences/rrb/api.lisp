@@ -21,8 +21,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:take-out!-function)
-                                             (structure transactional-rrb-vector)
                                              container
+                                             (structure transactional-rrb-vector)
                                              location &rest rest &key &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
@@ -32,8 +32,8 @@
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
               (apply #'cl-ds.meta:alter-bucket
-                     operation
                      container
+                     operation
                      location
                      bucket
                      rest)
@@ -88,8 +88,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:take-out!-function)
-                                             (structure mutable-rrb-vector)
                                              container
+                                             (structure mutable-rrb-vector)
                                              location &rest rest &key &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
@@ -99,8 +99,8 @@
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
               (apply #'cl-ds.meta:alter-bucket!
-                     operation
                      container
+                     operation
                      location
                      bucket
                      rest)
@@ -165,8 +165,8 @@
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
               (apply #'cl-ds.meta:alter-bucket!
-                     operation
                      container
+                     operation
                      value
                      bucket
                      rest)
@@ -205,16 +205,16 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
-                                             (structure mutable-rrb-vector)
                                              container
+                                             (structure mutable-rrb-vector)
                                              location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (safety 1)
                      (debug 0) (space 0)))
   (bind ((tail-size (cl-ds.common.rrb:access-tail-size structure))
          (tail (cl-ds.common.rrb:access-tail structure))
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
-                                             operation
                                              container
+                                             operation
                                              value
                                              rest)))
     (unless (cl-ds:changed status)
@@ -245,8 +245,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:functional-put-function)
-                                             (structure functional-rrb-vector)
                                              container
+                                             (structure functional-rrb-vector)
                                              location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
@@ -254,8 +254,8 @@
          (tag nil)
          (tail-change 1)
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
-                                             operation
                                              container
+                                             operation
                                              value
                                              rest)))
     (unless (cl-ds:changed status)
@@ -301,8 +301,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
-                                             (structure transactional-rrb-vector)
                                              container
+                                             (structure transactional-rrb-vector)
                                              location &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (debug 0) (safety 1)))
@@ -310,8 +310,8 @@
          (tag (cl-ds.common.abstract:read-ownership-tag structure))
          (tail-change 1)
          ((:values new-bucket status) (apply #'cl-ds.meta:make-bucket
-                                             operation
                                              container
+                                             operation
                                              value
                                              rest)))
     (unless (cl-ds:changed status)
@@ -348,8 +348,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:take-out-function)
-                                             (structure functional-rrb-vector)
                                              container
+                                             (structure functional-rrb-vector)
                                              location &rest rest &key &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (safety 1) (debug 0)))
@@ -360,8 +360,8 @@
          ((:dflet shrink-bucket (bucket))
           (multiple-value-bind (bucket status)
               (apply #'cl-ds.meta:alter-bucket
-                     operation
                      container
+                     operation
                      location
                      bucket
                      rest)
@@ -428,8 +428,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure transactional-rrb-vector)
                                              container
+                                             (structure transactional-rrb-vector)
                                              index &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (safety 1) (debug 0)))
@@ -441,8 +441,8 @@
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
               (apply #'cl-ds.meta:alter-bucket
-                     operation
                      container
+                     operation
                      value
                      bucket
                      index
@@ -508,8 +508,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure functional-rrb-vector)
                                              container
+                                             (structure functional-rrb-vector)
                                              index &rest rest &key value &allow-other-keys)
   (declare (optimize (speed 3) (space 0)
                      (safety 1) (debug 0)))
@@ -522,8 +522,8 @@
          ((:dflet change-bucket (bucket))
           (multiple-value-bind (node status)
               (apply #'cl-ds.meta:alter-bucket
-                     operation
                      container
+                     operation
                      value
                      bucket
                      rest)

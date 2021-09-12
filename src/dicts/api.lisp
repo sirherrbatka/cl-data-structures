@@ -53,6 +53,14 @@
                                     :condition-fn condition-fn))
 
 
+(defmethod cl-ds:insert! ((container mutable-dictionary) location value)
+  (cl-ds.meta:position-modification #'cl-ds:insert!
+                                    container
+                                    container
+                                    location
+                                    :value value))
+
+
 (defmethod (setf cl-ds:at) (new-value (container mutable-dictionary) location
                             &rest more-locations)
   (cl-ds:assert-one-dimension more-locations)
@@ -64,6 +72,14 @@
                                                    location
                                                    :value new-value))))
     (values new-value status)))
+
+
+(defmethod cl-ds:insert! ((container mutable-sparse-vector) location value)
+  (cl-ds.meta:position-modification #'cl-ds:insert!
+                                    container
+                                    container
+                                    location
+                                    :value value))
 
 
 (defmethod (setf cl-ds:at) (new-value (container mutable-sparse-vector) location

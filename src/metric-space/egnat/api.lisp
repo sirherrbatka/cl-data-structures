@@ -34,7 +34,7 @@
   (bind ((container (apply #'make-mutable-egnat-metric-set arguments))
          (root (cl-ds.common.egnat:make-egnat-tree container
                                                    #'cl-ds:put!
-                                                   arguments
+                                                   (cddr arguments)
                                                    sequence
                                                    (second (member :parallel arguments)))))
     (setf (cl-ds.common.egnat:access-root container) root
@@ -48,7 +48,7 @@
   (bind ((container (apply #'make-mutable-egnat-metric-set arguments))
          (root (cl-ds.common.egnat:make-egnat-tree container
                                                    #'cl-ds:put!
-                                                   arguments
+                                                   (cddr arguments)
                                                    sequence
                                                    (second (member :parallel arguments)))))
     (setf (cl-ds.common.egnat:access-root container) root

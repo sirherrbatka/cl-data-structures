@@ -1,8 +1,10 @@
 (cl:in-package #:cl-ds.dicts.hamt)
 
 
-(defun make-hash-dict-content (operation container location value hash status all)
-  (bind (((:values bucket status) (apply #'cl-ds.meta:make-bucket operation container value status all)))
+(defun make-hash-dict-content (operation container location value hash all)
+  (bind (((:values bucket status) (apply #'cl-ds.meta:make-bucket
+                                         container operation
+                                         value all)))
     (values (cl-ds.common:make-hash-dict-content :hash hash
                                                  :location location
                                                  :value bucket)
@@ -37,7 +39,7 @@
                                            (values bucket
                                                    cl-ds.common:empty-eager-modification-operation-status))
                                         (apply #'cl-ds.meta:alter-bucket!
-                                                 operation container nil
+                                                 container operation nil
                                                  (cl-ds.common:hash-dict-content-value node)
                                                  all))))
     (when (cl-ds:changed status)
@@ -71,7 +73,7 @@
                                            (values bucket
                                                    cl-ds.common:empty-eager-modification-operation-status))
                                         (apply #'cl-ds.meta:alter-bucket
-                                                 operation container nil
+                                                 container operation nil
                                                  (cl-ds.common:hash-dict-content-value node) all))))
     (unless (cl-ds:changed status)
       (return-from shrink (values bucket status)))
@@ -120,13 +122,11 @@
                  (push c result))))
     (bind (((:values new-node status)
             (if (endp rest)
-                (make-hash-dict-content operation container location value hash
-                                        (cl-ds.common:make-eager-modification-operation-status
-                                         nil nil t)
-                                        all)
+                (make-hash-dict-content operation container
+                                        location value hash all)
                 (bind (((:values altered-bucket status)
-                        (apply #'cl-ds.meta:alter-bucket operation container
-                               value
+                        (apply #'cl-ds.meta:alter-bucket
+                               container operation value
                                (cl-ds.common:hash-dict-content-value (first rest))
                                all)))
                   (values (if (cl-ds:changed status)
@@ -157,10 +157,10 @@
                                           (cl-ds.common:hash-content-location node))))))
          (node (first result))
          ((:values new-value status) (if (null result)
-                                        (apply #'cl-ds.meta:make-bucket operation container value
+                                        (apply #'cl-ds.meta:make-bucket container operation value
                                                  all)
                                         (apply #'cl-ds.meta:alter-bucket!
-                                                 operation container value
+                                                 container operation value
                                                  (cl-ds.common:hash-dict-content-value node)
                                                  all))))
     (when (cl-ds:changed status)

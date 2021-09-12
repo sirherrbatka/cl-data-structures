@@ -249,8 +249,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:put-function)
-     (structure functional-2-3-queue)
      container
+     (structure functional-2-3-queue)
      location
      &rest all)
   (let ((head-position (access-head-position structure))
@@ -269,8 +269,8 @@
                   (head-position 1)
                   (size (1+ size))
                   ((:values bucket status) (apply #'cl-ds.meta:make-bucket
-                                                  operation
                                                   container
+                                                  operation
                                                   location
                                                   all)))
              (if (cl-ds:changed status)
@@ -292,8 +292,8 @@
                                           :element-type element-type)))
                     (size (1+ size))
                     ((:values bucket status) (apply #'cl-ds.meta:make-bucket
-                                                    operation
                                                     container
+                                                    operation
                                                     location
                                                     all)))
                (if (cl-ds:changed status)
@@ -314,8 +314,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:put!-function)
-     (structure mutable-2-3-queue)
      container
+     (structure mutable-2-3-queue)
      location
      &rest all)
   (let ((head-position (access-head-position structure))
@@ -332,16 +332,16 @@
                  head #1#
                  (access-head structure) head
                  (aref head 0) (apply #'cl-ds.meta:make-bucket
-                                      operation
                                       container
+                                      operation
                                       location
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
                    cl-ds.common:empty-eager-modification-operation-status))
           (t (setf (aref head head-position) (apply #'cl-ds.meta:make-bucket
-                                                    operation
                                                     container
+                                                    operation
                                                     location
                                                     all)
                    (access-head-position structure) (1+ head-position)
@@ -353,8 +353,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:put!-function)
-     (structure transactional-2-3-queue)
      container
+     (structure transactional-2-3-queue)
      location
      &rest all)
   (let ((head-position (access-head-position structure))
@@ -372,16 +372,16 @@
                  head #1#
                  (access-head structure) head
                  (aref head 0) (apply #'cl-ds.meta:make-bucket
-                                      operation
                                       container
+                                      operation
                                       location
                                       all)
                  (cl-ds.queues:access-size structure) (1+ size))
            (values structure
                    cl-ds.common:empty-eager-modification-operation-status))
           (t (setf (aref head head-position) (apply #'cl-ds.meta:make-bucket
-                                                    operation
                                                     container
+                                                    operation
                                                     location
                                                     all)
                    (access-head-position structure) (1+ head-position)
@@ -393,8 +393,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:take-out-function)
-     (structure functional-2-3-queue)
      container
+     (structure functional-2-3-queue)
      location
      &rest all)
   (let ((tail-position (access-tail-position structure))
@@ -409,7 +409,7 @@
                (tail-position (access-tail-position structure))
                ((:values new-buffer status)
                 (apply #'cl-ds.meta:alter-bucket
-                       operation container
+                       container operation
                        location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
@@ -436,7 +436,7 @@
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
                         (apply #'cl-ds.meta:alter-bucket
-                               operation container
+                               container operation
                                location bucket
                                all))
                        (tail-position 0)
@@ -461,7 +461,7 @@
                      (cl-ds.common.2-3:access-root structure)))
                    ((:values new-bucket status)
                     (apply #'cl-ds.meta:alter-bucket
-                           operation container
+                           container operation
                            location (aref buffer 0)
                            all))
                    (tail buffer)
@@ -488,8 +488,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:take-out!-function)
-     (structure transactional-2-3-queue)
      container
+     (structure transactional-2-3-queue)
      location
      &rest all)
   (let ((tail-position (access-tail-position structure))
@@ -502,7 +502,7 @@
         (bind ((bucket (aref tail tail-position))
                ((:values new-buffer status)
                 (apply #'cl-ds.meta:alter-bucket
-                       operation container
+                       container operation
                        location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
@@ -519,8 +519,8 @@
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
                         (apply #'cl-ds.meta:alter-bucket
-                               operation
                                container
+                               operation
                                location
                                bucket
                                all)))
@@ -540,8 +540,8 @@
                      structure))
                    ((:values new-bucket status)
                     (apply #'cl-ds.meta:alter-bucket
-                           operation
                            container
+                           operation
                            location
                            (aref buffer 0)
                            all)))
@@ -558,8 +558,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((operation cl-ds.meta:take-out!-function)
-     (structure mutable-2-3-queue)
      container
+     (structure mutable-2-3-queue)
      location
      &rest all)
   (let ((tail-position (access-tail-position structure))
@@ -572,7 +572,7 @@
         (bind ((bucket (aref tail tail-position))
                ((:values new-buffer status)
                 (apply #'cl-ds.meta:alter-bucket!
-                       operation container
+                       container operation
                        location bucket all)))
           (if (cl-ds.meta:null-bucket-p new-buffer)
               (progn
@@ -589,8 +589,8 @@
                        (head-position (access-head-position structure))
                        ((:values shrinked-bucket status)
                         (apply #'cl-ds.meta:alter-bucket!
-                               operation
                                container
+                               operation
                                location
                                bucket
                                all)))
@@ -609,8 +609,8 @@
                     (cl-ds.common.2-3:delete-back-from-tree! structure))
                    ((:values new-bucket status)
                     (apply #'cl-ds.meta:alter-bucket!
-                           operation
                            container
+                           operation
                            location
                            (aref buffer 0)
                            all)))
@@ -785,8 +785,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:take-out!-function)
-                                             (structure synchronization-mixin)
                                              container
+                                             (structure synchronization-mixin)
                                              location
                                              &rest all)
   (declare (ignore all))
@@ -799,8 +799,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
-                                             (structure synchronization-mixin)
                                              container
+                                             (structure synchronization-mixin)
                                              location
                                              &rest all)
   (declare (ignore all))
@@ -814,8 +814,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:put!-function)
-                                             (structure fixed-capacity-synchronization-mixin)
                                              container
+                                             (structure fixed-capacity-synchronization-mixin)
                                              location
                                              &rest all)
   (declare (ignore all))
@@ -834,8 +834,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:take-out!-function)
-                                             (structure fixed-capacity-synchronization-mixin)
                                              container
+                                             (structure fixed-capacity-synchronization-mixin)
                                              location
                                              &rest all)
   (declare (ignore all))

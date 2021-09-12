@@ -128,8 +128,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure mutable-egnat-container)
                                              container
+                                             (structure mutable-egnat-container)
                                              location
                                              &rest all)
   (egnat-grow! structure container operation location all))

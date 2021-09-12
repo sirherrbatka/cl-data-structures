@@ -124,8 +124,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure functional-hamt-dictionary)
                                              container
+                                             (structure functional-hamt-dictionary)
                                              location &rest all &key value)
   (declare (optimize (speed 3)
                      (safety 1)
@@ -156,8 +156,8 @@ Methods. Those will just call non generic functions.
                            conflict))
            ((:dflet make-bucket ())
             (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
-                                         operation
                                          container
+                                         operation
                                          value
                                          all)))
               (setf changed (cl-ds:changed b))
@@ -188,8 +188,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure transactional-hamt-dictionary)
                                              container
+                                             (structure transactional-hamt-dictionary)
                                              location &rest all &key value)
   (declare (optimize (speed 3)
                      (safety 1)
@@ -212,8 +212,8 @@ Methods. Those will just call non generic functions.
               (values a b changed)))
            ((:dflet make-bucket ())
             (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
-                                         operation
                                          container
+                                         operation
                                          value
                                          all)))
               (setf changed (cl-ds:changed b))
@@ -245,8 +245,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:shrink-function)
-                                             (structure functional-hamt-dictionary)
                                              container
+                                             (structure functional-hamt-dictionary)
                                              location
                                              &rest all
                                              &key)
@@ -298,8 +298,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:shrink-function)
-                                             (structure transactional-hamt-dictionary)
                                              container
+                                             (structure transactional-hamt-dictionary)
                                              location
                                              &rest all
                                              &key)
@@ -346,8 +346,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:shrink-function)
-                                             (structure mutable-hamt-dictionary)
                                              container
+                                             (structure mutable-hamt-dictionary)
                                              location
                                              &rest all
                                              &key)
@@ -386,8 +386,8 @@ Methods. Those will just call non generic functions.
 
 
 (defmethod cl-ds.meta:position-modification ((operation cl-ds.meta:grow-function)
-                                             (structure mutable-hamt-dictionary)
                                              container
+                                             (structure mutable-hamt-dictionary)
                                              location
                                              &rest all
                                              &key value)
@@ -410,8 +410,8 @@ Methods. Those will just call non generic functions.
              (tag (read-ownership-tag structure))
              ((:dflet make-bucket ())
               (bind (((:values a b) (apply #'cl-ds.meta:make-bucket
-                                           operation
                                            container
+                                           operation
                                            value
                                            all)))
                 (values

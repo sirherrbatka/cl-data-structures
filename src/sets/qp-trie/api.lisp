@@ -21,8 +21,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((function cl-ds.meta:put!-function)
-     (structure mutable-qp-trie-set)
      container
+     (structure mutable-qp-trie-set)
      location
      &rest all)
   (declare (ignore all))
@@ -41,8 +41,8 @@
 
 (defmethod cl-ds.meta:position-modification
     ((function cl-ds.meta:erase!-function)
-     (structure mutable-qp-trie-set)
      container
+     (structure mutable-qp-trie-set)
      location
      &rest all)
   (declare (ignore all))
@@ -279,8 +279,8 @@
 
 
 (defmethod cl-ds.meta:position-modification ((function cl-ds.meta:erase*!-function)
-                                             (structure mutable-qp-trie-set)
                                              container
+                                             (structure mutable-qp-trie-set)
                                              (location qp-trie-set-range)
                                              &rest all)
   (declare (ignore all))
