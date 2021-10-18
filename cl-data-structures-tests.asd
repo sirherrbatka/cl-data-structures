@@ -1,6 +1,3 @@
-(cl:in-package #:cl-user)
-
-
 (asdf:defsystem cl-data-structures-tests
   :name "cl-data-structures-tests"
   :version "0.0.0"

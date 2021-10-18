@@ -212,7 +212,7 @@
            (setf (slot-value cell '%path) nil)
            (if (and (not (null path))
                     (setf path (to-pathname path :directory path))
-                    (osicat:directory-exists-p path)
+                    (uiop:directory-exists-p path)
                     (~> cell read-predicate (funcall path)))
                (return-from eat-cell (values path t))
                (return-from eat-cell (values nil nil))))
@@ -220,7 +220,7 @@
            (if (null prev-path)
                (return-from eat-cell (values nil nil))
                (let ((result (merge-pathnames (read-path cell) prev-path)))
-                 (if (and (osicat:directory-exists-p result)
+                 (if (and (uiop:directory-exists-p result)
                           (~> cell read-predicate (funcall result)))
                      (return-from eat-cell (values result t))
                      (go :start))))))))
@@ -237,7 +237,7 @@
              (if (~> cell access-prev-cell null)
                  (progn
                    (setf prev-path (to-pathname path :directory path))
-                   (unless (osicat:directory-exists-p prev-path)
+                   (unless (uiop:directory-exists-p prev-path)
                      (push :end (access-state cell))
                      (return-from eat-cell
                        (values nil nil)))
@@ -246,7 +246,7 @@
                  (if-let ((p (~>> cell access-prev-cell eat-cell)))
                    (progn
                      (setf prev-path (merge-pathnames path p))
-                     (when (osicat:directory-exists-p prev-path)
+                     (when (uiop:directory-exists-p prev-path)
                        (setf (access-state cell) (list prev-path)))
                      (go :start))
                    (progn
@@ -258,7 +258,7 @@
                         (~> cell access-state first (eql :end))))
              (for next-path = (pop (access-state cell)))
              (for directory-content = (~>> next-path directory-content
-                                           (delete-if-not #'osicat:directory-exists-p)))
+                                           (delete-if-not #'uiop:directory-exists-p)))
              (setf (access-state cell)
                    (cl-ds.utils:add-to-list directory-content
                                             (access-state cell)))
@@ -286,9 +286,8 @@
                    (values nil nil))
                  (let* ((directory-content
                           (~>> prev-path directory-content
-                               (delete-if-not (cl-ds.utils:and*
-                                               (rcurry #'osicat:file-exists-p
-                                                       :regular-file)
+                               (delete-if-not (alexandria:conjoin
+                                               #'uiop:file-exists-p
                                                (read-predicate cell))))))
                    (setf (access-state cell) directory-content)
                    (go :start))))
@@ -311,7 +310,7 @@
                    (values nil nil))
                  (let* ((directory-content
                           (~>> prev-path directory-content
-                               (delete-if-not (rcurry #'osicat:file-exists-p
+                               (delete-if-not (rcurry #'uiop:file-exists-p
                                                       :regular-file)))))
                    (setf (access-state cell) directory-content)
                    (go :start))))
@@ -326,11 +325,23 @@
 
 
 (defun directory-content (directory)
-  (osicat:list-directory directory))
+  (uiop:directory-files directory))
+
+
+(defun unmerge-pathnames (pathspec default)
+  "Removes those leading directory components from PATHSPEC that
+are shared with DEFAULT."
+  (let* ((dir (pathname-directory pathspec))
+         (mismatch (mismatch dir
+                             (pathname-directory default)
+                             :test #'equal)))
+    (make-pathname :directory (when mismatch
+                                (cons :relative (subseq dir mismatch)))
+                   :defaults pathspec)))
 
 
 (defun directory-regex-matches (regex path parent)
-  (~> (osicat:unmerge-pathnames path parent)
+  (~> (unmerge-pathnames path parent)
       namestring
       (cl-ppcre:scan regex _)
       not
@@ -376,7 +387,7 @@
                  (return-from eat-cell
                    (values nil nil))
                  (let* ((directory-content (~>> prev-path directory-content
-                                                (delete-if-not #'osicat:directory-exists-p)))
+                                                (delete-if-not #'uiop:directory-exists-p)))
                         (new-state (mapcar (curry #'list 1 prev-path) directory-content)))
                    (setf (access-state cell) new-state)
                    (go :start))))
@@ -385,7 +396,7 @@
              (for (depth prev-path next-path) = (pop (access-state cell)))
              (when (not-greater times depth)
                (let ((directory-content (~>> next-path directory-content
-                                             (delete-if-not #'osicat:directory-exists-p))))
+                                             (delete-if-not #'uiop:directory-exists-p))))
                  (setf (access-state cell)
                        (cl-ds.utils:add-to-list (mapcar (curry #'list (1+ depth) prev-path)
                                                         directory-content)
@@ -405,7 +416,7 @@
        (if (null inner)
            (values nil nil)
            (let ((next-path (merge-pathnames path inner)))
-             (if (and (osicat:file-exists-p next-path :regular-file)
+             (if (and (uiop:file-exists-p next-path :regular-file)
                       (~> cell read-predicate (funcall next-path)))
                  (return-from eat-cell (values next-path t))
                  (go :start)))))))

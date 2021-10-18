@@ -13,9 +13,8 @@
                 :more-conditions :closer-mop
                 :lparallel       :flexichain
                 :metabang-bind   :bordeaux-threads
-                :scribble        :osicat
-                :cl-ppcre        :trivial-garbage
-                :uiop)
+                :scribble        :uiop
+                :cl-ppcre        :trivial-garbage)
   :serial T
   :pathname "src"
   :components ((:file "aux-package")
