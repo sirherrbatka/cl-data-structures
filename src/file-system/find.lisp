@@ -287,8 +287,8 @@
                  (let* ((directory-content
                           (~>> prev-path directory-content
                                (delete-if-not (alexandria:conjoin
-                                               #'uiop:file-exists-p
-                                               (read-predicate cell))))))
+                                               (read-predicate cell)
+                                               #'uiop:file-exists-p)))))
                    (setf (access-state cell) directory-content)
                    (go :start))))
            (iterate
@@ -310,8 +310,7 @@
                    (values nil nil))
                  (let* ((directory-content
                           (~>> prev-path directory-content
-                               (delete-if-not (rcurry #'uiop:file-exists-p
-                                                      :regular-file)))))
+                               (delete-if-not #'uiop:file-exists-p))))
                    (setf (access-state cell) directory-content)
                    (go :start))))
            (iterate
@@ -325,7 +324,8 @@
 
 
 (defun directory-content (directory)
-  (uiop:directory-files directory))
+  (append (uiop:directory-files directory)
+          (uiop:subdirectories directory)))
 
 
 (defun unmerge-pathnames (pathspec default)
