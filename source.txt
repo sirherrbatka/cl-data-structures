@@ -1,0 +1,1 @@
+latest-github-release https://github.com/sirherrbatka/cl-data-structures.git
