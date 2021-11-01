@@ -406,7 +406,6 @@
 (defmethod cl-ds:clone ((container fundamental-skip-list))
   (cl-ds.utils:with-slots-for (container fundamental-skip-list)
     (make (class-of container)
-          :size size
           :ordering-function ordering-function
           :pointers (map 'vector
                          (rcurry #'gethash
@@ -420,7 +419,6 @@
 (defmethod cl-ds:empty-clone ((container fundamental-skip-list))
   (cl-ds.utils:with-slots-for (container fundamental-skip-list)
     (make (class-of container)
-          :size 0
           :ordering-function ordering-function
           :pointers (make-array maximum-level :initial-element nil)
           :test-function (access-test-function container)
@@ -429,7 +427,6 @@
 
 (defmethod cl-ds:reset! ((container fundamental-skip-list))
   (cl-ds.utils:with-slots-for (container fundamental-skip-list)
-    (setf size 0)
     (cl-ds.utils:transform (constantly nil) pointers)
     container))
 
