@@ -39,6 +39,10 @@
 
 (declaim (inline sparse-rrb-node-content))
 (declaim (inline sparse-rrb-node-bitmask))
+(declaim (inline sparse-rrb-node-untagged-content))
+(declaim (inline sparse-rrb-node-untagged-bitmask))
+(declaim (inline sparse-rrb-node-tagged-content))
+(declaim (inline sparse-rrb-node-tagged-bitmask))
 (cl-ds.common.abstract:define-tagged-untagged-node sparse-rrb-node
   (content #() :type (simple-array * (*)))
   (bitmask 0 :type sparse-rrb-mask))
