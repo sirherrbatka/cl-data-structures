@@ -69,7 +69,7 @@
            (for fname = (struct-accessor-name name slot))
            (collect `(defun ,fname
                          (argument)
-                       (declare (optimize (speed 3)))
+                       (declare (optimize (speed 3) (safety 0)))
                        (if (typep argument ',tagged-name)
                            (,(struct-accessor-name tagged-name slot) argument)
                            (,(struct-accessor-name untagged-name slot) argument))))

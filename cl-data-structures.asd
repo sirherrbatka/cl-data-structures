@@ -1,6 +1,3 @@
-(cl:in-package #:cl-user)
-
-
 (asdf:defsystem cl-data-structures
   :name "cl-data-structures"
   :version "1.0.0"
