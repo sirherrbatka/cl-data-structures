@@ -53,6 +53,8 @@
    #:sparse-nref
    #:sparse-rrb-mask
    #:sparse-rrb-node
+   #:sparse-rrb-node-untagged
+   #:sparse-rrb-node-tagged
    #:sparse-rrb-node-bitmask
    #:sparse-rrb-node-contains
    #:sparse-rrb-node-contains
