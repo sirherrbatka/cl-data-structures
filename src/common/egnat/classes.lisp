@@ -84,9 +84,6 @@
            :accessor access-stack)
    (%initial-stack :reader read-initial-stack
                    :initarg :stack)
-   (%initial-results :initform '()
-                     :initarg :results
-                     :reader read-initial-stack)
    (%container :initarg :container
                :reader read-container)))
 
