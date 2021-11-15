@@ -23,17 +23,13 @@
           %initial-to %to)))
 
 
-(defmethod reinitialize-instance ((instance sequence-window)
-                                  &key &allow-other-keys)
+(defmethod cl-ds:reset! ((instance sequence-window))
   (bind (((:slots %from %current-index
                   %initial-to %to)
           instance))
     (setf %current-index %from
-          %to %initial-to)))
-
-
-(defmethod cl-ds:reset! ((instance sequence-window))
-  (reinitialize-instance instance))
+          %to %initial-to))
+  instance)
 
 
 (defclass random-access-sequence-window (sequence-window)

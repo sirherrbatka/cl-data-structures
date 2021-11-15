@@ -74,12 +74,8 @@
 
 
 (defmethod cl-ds:reset! ((range forward-connecting-range))
-  (reinitialize-instance range))
-
-
-(defmethod reinitialize-instance :after ((range forward-connecting-range)
-                                         &key &allow-other-keys)
-  (init-connected-ranges range))
+  (init-connected-ranges range)
+  range)
 
 
 (defmethod initialize-instance :after ((range forward-connecting-range)

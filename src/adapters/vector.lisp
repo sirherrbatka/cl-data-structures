@@ -43,10 +43,6 @@
   range)
 
 
-(defmethod reinitialize-instance ((range vector-range) &key &allow-other-keys)
-  (init-vector-range range))
-
-
 (defmethod initialize-instance :after ((range vector-range) &key &allow-other-keys)
   (init-vector-range range))
 
@@ -66,7 +62,8 @@
 
 
 (defmethod cl-ds:reset! ((range vector-range))
-  (reinitialize-instance range))
+  (init-vector-range range)
+  range)
 
 
 (defmethod cl-ds:clone ((range vector-range))

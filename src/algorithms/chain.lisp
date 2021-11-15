@@ -53,11 +53,6 @@
   (init-chain-of-range obj))
 
 
-(defmethod reinitialize-instance ((obj forward-chain-of-ranges)
-                                  &key &allow-other-keys)
-  (init-chain-of-range obj))
-
-
 (defun chain (&rest ranges)
   (map nil
        (lambda (x) (check-type x cl-ds:fundamental-forward-range))
@@ -72,7 +67,7 @@
 
 
 (defmethod cl-ds:reset! ((range forward-chain-of-ranges))
-  (reinitialize-instance range)
+  (init-chain-of-range range)
   range)
 
 

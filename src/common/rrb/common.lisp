@@ -888,12 +888,6 @@
             :to (read-initial-upper-bound instance)))
 
 
-(defmethod reinitialize-instance (instance &key &allow-other-keys)
-  (init-rrb instance (access-container instance)
-            :from (read-initial-lower-bound instance)
-            :to (read-initial-upper-bound instance)))
-
-
 (defmethod cl-ds:peek-front ((range rrb-range))
   (bind (((:slots %start %content) range))
     (if (null %content)
@@ -1015,9 +1009,11 @@
     range))
 
 
-(defmethod cl-ds:reset! ((obj rrb-range))
-  (reinitialize-instance obj)
-  obj)
+(defmethod cl-ds:reset! ((instance rrb-range))
+  (init-rrb instance (access-container instance)
+            :from (read-initial-lower-bound instance)
+            :to (read-initial-upper-bound instance))
+  instance)
 
 
 (defmethod cl-ds:size ((obj rrb-range))
