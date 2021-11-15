@@ -5,7 +5,6 @@
 Basic types
 
 |#
-
 (eval-always
   (define-constant +hash-level+ 5)
   (define-constant +maximum-children-count+ (ash 1 +hash-level+))

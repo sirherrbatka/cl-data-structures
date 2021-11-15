@@ -2,7 +2,8 @@
 
 
 (defclass range-function (closer-mop:standard-generic-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass layer-function (range-function)
