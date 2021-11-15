@@ -276,7 +276,8 @@
     (apply #'pass-bucket-operation container operation data all)))
 
 
-(define-constant null-bucket 'null-bucket)
+(eval-always
+  (define-constant null-bucket 'null-bucket))
 
 
 (defgeneric map-bucket (container bucket function)

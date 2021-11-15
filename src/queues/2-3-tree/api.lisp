@@ -1,7 +1,8 @@
 (cl:in-package #:cl-data-structures.queues.2-3-tree)
 
 
-(define-constant +buffer-size+ 32)
+(eval-always
+  (define-constant +buffer-size+ 32))
 
 
 (deftype queue-buffer ()

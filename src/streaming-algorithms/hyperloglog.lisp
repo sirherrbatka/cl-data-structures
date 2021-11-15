@@ -17,16 +17,17 @@
 This is loglog-beta to be specific.
 |#
 
-(define-constant +p+ 14)
-(define-constant +m+ (ash 1 +p+))
-(define-constant +max+ (- 64 +p+))
-(define-constant +maxx+ (ldb (byte +p+ 0) #xFFFFFFFFFFFFFFFF))
-(define-constant +alpha+ (/ 0.7213d0 (1+ (/ 1.079d0 +m+))))
-(define-constant +q+ 6)
-(define-constant +r+ 10)
-(define-constant +2q+ (ash 1 +q+))
-(define-constant +2r+ (ash 1 +r+))
-(define-constant +c+  0.169919487159739093975315012348d0)
+(eval-always
+  (define-constant +p+ 14)
+  (define-constant +m+ (ash 1 +p+))
+  (define-constant +max+ (- 64 +p+))
+  (define-constant +maxx+ (ldb (byte +p+ 0) #xFFFFFFFFFFFFFFFF))
+  (define-constant +alpha+ (/ 0.7213d0 (1+ (/ 1.079d0 +m+))))
+  (define-constant +q+ 6)
+  (define-constant +r+ 10)
+  (define-constant +2q+ (ash 1 +q+))
+  (define-constant +2r+ (ash 1 +r+))
+  (define-constant +c+  0.169919487159739093975315012348d0))
 
 
 (deftype register ()

@@ -65,7 +65,8 @@
     expected-counts))
 
 
-(define-constant +epsilon+ 1.19e-07 :test '=)
+(eval-always
+  (define-constant +epsilon+ 1.19e-07 :test '=))
 
 
 (defun gamma-function-incomplete (a x)

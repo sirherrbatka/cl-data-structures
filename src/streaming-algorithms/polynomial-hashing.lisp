@@ -11,8 +11,9 @@
 (cl:in-package #:cl-data-structures.streaming-algorithms.polynomial-hashing)
 
 
-(define-constant +long-prime+ 4294967311)
-(define-constant +max-64-bits+ #xFFFFFFFFFFFFFFFF)
+(eval-always
+  (define-constant +long-prime+ 4294967311)
+  (define-constant +max-64-bits+ #xFFFFFFFFFFFFFFFF))
 
 
 (deftype hash ()
