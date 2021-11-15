@@ -6,9 +6,10 @@ Basic types
 
 |#
 
-(define-constant +hash-level+ 5)
-(define-constant +maximum-children-count+ (ash 1 +hash-level+))
-(define-constant +depth+ (floor (/ 64 +hash-level+)))
+(eval-always
+  (define-constant +hash-level+ 5)
+  (define-constant +maximum-children-count+ (ash 1 +hash-level+))
+  (define-constant +depth+ (floor (/ 64 +hash-level+))))
 
 
 (deftype hash-node-index ()

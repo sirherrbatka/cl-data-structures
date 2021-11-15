@@ -2,16 +2,17 @@
 (cl:in-package #:cl-data-structures.common.rrb)
 
 
-(define-constant +bit-count+ 5)
-(define-constant +maximal-shift+ (iterate
-                                   (for c
-                                        initially (ash 1 +bit-count+)
-                                        then (ash c +bit-count+))
-                                   (while (non-negative-fixnum-p c))
-                                   (counting t)))
-(define-constant +maximum-children-count+ (ash 1 +bit-count+))
-(define-constant +tail-mask+ (dpb 0 (byte +bit-count+ 0)
-                                  most-positive-fixnum))
+(eval-always
+  (define-constant +bit-count+ 5)
+  (define-constant +maximal-shift+ (iterate
+                                     (for c
+                                          initially (ash 1 +bit-count+)
+                                          then (ash c +bit-count+))
+                                     (while (non-negative-fixnum-p c))
+                                     (counting t)))
+  (define-constant +maximum-children-count+ (ash 1 +bit-count+))
+  (define-constant +tail-mask+ (dpb 0 (byte +bit-count+ 0)
+                                    most-positive-fixnum)))
 
 
 (deftype node-content ()
