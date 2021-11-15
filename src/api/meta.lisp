@@ -2,67 +2,83 @@
 
 
 (defclass functional-function ()
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass destructive-function ()
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass grow-function ()
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass shrink-function ()
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass insert-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass update-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass update-if-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass add-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass erase-function (shrink-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass erase-if-function (shrink-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass put-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass take-out-function (shrink-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass take-out-back-function (shrink-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass take-out-front-function (shrink-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass put-back-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass put-front-function (grow-function)
-  ())
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
 
 
 (defclass take-out!-function (closer-mop:standard-generic-function
