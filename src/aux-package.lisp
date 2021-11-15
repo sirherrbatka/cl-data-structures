@@ -1,6 +1,7 @@
 (cl:in-package #:cl-user)
 
 (defpackage #:cl-data-structures.fancy
+  (:use)
   (:export #:defpackage)
   (:nicknames #:cl-ds.fancy))
 
@@ -18,6 +19,7 @@
            (cl:push optval reexports)))))
     `(cl:eval-when (:compile-toplevel :load-toplevel :execute)
        (cl:defpackage ,package
+         (:use)
          ,@(cl:remove :reexport options :key #'cl:car)
          ,@(cl:loop for rexport-spec in reexports
                  append
