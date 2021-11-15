@@ -1,8 +1,7 @@
 (cl:in-package #:cl-data-structures)
 
 
-(defclass expression (c2mop:funcallable-standard-object
-                      chunking-mixin
+(defclass expression (chunking-mixin
                       fundamental-forward-range)
   ((%construct-function :initarg :construct-function
                         :type function
@@ -15,8 +14,7 @@
    (%finished-closure :accessor access-finished-closure
                       :initarg :finished-closure)
    (%closure :accessor access-closure
-             :initarg :closure))
-  (:metaclass c2mop:funcallable-standard-class))
+             :initarg :closure)))
 
 
 (defmethod clone ((obj expression))
@@ -38,9 +36,8 @@
 (defmethod initialize-instance :after ((obj expression) &rest all
                                        &key &allow-other-keys)
   (declare (ignore all))
-  (if (slot-boundp obj '%closure)
-      (c2mop:set-funcallable-instance-function obj (access-closure obj))
-      (reset! obj)))
+  (unless (slot-boundp obj '%closure)
+    (reset! obj)))
 
 
 (defmacro xpr (arguments &body body)
@@ -106,8 +103,7 @@
           (apply %construct-function %arguments)))
     (setf %closure function
           %finished-closure finished-closure
-          %arguments-closure arguments-closure)
-    (c2mop:set-funcallable-instance-function obj function))
+          %arguments-closure arguments-closure))
   obj)
 
 
