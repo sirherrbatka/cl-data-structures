@@ -14,7 +14,7 @@
   (is data '(4 3 2 1) :test #'equal)
   (setf data nil)
   (iterate
-    (for (values value not-finished) = (funcall expression))
+    (for (values value not-finished) = (cl-ds:consume-front expression))
     (while not-finished)
     (push value data))
   (is data '(4 3 2 1) :test #'equal))

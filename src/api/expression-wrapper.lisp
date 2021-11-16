@@ -84,7 +84,7 @@
 
 
 (defmethod consume-front ((obj expression))
-  (funcall obj))
+  (funcall (access-closure obj)))
 
 
 (defmethod peek-front ((obj expression))
