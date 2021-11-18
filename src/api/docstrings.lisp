@@ -52,7 +52,8 @@
                        (set (cl-ds:make-from-traversable
                              data
                              'cl-ds.ms.egnat:mutable-egnat-metric-set
-                             #'= (alexandria:compose #'abs #'-) 'fixnum))
+                             (alexandria:compose #'abs #'-)
+                             'fixnum))
                        (near (cl-ds.alg:to-vector (cl-ds:near set 10 7))))
                   (prove:ok (every (lambda (x) (< 3 x 17)) near)))]))
 
