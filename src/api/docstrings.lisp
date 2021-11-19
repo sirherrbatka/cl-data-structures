@@ -153,15 +153,17 @@
         (prove:diag "Running example for ERASE-IF")
         (prove:is (cl-ds:at next-table 'a) 5)
         (prove:is (cl-ds:at table 'a) 5 :test (alexandria:compose #'null #'eql))
-        (cl-ds:mod-bind (erased-table found value)
+        (cl-ds:mod-bind (erased-table found value changed)
                         (cl-ds:erase-if next-table 'a
-                                        (lambda (location value) (declare (ignore location))
+                                        (lambda (value)
                                           (evenp value)))
-          (prove:ok (null found))
-          (prove:is value nil)
+          (prove:ok found)
+          (prove:is value 5)
+          (prove:is changed nil)
           (prove:is (cl-ds:at erased-table 'a) 5)
           (prove:is (cl-ds:at next-table 'a) 5))
-        (cl-ds:mod-bind (erased-table found value) (cl-ds:erase-if next-table 'b (lambda (location value) (declare (ignore location)) (evenp value)))
+        (cl-ds:mod-bind (erased-table found value)
+                        (cl-ds:erase-if next-table 'b (lambda (value) (evenp value)))
           (prove:ok found)
           (prove:is value 6)
           (prove:is (cl-ds:at erased-table 'b) nil)
@@ -189,12 +191,13 @@
               (cl-ds:at table 'b) 6)
         (prove:diag "Running example for ERASE-IF!")
         (prove:is (cl-ds:at table 'a) 5)
-        (cl-ds:mod-bind (erased-table found value) (cl-ds:erase-if! table 'a (lambda (location value) (declare (ignore location)) (evenp value)))
-          (prove:ok (null found))
-          (prove:is value nil)
+        (cl-ds:mod-bind (erased-table found value changed) (cl-ds:erase-if! table 'a (lambda (value) (evenp value)))
+          (prove:ok found)
+          (prove:is value 5)
+          (prove:is changed nil)
           (prove:is erased-table table)
           (prove:is (cl-ds:at erased-table 'a) 5))
-        (cl-ds:mod-bind (erased-table found value) (cl-ds:erase-if! table 'b (lambda (location value) (declare (ignore location)) (evenp value)))
+        (cl-ds:mod-bind (erased-table found value) (cl-ds:erase-if! table 'b (lambda (value) (evenp value)))
           (prove:ok found)
           (prove:is value 6)
           (prove:is erased-table table)
@@ -313,7 +316,7 @@
      "Mutable API: If the LOCATION is taken in the CONTAINER, destructivly update it with the NEW-VALUE"
 
      :syntax
-     "(update! container location new-value) -> same-container status"
+     "(update! container location new-value) => same-container status"
 
      :returns
      ("CONTAINER"
