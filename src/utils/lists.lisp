@@ -186,7 +186,7 @@
   (if (emptyp sequence)
       t
       (progn
-        (reduce (lambda (&optional (prev nil prev-bound) (next nil next-bound))
+        (reduce (lambda (&optional (prev nil) (next nil next-bound))
                   (if next-bound
                       (if (funcall test
                                    (funcall key prev)

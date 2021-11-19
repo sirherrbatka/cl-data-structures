@@ -116,11 +116,6 @@
     (stream-error (e) (declare (ignore e)))))
 
 
-(more-conditions:define-condition-translating-method close-inner-stream
-    ((error cl-ds:file-releated-error)))
-
-
-
 (defgeneric close-inner-stream (range)
   (:method ((range cl-ds:fundamental-forward-range))
     (cl-ds:forward-call range #'close-inner-stream))
@@ -129,6 +124,10 @@
       (close-silence-errors stream)
       (setf (car (slot-value range '%stream)) nil))
     range))
+
+
+(more-conditions:define-condition-translating-method close-inner-stream
+    ((error cl-ds:file-releated-error)))
 
 
 (defmacro with-file-ranges (bindings &body body)
