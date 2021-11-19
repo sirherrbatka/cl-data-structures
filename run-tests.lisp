@@ -20,6 +20,11 @@
              (prove:*enable-colors* t)
              (prove:*default-reporter* :dot))
          (prove:run :cl-data-structures-tests)
-         (prove:diag "Running examples now.")
-         (documentation-utils-extensions:execute-documentation :label :examples)))
+         (prove:diag "Running API examples now.")
+         (documentation-utils-extensions:execute-documentation :package :cl-data-structures :label :examples)
+         (prove:diag "Running ALG examples now.")
+         (documentation-utils-extensions:execute-documentation :package :cl-data-structures.algorithms :label :examples)
+         ))
   (cl-user::quit))
+
+(cl-ds.alg:first-element :key (map 'string #'second))

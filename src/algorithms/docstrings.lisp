@@ -57,12 +57,10 @@
 
   (function partition-if
     (:description "Groups consecutive elements in the range into a partition if TEST called on the previous value in the range and the current value in the range returns non-NIL, creates new partition otherwise. This does not change the content of the RANGE, but it will force aggregation to be performed on every group independently. Order of the groups is preserved in the aggregation result."
-     :examples "(let* ((data '((1 "w") (1 "o") (1 "r") (1 "d") (2 "a") (2 "s") (3 "l") (3 "a") (3 "w")))
+     :examples "(let* ((data '((1 \"w\") (1 \"o\") (1 \"r\") (1 \"d\") (2 \"a\") (2 \"s\") (3 \"l\") (3 \"a\") (3 \"w\")))
                        (partitioned (cl-ds.alg:partition-if data (lambda (prev next) (= (first prev) (first next)))))
-                       (aggregated (cl-ds.alg:to-vector partitioned :element-type 'character
-                                                                    :key (alexandria:compose #'alexandria:first-elt
-                                                                                             #'second))))
-                  (prove:is aggregated #("word" "as" "law") :test #'equalp))"
+                       (aggregated (cl-ds.alg:to-vector partitioned :key (lambda (x) (map 'string (alexandria:compose #'alexandria:first-elt #'second) x)))))
+                  (prove:is aggregated #(\"word\" \"as\" \"law\") :test #'equalp))"
      :notes ("Aggregation on the returned range is performed eagerly."
              "Can be considered to be alternative to the GROUP-BY, suitable for the ordered data.")
      :returns "ABSTRACT-PARTITION-IF-PROXY instance."
