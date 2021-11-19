@@ -43,6 +43,18 @@
                  (arguments "Arguments, as passed to usual make function.")
                  (traversable "Data that should be put in the result container."))))
 
+  (function between*
+    (:description "Searches the ordered CONTAINER for elements between LOW and HIGH. Returns range."
+     :arguments ((container "Container searched for elements.")
+                 (:low "Lower boundry.")
+                 (:high "High boundry."))
+     :examples [(prove:is (cl-ds.alg:to-list (cl-ds:between* (cl-ds:make-from-traversable (cl-ds:iota-range :to 500)
+                                                                                          'cl-ds.sets.skip-list:mutable-skip-list-set
+                                                                                          #'< #'=)
+                                                             :low 10
+                                                             :high 20))
+                          (alexandria:iota 10 :start 10))]))
+
   (function near
     (:description "Searches the CONTAINER for elements that are at most a MAXIMAL-DISTANCE away from the ITEM. Returns a range of elements."
      :arguments ((container "Container searched for element.")
