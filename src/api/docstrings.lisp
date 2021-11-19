@@ -1,5 +1,4 @@
 (cl:in-package #:cl-data-structures)
-(named-readtables:in-readtable :scribble)
 
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
@@ -19,15 +18,14 @@
      "Obtain element stored at LOCATION in the CONTAINER."
 
      :examples
-     [(let ((table (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
-        (prove:diag "Testing example for AT function.")
+     "(let ((table (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
         (multiple-value-bind (value found) (cl-ds:at table 'a)
           (prove:is value nil)
           (prove:is found nil))
         (setf (cl-ds:at table 'a) 1)
         (multiple-value-bind (value found) (cl-ds:at table 'a)
           (prove:is value 1)
-          (prove:is found t)))]))
+          (prove:is found t)))"))
 
   (function dimensionality
     (:description "Number of dimensions in the object."))
@@ -48,26 +46,26 @@
      :arguments ((container "Container searched for elements.")
                  (:low "Lower boundry.")
                  (:high "High boundry."))
-     :examples [(prove:is (cl-ds.alg:to-list (cl-ds:between* (cl-ds:make-from-traversable (cl-ds:iota-range :to 500)
+     :examples "(prove:is (cl-ds.alg:to-list (cl-ds:between* (cl-ds:make-from-traversable (cl-ds:iota-range :to 500)
                                                                                           'cl-ds.sets.skip-list:mutable-skip-list-set
                                                                                           #'< #'=)
                                                              :low 10
                                                              :high 20))
-                          (alexandria:iota 10 :start 10))]))
+                          (alexandria:iota 10 :start 10))"))
 
   (function near
     (:description "Searches the CONTAINER for elements that are at most a MAXIMAL-DISTANCE away from the ITEM. Returns a range of elements."
      :arguments ((container "Container searched for element.")
                  (item "Item to search around.")
                  (maximal-distance "Don't yield elements longer "))
-     :examples [(let* ((data #(10 20 40 5 11 12 50 30 20 1 6 7 8 18 21 51 52 80 78))
+     :examples "(let* ((data #(10 20 40 5 11 12 50 30 20 1 6 7 8 18 21 51 52 80 78))
                        (set (cl-ds:make-from-traversable
                              data
                              'cl-ds.ms.egnat:mutable-egnat-metric-set
                              (alexandria:compose #'abs #'-)
                              'fixnum))
                        (near (cl-ds.alg:to-vector (cl-ds:near set 10 7))))
-                  (prove:ok (every (lambda (x) (< 3 x 17)) near)))]))
+                  (prove:ok (every (lambda (x) (< 3 x 17)) near)))"))
 
   (function add
     (:description "Add NEW-VALUE into the CONTAINER at the LOCATION. Will not replace a value at LOCATION if it was already occupied."))
@@ -106,10 +104,10 @@
      :notes "This is the functional counterpart to the (SETF AT) function."
 
      :examples
-     [(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
+     "(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
              (next-table (cl-ds:insert table 'a 5)))
         (prove:is (cl-ds:at next-table 'a) 5)
-        (prove:is (cl-ds:at table 'a) 5 :test (alexandria:compose #'null #'eql)))]))
+        (prove:is (cl-ds:at table 'a) 5 :test (alexandria:compose #'null #'eql)))"))
 
   (function erase
     (:syntax "erase container location => new-instance status"
@@ -123,16 +121,15 @@
      :notes "This is the functional counterpart to the ERASE! function."
 
      :examples
-     [(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
+     "(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
              (next-table (cl-ds:insert table 'a 5)))
-        (prove:diag \"Running example for ERASE\")
         (prove:is (cl-ds:at next-table 'a) 5)
         (prove:is (cl-ds:at table 'a) 5 :test (alexandria:compose #'null #'eql))
         (cl-ds:mod-bind (erased-table found value) (cl-ds:erase next-table 'a)
           (prove:ok found)
           (prove:is value 5)
           (prove:is (cl-ds:at erased-table 'a) nil)
-          (prove:is (cl-ds:at next-table 'a) 5)))]
+          (prove:is (cl-ds:at next-table 'a) 5)))"
 
      :arguments
      (("CONTAINER" "Container that shall be modified.")
@@ -148,9 +145,8 @@
       "Modification status object.")
 
      :examples
-     [(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
+     "(let* ((table (cl-ds.dicts.hamt::make-functional-hamt-dictionary #'sxhash #'eq))
              (next-table (cl-ds:insert (cl-ds:insert table 'a 5) 'b 6)))
-        (prove:diag "Running example for ERASE-IF")
         (prove:is (cl-ds:at next-table 'a) 5)
         (prove:is (cl-ds:at table 'a) 5 :test (alexandria:compose #'null #'eql))
         (cl-ds:mod-bind (erased-table found value changed)
@@ -167,7 +163,7 @@
           (prove:ok found)
           (prove:is value 6)
           (prove:is (cl-ds:at erased-table 'b) nil)
-          (prove:is (cl-ds:at next-table 'b) 6)))]
+          (prove:is (cl-ds:at next-table 'b) 6)))"
 
      :arguments
      (("CONTAINER" "Container that shall be modified.")
@@ -186,10 +182,9 @@
       "Modification status object.")
 
      :examples
-     [(let* ((table (cl-ds.dicts.hamt::make-mutable-hamt-dictionary #'sxhash #'eq)))
+     "(let* ((table (cl-ds.dicts.hamt::make-mutable-hamt-dictionary #'sxhash #'eq)))
         (setf (cl-ds:at table 'a) 5
               (cl-ds:at table 'b) 6)
-        (prove:diag "Running example for ERASE-IF!")
         (prove:is (cl-ds:at table 'a) 5)
         (cl-ds:mod-bind (erased-table found value changed) (cl-ds:erase-if! table 'a (lambda (value) (evenp value)))
           (prove:ok found)
@@ -201,7 +196,7 @@
           (prove:ok found)
           (prove:is value 6)
           (prove:is erased-table table)
-          (prove:is (cl-ds:at erased-table 'b) nil)))]
+          (prove:is (cl-ds:at erased-table 'b) nil)))"
 
      :arguments (("CONTAINER" "Container that shall be modified.")
                  ("LOCATION" "Designates place in returned instance that will be changed.")
@@ -225,10 +220,10 @@
      :arguments (("container" "instance that will be checked."))
      :returns "The number of elements in the container."
      :examples
-     [(let ((container (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
+     "(let ((container (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
         (prove:is (cl-ds:size container) 0)
         (setf (cl-ds:at container 'a) 1)
-        (prove:is (cl-ds:size container) 1))]))
+        (prove:is (cl-ds:size container) 1))"))
 
   (function update
     (:description
@@ -451,13 +446,12 @@
      :arguments ((container "Any subclass of fundamental-container"))
 
      :examples
-     [(progn (prove:diag "Running example for mutablep.")
-             (let ((mutable (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
+     "(progn (let ((mutable (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
                (prove:ok (cl-ds:mutablep mutable))
                (prove:ok (not (cl-ds:functionalp mutable))))
              (let ((functional (cl-ds.dicts.hamt:make-functional-hamt-dictionary #'sxhash #'eq)))
                (prove:ok (not (cl-ds:mutablep functional)))
-               (prove:ok (cl-ds:functionalp functional))))]
+               (prove:ok (cl-ds:functionalp functional))))"
 
      :returns "T if CONTAINER exposes mutable API and NIL if not."))
 
@@ -466,25 +460,22 @@
                "(functionalp functional-container) -> t")
      :arguments (("container" "A subclass of the fundamental-container"))
      :examples
-     [(progn
-        (prove:diag "Running example for the functionalp function.")
+     "(progn
         (let ((mutable (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq)))
           (prove:ok (cl-ds:mutablep mutable))
           (prove:ok (not (cl-ds:functionalp mutable))))
         (let ((functional (cl-ds.dicts.hamt:make-functional-hamt-dictionary #'sxhash #'eq)))
           (prove:ok (not (cl-ds:mutablep functional)))
-          (prove:ok (cl-ds:functionalp functional))))]
+          (prove:ok (cl-ds:functionalp functional))))"
      :returns "T if CONTAINER exposes functional API and NIL if not."))
 
   (function transactionalp
     (:syntax "transactionalp container => boolean"
      :arguments (("container" "An subclass of the fundamental-container."))
      :examples
-     [(progn
-        (prove:diag "Running example for the transactionalp.")
-        (let ((container (cl-ds:become-transactional (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq))))
+     "(let ((container (cl-ds:become-transactional (cl-ds.dicts.hamt:make-mutable-hamt-dictionary #'sxhash #'eq))))
           (prove:ok (cl-ds:mutablep container))
-          (prove:ok (cl-ds:transactionalp container))))]
+          (prove:ok (cl-ds:transactionalp container)))"
      :returns "T if the CONTAINER is transactional and NIL if it is not."))
 
   (function value
@@ -503,14 +494,14 @@
                  (body "Body of the expression."))
      :notes "Objects used as part of the state should be immutable to support RESET! and CLONE operations properly."
      :description "Constructs expression. Expression is a forward range build around the function closed over the state. State can be modified with SEND-RECUR and RECUR forms. SEND-RECUR modifies state and returns the value. RECUR modifies state but does not return the value."
-     :examples [(let ((iota (cl-ds:xpr (:i 0) ; this will construct iota range with elements 0, 1, 2, 3, 4
+     :examples "(let ((iota (cl-ds:xpr (:i 0) ; this will construct iota range with elements 0, 1, 2, 3, 4
                               (when (< i 5) ; check the stop condition
                                 (cl-ds:send-recur i :i (1+ i)))))) ; yield i and bind (1+ i) to i
                   (prove:is (cl-ds:consume-front iota) 0)
                   (prove:is (cl-ds:consume-front iota) 1)
                   (prove:is (cl-ds:consume-front iota) 2)
                   (prove:is (cl-ds:consume-front iota) 3)
-                  (prove:is (cl-ds:consume-front iota) 4))]))
+                  (prove:is (cl-ds:consume-front iota) 4))"))
 
   (function found
     (:syntax "found status => boolean"

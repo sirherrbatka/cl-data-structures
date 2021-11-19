@@ -19,5 +19,7 @@
              (*standard-output* (make-broadcast-stream))
              (prove:*enable-colors* t)
              (prove:*default-reporter* :dot))
-         (prove:run :cl-data-structures-tests)))
+         (prove:run :cl-data-structures-tests)
+         (prove:diag "Running examples now.")
+         (documentation-utils-extensions:execute-documentation :label :examples)))
   (cl-user::quit))
