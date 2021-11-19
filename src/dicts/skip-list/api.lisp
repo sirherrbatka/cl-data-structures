@@ -124,9 +124,8 @@
                                             (if (cl-ds:changed status)
                                                 (let ((result (~> container
                                                                   cl-ds.common.skip-list:access-maximum-level
-                                                                  (cl-ds.common.skip-list:make-skip-list-node-of-random-level value))))
+                                                                  (cl-ds.common.skip-list:make-skip-list-node-of-random-level bucket))))
                                                   (setf (cl-ds.common.skip-list:skip-list-node-content result) location)
-                                                  (setf (cl-ds.common.skip-list:assoc-skip-list-node-value result) bucket)
                                                   (values result status))
                                                 (values nil status)))
                                           (bind (((:values bucket status)
