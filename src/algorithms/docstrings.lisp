@@ -1,5 +1,4 @@
 (cl:in-package #:cl-data-structures.algorithms)
-(named-readtables:in-readtable :scribble)
 
 
 (docs:define-docs
@@ -7,13 +6,13 @@
 
   (function sliding-window
     (:description "Groups RANE elementwise using sliding window of the the size WINDOW-SIZE."
-     :examples [(progn
+     :examples "(progn
                   (prove:is (cl-ds.alg:to-list (cl-ds.alg:sliding-window '(1 2 3) 3))
                             '((1 2 3))
                             :test 'equal)
                   (prove:is (cl-ds.alg:to-list (cl-ds.alg:sliding-window '(1 2 3 4) 3))
                             '((1 2 3) (2 3 4))
-                            :test 'equal))]
+                            :test 'equal))"
      :arguments ((range "Input range.")
                  (window-size "Size of the sliding window."))
      :notes ("Windows are always of the length of WINDOW-SIZE. If there is not enough elements to form window, range will act as it would be empty.")
@@ -58,12 +57,12 @@
 
   (function partition-if
     (:description "Groups consecutive elements in the range into a partition if TEST called on the previous value in the range and the current value in the range returns non-NIL, creates new partition otherwise. This does not change the content of the RANGE, but it will force aggregation to be performed on every group independently. Order of the groups is preserved in the aggregation result."
-     :examples [(let* ((data '((1 "w") (1 "o") (1 "r") (1 "d") (2 "a") (2 "s") (3 "l") (3 "a") (3 "w")))
+     :examples "(let* ((data '((1 "w") (1 "o") (1 "r") (1 "d") (2 "a") (2 "s") (3 "l") (3 "a") (3 "w")))
                        (partitioned (cl-ds.alg:partition-if data (lambda (prev next) (= (first prev) (first next)))))
                        (aggregated (cl-ds.alg:to-vector partitioned :element-type 'character
                                                                     :key (alexandria:compose #'alexandria:first-elt
                                                                                              #'second))))
-                  (prove:is aggregated #("word" "as" "law") :test #'equalp))]
+                  (prove:is aggregated #("word" "as" "law") :test #'equalp))"
      :notes ("Aggregation on the returned range is performed eagerly."
              "Can be considered to be alternative to the GROUP-BY, suitable for the ordered data.")
      :returns "ABSTRACT-PARTITION-IF-PROXY instance."
@@ -119,10 +118,10 @@
     (:description "Counts the number of elements. Useful mostly in conjunction with a GROUP-BY."
      :returns "Integer."
      :arguments ((range "Input range."))
-     :examples [(let ((data #(1 2 3 4 5)))
+     :examples "(let ((data #(1 2 3 4 5)))
                   (prove:is (length data) (cl-ds.alg:count-elements data))
                   (prove:is 3 (cl-ds:at (cl-ds.alg:count-elements (cl-ds.alg:group-by data :key #'evenp))
-                                        nil)))]
+                                        nil)))"
      :see-also (group-by)))
 
   (function enumerate
@@ -139,9 +138,9 @@
 
   (function chain
     (:description "Concatenate multiple ranges into one."
-     :examples [(prove:is (cl-ds.alg:to-vector (cl-ds.alg:chain '(1 2 3) '(4 5 6)))
+     :examples "(prove:is (cl-ds.alg:to-vector (cl-ds.alg:chain '(1 2 3) '(4 5 6)))
                           #(1 2 3 4 5 6)
-                          :test #'equalp)]
+                          :test #'equalp)"
      :exceptional-situations ("Raises TYPE-ERROR if any of the input ranges is not (OR CL:SEQUENCE FUNDAMENTAL-FORWARD-RANGE).")
      :returns "FUNDAMENTAL-FORWARD-RANGE instance."))
 
@@ -155,11 +154,11 @@
 
   (function summary
     (:description "The summary is a macro allowing performance of multiple aggregations in one function call."
-     :examples [(let ((result (cl-ds.alg:summary (cl-ds:iota-range :to 250)
+     :examples "(let ((result (cl-ds.alg:summary (cl-ds:iota-range :to 250)
                                 :min (cl-ds.alg:accumulate #'min)
                                 :max (cl-ds.alg:accumulate #'max))))
                   (prove:is (cl-ds:at result :min) 0)
-                  (prove:is (cl-ds:at result :max) 249))]
+                  (prove:is (cl-ds:at result :max) 249))"
      :arguments ((range "Range to aggregate.")
                  (forms "Description of function invocation in the form of the plist. Key is a label used to identify value in the result range, a value is an aggregation function form (function and the function arguments). The range will be inserted as the first argument in the aggregation function call by default, or in the place of any symbol with name '_' if such symbol is present."))
      :returns "Range of results. Use cl-ds:at with label to extract result of each individual aggregation form."
@@ -208,9 +207,9 @@
      :exceptional-situations ("Raises TYPE-ERROR if any of the input ranges is not (OR CL:SEQUENCE FUNDAMENTAL-FORWARD-RANGE)."
                               "Will raise TYPE-ERROR if FUNCTION is not FUNCALLABLE.")
      :notes "Can be considered to be lazy variant of CL:MAP function called on multiple sequences."
-     :examples ([(prove:is (cl-ds.alg:to-vector (cl-ds.alg:zip #'list '(1 2 3) '(4 5 6)))
+     :examples "(prove:is (cl-ds.alg:to-vector (cl-ds.alg:zip #'list '(1 2 3) '(4 5 6)))
                            #((1 4) (2 5) (3 6))
-                           :test #'equalp)])
+                           :test #'equalp)"
      :returns "New fundamental-forward-range instance."
      :arguments ((function "Function used to join contents of the RANGES.")
                  (ranges "Input."))))
@@ -272,8 +271,8 @@
                  (:groups "HASH-TABLE groups prototype. Passing this will cause :TEST to be discarded. This argument is useful for using non-portable HASH-TABLE extension.")
                  (:test "Test for the inner hashtable (either eq, eql or equal)."))
      :returns "GROUP-BY-RANGE instance (either forward, bidirectional or random access, based on the class of the RANGE)."
-     :examples [(let* ((data #(1 2 3 4 5 6 7 8 9 10))
+     :examples "(let* ((data #(1 2 3 4 5 6 7 8 9 10))
                        (sums (cl-ds.alg:accumulate (cl-ds.alg:group-by data :key #'evenp) #'+)))
                   (prove:is (cl-ds:size sums) 2)
                   (prove:is (cl-ds:at sums t) 30)
-                  (prove:is (cl-ds:at sums nil) 25))])))
+                  (prove:is (cl-ds:at sums nil) 25))")))

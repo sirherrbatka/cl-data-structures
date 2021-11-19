@@ -1,5 +1,4 @@
 (cl:in-package #:cl-data-structures.meta)
-(named-readtables:in-readtable :scribble)
 
 
 (docs:define-docs

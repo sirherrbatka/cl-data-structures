@@ -1,5 +1,4 @@
 (cl:in-package #:cl-data-structures.streaming-algorithms)
-(named-readtables:in-readtable :scribble)
 
 (docs:define-docs
   :formatter docs.ext:rich-aggregating-formatter
@@ -74,7 +73,7 @@
              "Sensitive to a hash function. Large avalanche factor is very helpful. Needs all 64 bits so sxhash won't be fine."
              "Can be used to (for instance) estimate number of keys before creating a hash table. A good estimate of size minimizes rehashing and therefore reduces both memory allocation and time required to fill the hash table.")
      :returns "Instance of the fundamental-data-sketch class. Use CL-DS:VALUE to extract estimate from it."
-     :examples [(let ((data (cl-ds:xpr (:i 0)
+     :examples "(let ((data (cl-ds:xpr (:i 0)
                               (when (< i 500000)
                                 (cl-ds:send-recur (random 99999999999) :i (1+ i))))))
                   (prove:ok (< 490000
@@ -82,7 +81,7 @@
                                 (cl-data-structures.streaming-algorithms:approximated-set-cardinality
                                  data
                                  :hash-fn #'cl-data-structures.utils:hash-integer))
-                               510000)))]))
+                               510000)))"))
 
   (function clean-sketch
     (:description "Creates a new, empty data-sketch that would be produced by the function. New data-sketch can be cloned and passed as :data-sketch. This allows to keep compatibility between results of call to the streaming function."))
