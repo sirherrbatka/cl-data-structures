@@ -3,6 +3,9 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
+(quicklisp:quickload :documentation-utils-extensions :silent t)
+(setf documentation-utils-extensions:*documentation*
+      (documentation-utils-extensions:make-documentation-collection))
 (quicklisp:quickload :cl-data-structures-tests :silent t)
 
 (unwind-protect
