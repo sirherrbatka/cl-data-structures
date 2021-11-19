@@ -23,8 +23,5 @@
          (prove:diag "Running API examples now.")
          (documentation-utils-extensions:execute-documentation :package :cl-data-structures :label :examples)
          (prove:diag "Running ALG examples now.")
-         (documentation-utils-extensions:execute-documentation :package :cl-data-structures.algorithms :label :examples)
-         ))
+         (documentation-utils-extensions:execute-documentation :package :cl-data-structures.algorithms :label :examples)))
   (cl-user::quit))
-
-(cl-ds.alg:first-element :key (map 'string #'second))

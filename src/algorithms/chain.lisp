@@ -54,9 +54,7 @@
 
 
 (defun chain (&rest ranges)
-  (map nil
-       (lambda (x) (check-type x cl-ds:fundamental-forward-range))
-       ranges)
+  (cl-ds.utils:transform (lambda (x) (cl-ds:whole-range x)) ranges)
   (let ((fundamental-type (common-fundamental-range-class ranges)))
     (assert fundamental-type)
     (make (eswitch (fundamental-type)
