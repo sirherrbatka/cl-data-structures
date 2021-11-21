@@ -139,7 +139,7 @@
 
 
 (-> make-distance-matrix-from-vector ((or list symbol)
-                                      (-> (t t) single-float)
+                                      (-> (t t) t)
                                       vector
                                       &key
                                       (:key (-> (t) t))
