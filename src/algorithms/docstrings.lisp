@@ -253,6 +253,7 @@
                  (range "First input range.")
                  (more-ranges "All other ranges."))
      :exceptional-situations "Will raise a TYPE-ERROR if any of the RANGES is of a wrong type."
+     :example "(prove:is (cl-ds.alg:to-list (cl-ds.alg:cartesian #'list (cl-ds:iota-range :to 3) (cl-ds:iota-range :to 3))) '((0 0) (1 0) (2 0) (0 1) (1 1) (2 1) (0 2) (1 2) (2 2)))"
      :returns "FUNDAMENTAL-FORWARD-RANGE instance."))
 
   (variable *current-key*
