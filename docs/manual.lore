@@ -7,7 +7,7 @@
 @begin{section}
 @title{Generic Functions}
 @label{API Generic Functions}
-@text{The following set contains generic functions that can be used to query or manipulate containers. Not all containers can be manipulated with entieriety of those functions. However, applicable functions are defined in the category of container, and thus, this manual lists functions applicable for instances of containers in each category.}
+@text{The following set contains generic functions that can be used to query or manipulate containers. Not all containers can be manipulated with entirety of those functions. However, applicable functions are defined in the category of container, and thus, this manual lists functions applicable for instances of containers in each category.}
 (level [section]
   @title{Query Functions}
   @text{Following generic functions check state of the container and are not allowed to change it.}
@@ -133,7 +133,7 @@
  @text{This section contains reference of all the functions in the CL-DS.ALG package.}
 
  @begin{section} @title{Aggregation Functions}
-  @text{Aggregation functions transform range into a singular value, akin to the SQL aggergation functions.}
+  @text{Aggregation functions transform range into a singular value, akin to the SQL aggregation functions.}
   @begin{documentation}
    @pack{CL-DATA-STRUCTURES.ALGORITHMS}
    @docfun['cl-ds.alg:accumulate]

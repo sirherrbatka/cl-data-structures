@@ -68,7 +68,12 @@
                   (prove:ok (every (lambda (x) (< 3 x 17)) near)))"))
 
   (function add
-    (:description "Add NEW-VALUE into the CONTAINER at the LOCATION. Will not replace a value at LOCATION if it was already occupied."))
+            (:description "Add NEW-VALUE into the CONTAINER at the LOCATION. Will not replace a value at LOCATION if it was already occupied.")
+     :examples ("(let* ((_ (cl-ds.dicts.hamt:make-functional-hamt-dictionary #'sxhash #'eq)) (_ (cl-ds:add            _ 0 'a))
+         (_ (cl-ds:add            _ 0 'b)) (_ (cl-ds:add            _ 1 'c))
+         (_ (cl-ds:insert         _ 1 'd)) (_ (cl-ds.alg:to-vector _ ))
+         (_ (sort _ #'< :key #'car)))
+    (prove:is _ '#((0 . a) (1 . d)) :test #'equalp))"))
 
   (function add!
     (:arguments

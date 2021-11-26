@@ -1,6 +1,11 @@
 (cl:in-package #:cl-data-structures.adapters)
 
 
+(defmethod cl-ds:at ((container sequence) index &rest more-locations)
+  (cl-ds:assert-one-dimension more-locations)
+  (elt container index))
+
+
 (defmethod cl-ds:size ((seq list))
   (length seq))
 
