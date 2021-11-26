@@ -1,6 +1,4 @@
-(cl:in-package #:cl-user)
-
-(defpackage #:cl-data-structures.fancy
+(cl:defpackage #:cl-data-structures.fancy
   (:use)
   (:export #:defpackage)
   (:nicknames #:cl-ds.fancy))
