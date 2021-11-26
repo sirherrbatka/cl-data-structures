@@ -40,13 +40,11 @@
 @docclass['cl-ds.dicts:mutable-hashing-dictionary]
 @docclass['cl-ds.dicts:transactional-hashing-dictionary]
 @docclass['cl-ds.dicts:lazy-hashing-dictionary]
-@text{In addition to this, on this level, few additional functions are defined.}
-@docgeneric['cl-ds.dicts:find-content]
 @end{section}
 
 
 @begin{section} @title{Sparse RRB Vector} @label{SRRB}
-@text{Sparse variant of the RRB vector. Unlike the CL:HASH-TABLE, this container will guarantee that the content is stored in the ascending order. Just like in the case of the RRB vectors, modification of the tail (which includes pushing new elements to the end) is optimized but put functions are not supported.} 
+@text{Sparse variant of the RRB vector. Unlike the CL:HASH-TABLE, this container will guarantee that the content is stored in the ascending order. Just like in the case of the RRB vectors, modification of the tail (which includes pushing new elements to the end) is optimized but put functions are not supported.}
 @docclass['cl-ds.dicts.srrb:mutable-sparse-rrb-vector]
 @docclass['cl-ds.dicts.srrb:functional-sparse-rrb-vector]
 @docclass['cl-ds.dicts.srrb:transactional-sparse-rrb-vector]
@@ -85,15 +83,6 @@
   @docfun['cl-ds.dicts.hamt:make-mutable-hamt-dictionary]
   @docfun['cl-ds.dicts.hamt:make-transactional-hamt-dictionary]
   @end{documentation})
-(level [section]
-  @title{POSITION-MODIFICATION contracts}
-  @text{Since HAMT is hashing container, many of the functions accept additional hash key argument with fixnum produced by the hashing function.}
-  @text{SHRINK-BUCKET function must be defined in terms all functional shrink-functions and buckets. Will accept :hash.}
-  @text{GROW-BUCKET function must be defined in terms all functional grow-functions and buckets. Will accept :hash.}
-  @text{SHRINK-BUCKET! function must be defined in terms all mutable shrink-functions and buckets. Will accept :hash.}
-  @text{GROW-BUCKET! function must be defined in terms all mutable grow-functions and buckets. Will accept :hash.}
-  @text{MAKE-BUCKET function must be defined in terms of all grow-functions and will return list of hash-content-tuple as bucket. Will accept :hash}
-  @text{Bucket must be usable with cl-ds.dicts:find-content. FIND-CONTENT function will accept hash as key argument.})
 @end{section}
 
 

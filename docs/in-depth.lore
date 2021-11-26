@@ -34,10 +34,6 @@
     @pack{CL-DATA-STRUCTURES}
     @docgeneric['cl-ds.meta:position-modification]
     @docgeneric['cl-ds.meta:make-bucket]
-    @docgeneric['cl-ds.meta:grow-bucket]
-    @docgeneric['cl-ds.meta:shrink-bucket]
-    @docgeneric['cl-ds.meta:grow-bucket!]
-    @docgeneric['cl-ds.meta:shrink-bucket!]
     @docgeneric['cl-ds.meta:functional-counterpart]
     @docgeneric['cl-ds.meta:destructive-counterpart]
     ))
