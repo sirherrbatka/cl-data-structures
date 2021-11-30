@@ -74,6 +74,6 @@
                       (map 'vector
                            (lambda (x)
                              (etypecase x
-                               (cl-ds:fundamental-forward-range x)
+                               (cl-ds:fundamental-forward-range (cl-ds:clone x))
                                (cl-ds:fundamental-container (cl-ds:whole-range x))
                                (cl:sequence (cl-ds:whole-range x))))))))
