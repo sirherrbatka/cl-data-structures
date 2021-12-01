@@ -246,6 +246,7 @@
                              (:file "polynomial-hashing")
                              (:file "package")
                              (:file "common")
+                             (:file "approximated-histogram")
                              (:file "approximated-set-cardinality")
                              (:file "approximated-counts")
                              (:file "approximated-top-k")

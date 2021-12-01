@@ -68,4 +68,6 @@
                (:module "math"
                 :components ((:test-file "moments-tests")
                              (:test-file "mutual-information-tests")
-                             (:test-file "simple-linear-regression-tests")))))
+                             (:test-file "simple-linear-regression-tests")))
+               (:module "streaming-algorithms"
+                :components ((:test-file "approximated-histogram-tests")))))

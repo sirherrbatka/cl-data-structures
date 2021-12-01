@@ -116,13 +116,71 @@
     (:description "Creates bloom filter out of elements in the range. Bloom filter is a memory efficient data structure allowing to check if an item is absent from the range. If AT returns nil, the item is certainly absent. If AT returns T item either present or not."
      :returns "Instance of the fundamental-data-sketch class. Use cl-ds:at to check if element is present. False positives are possible, false negatives are not possible."
      :exceptional-situations ("Will signal a TYPE-ERROR if either SPACE or COUNT is not integer."
-                              "Will signal a CL-DS:ARGUMENT-VALUE-OUT-OF-BOUNDS if either SPACE or COUNT is not above 0."
+                              "Will signal a CL-DS:ARGUMENT-VALUE-OUT-OF-BOUNDS if either width, heigh, or COUNT is not above 0."
                               "Will signal a TYPE-ERROR if HASH-FN is not funcallable."
                               "Will signal a TYPE-ERROR if HASHES is not (OR NULL (SIMPLE-ARRAY FIXNUM (* 2)).")
      :arguments ((range "Input for the creation of the bloom filter.")
-                 (:space "What is the bloom vector size?")
+                 (:width "What is the inner size?")
+                 (:height "What is the inner size?")
                  (:hash-fn "Hashing function. SXHASH will do for strings.")
                  (:count "How many bits are used for each item?")
                  (:key "Function used to extract value for hashing.")
                  (:hashes "Optional hashes vector. Needs to be supplied in order to ensure that the same hash values are generated between different filters.")
-                 (:data-sketch "Instead of the bits and the hash-fn, the user can pass a data-sketch argument.")))))
+                 (:data-sketch "Instead of the bits and the hash-fn, the user can pass a data-sketch argument."))))
+
+  (function
+   approximated-histogram
+   (:description "Creates approximated histogram, as described in A Streaming Parallel Decision Tree Algorithm article."
+    :returns "Instance of APPROXIMATED-HISTOGRAM. Use cl-ds:at to check for quantile value and obtain approximation of statistical summaries using dedicated functions with the APPROXIMATED-HISTOGRAM prefix."
+    :arguments ((range "Input for the creation of the histogram.")
+                (:maximal-bins-count "The maximal number of bins allowed for the histogram to create.")
+                (:key "Function used to extract value for the histogram.")
+                (:data-sketch "Instead of maximal-bins-count, the user can pass a data-sketch argument."))))
+
+  (function
+   approximated-histogram-add
+   (:description "Add new value to the approximated-histogram"))
+
+
+  (function
+   approximated-histogram-mean
+   (:description "Estimate mean of the approximated distribution."))
+
+  (function
+   approximated-histogram-median
+   (:description "Estimate median of the approximated distribution."))
+
+  (function
+   approximated-histogram-quantile
+   (:description "Estimate quantiles of the distribution. This function returns list, and can be used to obtain estimates of multiple quantiles in one call.")
+   (:examples "(let ((q (approximated-histogram-quantile
+          (approximated-histogram
+           (cl-ds.alg:on-each (cl-ds:iota-range :from 1 :to 100)
+                              (alexandria:rcurry #'coerce 'double-float)))
+          0.5
+          0.95)))
+  (prove:ok (< 49 (first q) 51)) (prove:ok (< 94 (second q) 96)))"))
+
+  (function
+   approximated-histogram-mean
+   (:description "Estimates mean of the distribution."))
+
+  (function
+   approximated-histogram-variance
+   (:description "Estimates variance of the distribution."))
+
+  (function
+   approximated-histogram-sum
+   (:description "Estimates total sum of all elements passed to the histogram."))
+
+  (function
+   approximated-histogram-add
+   (:description "Adds a single element to the distribution."))
+
+  (function
+   approximated-histogram-count-lower
+   (:description "How many elements with value lower then the specified there is?"))
+
+  (function
+   approximated-histogram-rank-order
+   (:description "What is the percantage of element in the histogram with value lower then the specified there is?")))

@@ -29,4 +29,14 @@
    #:one-bit-minhash-jaccard/double-float
    #:one-bit-minhash-jaccard/fixnum
    #:one-bit-minhash-jaccard/single-float
-   #:union))
+   #:union
+   #:approximated-histogram
+   #:approximated-histogram-add
+   #:approximated-histogram-mean
+   #:approximated-histogram-median
+   #:approximated-histogram-quantile
+   #:approximated-histogram-variance
+   #:approximated-histogram-sum
+   #:approximated-histogram-add
+   #:approximated-histogram-count-lower
+   #:approximated-histogram-count-rank-order))
