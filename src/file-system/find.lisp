@@ -201,7 +201,7 @@
 
 (defun to-pathname (x &rest args)
   (etypecase x
-    (string (apply #'make-pathname args))
+    ((or list string) (apply #'make-pathname args))
     (pathname x)))
 
 
