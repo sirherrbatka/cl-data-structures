@@ -13,7 +13,7 @@
    (%min :initarg :min :accessor access-min)
    (%max :initarg :max :accessor access-max))
   (:default-initargs
-   :max-bins 64
+   :max-bins 128
    :fill-pointer 0
    :count 0
    :bins (vector)
