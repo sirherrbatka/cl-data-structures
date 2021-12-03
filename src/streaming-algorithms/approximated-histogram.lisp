@@ -81,6 +81,12 @@
       (decf fill-pointer))))
 
 
+(defun approximated-histogram-bins (histogram)
+  (check-type histogram approximated-histogram)
+  (replace (make-array (access-fill-pointer histogram))
+           (access-bins histogram)))
+
+
 (defun approximated-histogram-bin-position (histogram value)
   (check-type value double-float)
   (check-type histogram approximated-histogram)

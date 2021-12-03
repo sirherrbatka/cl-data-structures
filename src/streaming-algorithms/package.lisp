@@ -38,6 +38,10 @@
    #:approximated-histogram-bin-position
    #:approximated-histogram-cumulant-sum
    #:approximated-histogram-values
+   #:approximated-histogram-bins
+   #:approximated-histogram-bin-sum
+   #:approximated-histogram-bin-value
+   #:approximated-histogram-bin-count
    #:approximated-histogram-quantile
    #:approximated-histogram-variance
    #:approximated-histogram-sum
