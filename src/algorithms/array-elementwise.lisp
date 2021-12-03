@@ -56,12 +56,13 @@
          ((unless (null inners)
             (iterate
               (declare (type fixnum i))
+              (with result = (copy-array inners))
               (for i from 0 below (if (array-has-fill-pointer-p inners)
                                       (fill-pointer inners)
                                       (array-total-size inners)))
-              (setf #1=(row-major-aref inners i)
-                    (cl-ds.alg.meta:extract-result #1#))
-              (finally (return inners)))))
+              (setf (row-major-aref result i)
+                    (cl-ds.alg.meta:extract-result (row-major-aref inners i)))
+              (finally (return result)))))
 
        (unless (null inners)
          (iterate
