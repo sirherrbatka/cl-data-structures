@@ -34,6 +34,7 @@
    #:approximated-histogram-add
    #:approximated-histogram-mean
    #:approximated-histogram-median
+   #:approximated-histogram-bin-other-sums
    #:approximated-histogram-bounds
    #:approximated-histogram-bin-position
    #:approximated-histogram-cumulant-sum
