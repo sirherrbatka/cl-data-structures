@@ -138,6 +138,10 @@
                 (:data-sketch "Instead of maximal-bins-count, the user can pass a data-sketch argument."))))
 
   (function
+   approximated-histogram-cumulant-sum
+   (:description "Returns vector of cumulant sums at bin."))
+
+  (function
    approximated-histogram-add
    (:description "Add new value to the approximated-histogram"))
 

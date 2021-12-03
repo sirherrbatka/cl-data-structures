@@ -259,7 +259,36 @@
 
 (defun approximated-histogram-sum (histogram)
   (check-type histogram approximated-histogram)
-  (reduce #'+ (access-bins histogram) :key #'approximated-histogram-bin-sum))
+  (reduce #'+ (access-bins histogram)
+          :key #'approximated-histogram-bin-sum
+          :end (access-fill-pointer histogram)))
+
+
+(defun approximated-histogram-cumulant-sum (histogram)
+  (check-type histogram approximated-histogram)
+  (iterate
+    (with fill-pointer = (access-fill-pointer histogram))
+    (with result = (make-array fill-pointer :element-type 'double-float))
+    (with total = 0.0d0)
+    (with bins = (access-bins histogram))
+    (for i from 0 below fill-pointer)
+    (for bin = (aref bins i))
+    (setf (aref result i)
+          (incf total (approximated-histogram-bin-sum bin)))
+    (finally (return result))))
+
+
+(defun approximated-histogram-values (histogram)
+  (check-type histogram approximated-histogram)
+  (iterate
+    (with fill-pointer = (access-fill-pointer histogram))
+    (with result = (make-array fill-pointer :element-type 'double-float))
+    (with bins = (access-bins histogram))
+    (for i from 0 below fill-pointer)
+    (for bin = (aref bins i))
+    (setf (aref result i)
+          (approximated-histogram-bin-value bin))
+    (finally (return result))))
 
 
 (defun approximated-histogram-mean (histogram)
