@@ -2,7 +2,7 @@
 
 
 (defclass approximated-histogram ()
-  ((%max-bins :initarg :max-bins
+  ((%max-bins :initarg :maximal-bins-count
               :reader maximal-bins-count
               :reader read-max-bins)
    (%bins :initarg :bins :accessor access-bins)
@@ -13,7 +13,7 @@
    (%min :initarg :min :accessor access-min)
    (%max :initarg :max :accessor access-max))
   (:default-initargs
-   :max-bins 128
+   :maximal-bins-count 128
    :fill-pointer 0
    :count 0
    :bins (vector)
@@ -21,12 +21,13 @@
    :max most-negative-double-float))
 
 
-(defun make-approximated-histogram (&key (max-bins 128))
-  (check-type max-bins integer)
-  (cl-ds:check-argument-bounds max-bins (<= 4 max-bins array-total-size-limit))
+(defun make-approximated-histogram (&key (maximal-bins-count 128))
+  (check-type maximal-bins-count integer)
+  (cl-ds:check-argument-bounds maximal-bins-count
+                               (<= 4 maximal-bins-count array-total-size-limit))
   (make 'approximated-histogram
-        :max-bins max-bins
-        :bins (make-array (1+ max-bins)
+        :maximal-bins-count maximal-bins-count
+        :bins (make-array (1+ maximal-bins-count)
                           :initial-element (make-approximated-histogram-bin))))
 
 
@@ -363,7 +364,7 @@
   (assert (cl-ds.utils:homogenousp list :key #'class-of))
   (let* ((new-bins (make-array total-bin-count))
          (result (make 'approximated-histogram
-                       :max-bins (read-max-bins first-sketch)
+                       :maximal-bins-count (read-max-bins first-sketch)
                        :min (reduce #'min list :key #'access-min)
                        :max (reduce #'max list :key #'access-max)
                        :count (reduce #'+ list :key #'access-count)
@@ -405,7 +406,7 @@
 (defmethod clean-sketch ((function approximated-histogram-function)
                          &rest all &key maximal-bins-count)
   (declare (ignore all))
-  (make-approximated-histogram :max-bins maximal-bins-count))
+  (make-approximated-histogram :maximal-bins-count maximal-bins-count))
 
 
 (defmethod cl-ds:clone ((object approximated-histogram))
@@ -413,7 +414,7 @@
         :bins (map 'vector
                    #'approximated-histogram-bin-clone
                    (access-bins object))
-        :max-bins (read-max-bins object)
+        :maximal-bins-count (read-max-bins object)
         :fill-pointer (access-fill-pointer object)
         :count (access-count object)
         :min (access-min object)

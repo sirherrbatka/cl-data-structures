@@ -30,6 +30,7 @@
    #:one-bit-minhash-jaccard/fixnum
    #:one-bit-minhash-jaccard/single-float
    #:union
+   #:make-approximated-histogram
    #:approximated-histogram
    #:approximated-histogram-add
    #:approximated-histogram-mean
