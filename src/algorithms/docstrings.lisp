@@ -198,6 +198,7 @@
      :arguments ((range "Primary input range.")
                  (latch "Range with boolean values.")
                  (more-latches "Ranges with boolean values."))
+     :examples "(prove:is '(1 4) (cl-ds.alg:to-list (cl-ds.alg:latch (cl-ds:iota-range :from 0 :to 5) (list nil t nil nil t))))"
      :returns "FUNDAMENTAL-FORWARD-RANGE instance."))
 
   (function zip

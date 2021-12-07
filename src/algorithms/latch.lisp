@@ -24,15 +24,19 @@
     (iterate
       (for (values value more) = (cl-ds:consume-front current))
       (while more)
-      (for go = t)
       (iterate
         (for latch in-vector latches)
         (for (values open more) = (cl-ds:consume-front latch))
         (unless more
           (return-from cl-ds:traverse range))
-        (setf go (and go open))
-        (finally (when go (funcall function value))))
+        (unless open
+          (leave nil))
+        (finally (funcall function value)))
       (finally (return range)))))
+
+
+(defmethod cl-ds.alg.meta:across-aggregate ((range latch-proxy) function)
+  (cl-ds:across range function))
 
 
 (defmethod cl-ds:across ((range latch-proxy) function)
@@ -40,17 +44,15 @@
         (latches (map 'vector #'cl-ds:clone (read-latches range))))
     (cl-ds:across current
                   (lambda (elt)
-                    (let ((open (iterate
-                                  (with result = t)
-                                  (for latch in-vector latches)
-                                  (for (values open more) =
-                                       (cl-ds:consume-front latch))
-                                  (unless more
-                                    (return-from cl-ds:across range))
-                                  (setf result (and open result))
-                                  (finally (return result)))))
-                      (when open
-                        (funcall function elt)))))
+                    (iterate
+                      (for latch in-vector latches)
+                      (for (values open more) =
+                           (cl-ds:consume-front latch))
+                      (unless more
+                        (return-from cl-ds:across range))
+                      (unless open
+                        (leave nil))
+                      (finally (funcall function elt)))))
     range))
 
 
@@ -64,14 +66,14 @@
   (iterate
     (for (values value more) = (cl-ds:consume-front current))
     (while more)
-    (for r = t)
     (iterate
       (for latch in-vector latches)
       (for (values open more) = (cl-ds:consume-front latch))
       (unless more
         (return-from peek-or-consume (values nil nil)))
-      (setf r (and open r))
-      (finally (when r (return-from peek-or-consume (values value t)))))
+      (unless open
+        (leave))
+      (finally (return-from peek-or-consume (values value t))))
     (finally (return (values nil nil)))))
 
 
@@ -101,7 +103,14 @@
 
 (defmethod apply-layer ((range fundamental-forward-range)
                         (function latch-function)
-                        all)
+                        all
+                        &aux
+                          (latch (second all))
+                          (more-latches (third all)))
   (make 'forward-latch-proxy
         :original-range range
-        :latches (cons (second all) (third all))))
+        :latches (mapcar (lambda (object)
+                           (if (typep object 'cl-ds:fundamental-forward-range)
+                               (cl-ds:clone object)
+                               (cl-ds:whole-range object)))
+                         (cons latch more-latches))))
