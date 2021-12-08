@@ -11,9 +11,9 @@
  @item{Signal an error, only if without a doubt, error has occurred.}
  @item{Signal only the well structured and documented errors.}
  @end{list}
-@text{To fulfill those requirements, the library defines it's own hierarchy of conditions, with each error signaled only in a very specific scenario. For instance, there is the INITIALIZATION-OUT-OF-BOUNDS error, that will be signaled only if the user attempts to initialize the class with a value that exceeds accepted bounds, as described in a relevant reference. Such error also usually points to documentation that describes why this error was signaled and provides information on what argument triggered signaling error, and what are an accepted bounds. This is done such way primarily to make both learning and debugging as easy as possible. In addition, it also makes automatic handling of errors actually possible. The user of this library is encouraged to take a look at the error hierarchies, as laid out in this manual API reference section.}
-@text{It is also important to point out, that CL-DATA-STRUCTURES attempts to explicitly document every possible error that can be raised by every function. If an unexpected error occurs, it may and should be considered bug of manual itself, and treated as such (namely: @emph{reported and fixed}).}
-@end{section}
+ @text{To fulfill those requirements, the library defines it's own hierarchy of conditions, with each error signaled only in a very specific scenario. For instance, there is the INITIALIZATION-OUT-OF-BOUNDS error, that will be signaled only if the user attempts to initialize the class with a value that exceeds accepted bounds, as described in a relevant reference. Such error also usually points to documentation that describes why this error was signaled and provides information on what argument triggered signaling error, and what are an accepted bounds. This is done such way primarily to make both learning and debugging as easy as possible. In addition, it also makes automatic handling of errors actually possible. The user of this library is encouraged to take a look at the error hierarchies, as laid out in this manual API reference section.}
+@text{It is also important to point out, that CL-DATA-STRUCTURES attempts to explicitly document every possible error that can be raised by every function. If an unexpected error occurs, it may and should be considered a bug of the manual itself, and treated as such (namely: @emph{reported and fixed}).}
+ @end{section}
 
 
 @begin{section}

@@ -3,9 +3,8 @@
  cl-lore.extensions.documentation.api
  cl-lore.extensions.sequence-graphs.api)
 
-
-@begin{section}
-@title{Conventions}
-@label{Conventions}
-@text{Data structure types are not hidden under generic interface names (like "std::unordered_map") but are instead directly exposed to the user. Users are encouraged to read the implementation details section of this manual to decide what data structure implementation works best for the specific use case. Destructive (in the sense of capable of mutating data passed as an argument) functions follow the Scheme style of adding '!' as a suffix (so we have GF ADD! that is the destructive version of ADD). There are exceptions to this rule, namely SETF functions. According to the above, there should be a generic function called INSERT!, but alas, that's not the case. Instead, there is the (SETF AT) API function that does the thing one would expect from INSERT!. In addition to this difference, SETF functions are expected to return the value of the modified place, and not the container itself. Therefore, that's what (SETF AT) does to maintain a cohesive style.}
-@end{section}
+ @begin{section}
+ @title{Conventions}
+ @label{Conventions}
+@text{Data structure types are not hidden under generic interface names (like "std::unordered_map") but are instead directly exposed to the user. Users are encouraged to read the implementation details section of this manual to decide what data structure implementation works best for the specific use case. Destructive (in the sense of capable of mutating data passed as an argument) functions follow the Scheme style of adding '!' as a suffix (so we have the generic function ADD! that is the destructive version of ADD). There are exceptions to this rule, namely SETF functions. According to the above, there should be a generic function called INSERT!, but alas, that's not the case. Instead, there is the (SETF AT) API function that does the thing one would expect from INSERT!. In addition to this difference, SETF functions are expected to return the value of the modified place, and not the container itself. Therefore, that's what (SETF AT) does to maintain a cohesive style.}
+ @end{section}

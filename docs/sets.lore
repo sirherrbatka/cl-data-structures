@@ -7,6 +7,7 @@
 @title{QP-Trie set}
 @label{QP-Trie set}
 @text{QP-Trie set is dedicated storage for the (simple-array (unsigned-byte 8) (*)) objects. Primary use case are utf-8. This data structure is uniquely suited toward storing large sets of such strings because it utilizes prefix structure that will compress set to reuse memory for storing identical prefixes of the content.}
+@text{QP-Trie set is dedicated storage for the (simple-array (unsigned-byte 8) (*)) objects. Primary use case are utf-8 strings. This data structure is uniquely suited toward storing large sets of such strings because it utilizes prefix structure that will compress set to reuse memory for storing identical prefixes of the content.}
 @begin{documentation}
 @pack{CL-DATA-STRUCTURES.SETS.QP-TRIE}
 @docclass['cl-ds.sets.qp-trie:mutable-qp-trie-set]

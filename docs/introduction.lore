@@ -14,10 +14,11 @@
   @item{Universal -- There should be no limitations on when this library is useful.}
   @item{Stable -- The API should be backward compatible. Breaking existing software is not acceptable.})
 @text{To achieve these goals, the package cl-data-structures contains the common API. Various implementations of that API have their own, separate packages. Implementations are divided into few categories:}
+
 (level [list]
-  @item{Dicts (short for dictionaries) -- Data structures that map keys to values. All in the package cl-ds.dicts.}
-  @item{Sequences -- Data structures that are akin to cl:vector in respect that they store elements in sequential manner.})
-@text{In order to minimize ammount of coder required to write useful applications, a number of algorithms is provided to operate on ranges of values from those structures. Thanks to combination of layer functions and aggregation functions it is possible to write concise code akin to SQL. Due to personal intrests of the author, some statistical functions has been added in the math package.}
-@include{Conventions}
-@include{Key concepts}
-@end{section}
+   @item{Dicts (short for dictionaries) -- Data structures that map keys to values. All in the package cl-ds.dicts.}
+   @item{Sequences -- Data structures that are akin to cl:vector in respect that they store elements in sequential manner.})
+@text{In order to minimize the amount of code required to write useful applications, a number of algorithms is provided to operate on ranges of values from those structures. Thanks to combination of layer functions and aggregation functions it is possible to write concise code akin to SQL (TODO: simple example that shows the SQL association). Due to personal intrests of the author, some statistical functions has been added in the math package.}
+ @include{Conventions}
+ @include{Key concepts}
+ @end{section}
