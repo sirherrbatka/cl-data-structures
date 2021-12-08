@@ -4,6 +4,7 @@
   :license "BSD simplified"
   :author "Marek Kochanowicz"
   :maintainer "Marek Kochanowicz"
+  :homepage "https://github.com/sirherrbatka/cl-data-structures"
   :description "Data structures, ranges, ranges algorithms."
   :depends-on ( #:iterate         #:alexandria
                 #:serapeum        #:documentation-utils-extensions
