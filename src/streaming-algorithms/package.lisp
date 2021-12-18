@@ -11,6 +11,25 @@
   (:export
    #:approximated-counts
    #:approximated-counts-distance
+   #:approximated-histogram
+   #:approximated-histogram-add
+   #:approximated-histogram-bin-count
+   #:approximated-histogram-bin-other-sums
+   #:approximated-histogram-bin-position
+   #:approximated-histogram-bin-sum
+   #:approximated-histogram-bin-value
+   #:approximated-histogram-bins
+   #:approximated-histogram-bounds
+   #:approximated-histogram-count-lower
+   #:approximated-histogram-count-rank-order
+   #:approximated-histogram-cumulant-sum
+   #:approximated-histogram-mean
+   #:approximated-histogram-median
+   #:approximated-histogram-quantile
+   #:approximated-histogram-rank-order
+   #:approximated-histogram-sum
+   #:approximated-histogram-values
+   #:approximated-histogram-variance
    #:approximated-set-cardinality
    #:approximated-top-k
    #:bloom-filter
@@ -18,35 +37,16 @@
    #:fundamental-data-sketch
    #:gather-minhash-corpus
    #:hyperloglog-jaccard
+   #:internal-array
+   #:make-approximated-histogram
    #:make-hash-array
    #:make-minhash
    #:make-one-bit-minhash
    #:minhash
-   #:internal-array
    #:minhash-jaccard/double-float
    #:minhash-jaccard/fixnum
    #:minhash-jaccard/single-float
    #:one-bit-minhash-jaccard/double-float
    #:one-bit-minhash-jaccard/fixnum
    #:one-bit-minhash-jaccard/single-float
-   #:union
-   #:make-approximated-histogram
-   #:approximated-histogram
-   #:approximated-histogram-add
-   #:approximated-histogram-mean
-   #:approximated-histogram-median
-   #:approximated-histogram-bin-other-sums
-   #:approximated-histogram-bounds
-   #:approximated-histogram-bin-position
-   #:approximated-histogram-cumulant-sum
-   #:approximated-histogram-values
-   #:approximated-histogram-bins
-   #:approximated-histogram-bin-sum
-   #:approximated-histogram-bin-value
-   #:approximated-histogram-bin-count
-   #:approximated-histogram-quantile
-   #:approximated-histogram-variance
-   #:approximated-histogram-sum
-   #:approximated-histogram-add
-   #:approximated-histogram-count-lower
-   #:approximated-histogram-count-rank-order))
+   #:union))

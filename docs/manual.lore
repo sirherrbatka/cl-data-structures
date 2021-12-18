@@ -240,7 +240,6 @@
 @docgeneric['cl-ds.sa:approximated-top-k]
 @docgeneric['cl-ds.sa:approximated-set-cardinality]
 @docgeneric['cl-ds.sa:approximated-histogram]
-@docfun['cl-ds.sa:make-approximated-histogram]
 @docfun['cl-ds.sa:approximated-histogram-quantile]
 @docfun['cl-ds.sa:approximated-histogram-mean]
 @docfun['cl-ds.sa:approximated-histogram-median]
