@@ -14,7 +14,6 @@
    #:approximated-histogram
    #:approximated-histogram-add
    #:approximated-histogram-bin-count
-   #:approximated-histogram-bin-other-sums
    #:approximated-histogram-bin-position
    #:approximated-histogram-bin-sum
    #:approximated-histogram-bin-value

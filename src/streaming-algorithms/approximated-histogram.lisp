@@ -33,15 +33,13 @@
 
 (defstruct approximated-histogram-bin
   (value 0.0d0 :type double-float)
-  (count 0.0d0 :type double-float)
-  (other-sums #() :type vector))
+  (count 0.0d0 :type double-float))
 
 
 (defun approximated-histogram-bin-clone (bin)
   (check-type bin approximated-histogram-bin)
   (make-approximated-histogram-bin
    :value (approximated-histogram-bin-value bin)
-   :other-sums (~> bin approximated-histogram-bin-other-sums copy-array)
    :count (approximated-histogram-bin-count bin)))
 
 
@@ -76,10 +74,6 @@
       (for value = (/ (+ (approximated-histogram-bin-sum b1)
                          (approximated-histogram-bin-sum b2))
                       count))
-      (for other-sums1 = (approximated-histogram-bin-other-sums b1))
-      (for other-sums2 = (approximated-histogram-bin-other-sums b2))
-      (assert (= (length other-sums1) (length other-sums2)))
-      (cl-ds.utils:transform #'+ other-sums2 other-sums1)
       (setf (approximated-histogram-bin-count b2) count)
       (setf (approximated-histogram-bin-value b2) value)
       (replace bins bins
@@ -104,7 +98,7 @@
                            :key #'approximated-histogram-bin-value))
 
 
-(defun approximated-histogram-add (histogram value &optional (other-values #() other-values-bound-p))
+(defun approximated-histogram-add (histogram value)
   (check-type value double-float)
   (check-type histogram approximated-histogram)
   (bind (((:accessors (min access-min)
@@ -125,21 +119,14 @@
                 (~> (aref bins position)
                     approximated-histogram-bin-value
                     (= value)))
-           (let* ((bin (aref bins position))
-                  (other-sums (approximated-histogram-bin-other-sums bin)))
-             (incf (approximated-histogram-bin-count bin))
-             (when other-values-bound-p
-               (assert (= (length other-sums) (length other-values)))
-               (cl-ds.utils:transform #'+ other-sums other-values))))
+           (let* ((bin (aref bins position)))
+             (incf (approximated-histogram-bin-count bin))))
           ((= position fill-pointer)
            (adjust-bins)
            (setf (aref bins fill-pointer)
                  (make-approximated-histogram-bin
                   :value value
-                  :count 1.0d0
-                  :other-sums (if other-values-bound-p
-                                  (copy-array other-values)
-                                  other-values)))
+                  :count 1.0d0))
            (incf fill-pointer))
           (t
            (adjust-bins)
@@ -150,10 +137,7 @@
            (setf (aref bins position)
                  (make-approximated-histogram-bin
                   :value value
-                  :count 1.0d0
-                  :other-sums (if other-values-bound-p
-                                  (copy-array other-values)
-                                  other-values)))))
+                  :count 1.0d0))))
     (approximated-histogram-trim histogram)
     histogram))
 
