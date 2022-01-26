@@ -42,6 +42,7 @@
    #:erase!
    #:erase*!
    #:lower-bound
+   #:path-scaner
    #:erase*
    #:erase-if
    #:erase-if!

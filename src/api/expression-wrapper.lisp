@@ -116,3 +116,74 @@
     (for (values value more) = (funcall function))
     (while more)
     (finally (return i))))
+
+
+(defun path-scaner (path &key flatten-lists flatten-vectors)
+  (lambda (object)
+    (cl-ds:xpr (:stack (list (list t path (list object))))
+      (when (endp stack)
+        (cl-ds:finish))
+      (bind ((((descend (first-path-element . rest-path) object-path) . rest) stack))
+        (if descend
+            (if (listp first-path-element)
+                (iterate
+                  (for element in first-path-element)
+                  (push (list t (cons element rest-path) object-path)
+                        rest)
+                  (finally (cl-ds:recur :stack rest)))
+                (bind (((:values next-object found)
+                        (funcall first-path-element (first object-path)))
+                       (new-path-to-object (cons next-object object-path)))
+                  (cl-ds.utils:cond+ ((endp rest-path) found)
+                    ((t t)
+                     (cond ((and flatten-vectors
+                                 (vectorp next-object))
+                            (cl-ds:recur
+                                   :stack (iterate
+                                            (for i from (~> next-object length 1-) downto 0)
+                                            (for obj = (aref next-object i))
+                                            (push (list nil
+                                                        (list first-path-element)
+                                                        (cons obj object-path))
+                                                  rest)
+                                            (finally (return rest)))))
+                           ((and flatten-lists
+                                 (listp next-object))
+                            (cl-ds:recur
+                             :stack (iterate
+                                      (for obj in next-object)
+                                      (push (list nil
+                                                  (list first-path-element)
+                                                  (cons obj object-path))
+                                            rest)
+                                      (finally (return rest)))))
+                       (t (cl-ds:send-recur new-path-to-object :stack rest))))
+                    ((t nil)
+                     (cl-ds:recur :stack rest))
+                    ((nil t)
+                     (cond ((and flatten-vectors
+                                  (vectorp next-object))
+                             (cl-ds:recur
+                                :stack (iterate
+                                         (for i from (~> next-object length 1-) downto 0)
+                                         (for obj = (aref next-object i))
+                                         (push (list t
+                                                     rest-path
+                                                     (cons obj object-path))
+                                               rest)
+                                         (finally (return rest)))))
+                            ((and flatten-lists
+                                  (listp next-object))
+                             (cl-ds:recur
+                              :stack (iterate
+                                       (for obj in next-object)
+                                       (push (list t
+                                                   rest-path
+                                                   (cons obj object-path))
+                                             rest)
+                                       (finally (return rest)))))
+                            (t (cl-ds:recur :stack (cons (list t rest-path (cons next-object object-path))
+                                                         rest)))))
+                    ((nil nil)
+                     (cl-ds:recur :stack rest)))))
+            (cl-ds:send-recur object-path :stack rest))))))
