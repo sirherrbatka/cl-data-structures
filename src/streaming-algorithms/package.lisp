@@ -28,6 +28,7 @@
    #:approximated-histogram-rank-order
    #:approximated-histogram-sum
    #:approximated-histogram-values
+   #:approximated-histogram-counts
    #:approximated-histogram-variance
    #:approximated-set-cardinality
    #:approximated-top-k

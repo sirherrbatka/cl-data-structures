@@ -301,6 +301,19 @@
     (finally (return result))))
 
 
+(defun approximated-histogram-counts (histogram)
+  (check-type histogram approximated-histogram)
+  (iterate
+    (with fill-pointer = (access-fill-pointer histogram))
+    (with result = (make-array fill-pointer :element-type 'double-float))
+    (with bins = (access-bins histogram))
+    (for i from 0 below fill-pointer)
+    (for bin = (aref bins i))
+    (setf (aref result i)
+          (approximated-histogram-bin-count bin))
+    (finally (return result))))
+
+
 (defun approximated-histogram-mean (histogram)
   (check-type histogram approximated-histogram)
   (if (zerop (access-count histogram))
