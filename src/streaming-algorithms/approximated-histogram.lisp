@@ -99,8 +99,8 @@
 
 
 (defun approximated-histogram-add (histogram value)
-  (check-type value double-float)
   (check-type histogram approximated-histogram)
+  (setf value (coerce value 'double-float))
   (bind (((:accessors (min access-min)
                       (max access-max)
                       (count access-count)
