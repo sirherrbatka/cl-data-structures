@@ -142,6 +142,13 @@
     histogram))
 
 
+(defun approximated-histogram-count (histogram)
+  (check-type histogram approximated-histogram)
+  (reduce #'+
+          (approximated-histogram-bins histogram)
+          :key #'approximated-histogram-bin-count))
+
+
 (defun approximated-histogram-count-lower
     (histogram value
      &rest other-values

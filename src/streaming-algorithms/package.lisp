@@ -13,6 +13,7 @@
    #:approximated-counts-distance
    #:approximated-histogram
    #:approximated-histogram-add
+   #:approximated-histogram-count
    #:approximated-histogram-bin-count
    #:approximated-histogram-bin-position
    #:approximated-histogram-bin-sum
