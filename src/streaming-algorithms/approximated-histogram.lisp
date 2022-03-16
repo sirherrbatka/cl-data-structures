@@ -368,6 +368,7 @@
   (assert (cl-ds.utils:homogenousp list :key #'class-of))
   (let* ((new-bins (make-array total-bin-count))
          (result (make 'approximated-histogram
+                       :fill-pointer total-bin-count
                        :maximal-bins-count (read-max-bins first-sketch)
                        :min (reduce #'min list :key #'access-min)
                        :max (reduce #'max list :key #'access-max)
