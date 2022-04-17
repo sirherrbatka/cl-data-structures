@@ -23,6 +23,7 @@
    #:approximated-histogram-count-lower
    #:approximated-histogram-count-rank-order
    #:approximated-histogram-cumulant-sum
+   #:approximated-histogram-truncated-mean
    #:approximated-histogram-mean
    #:approximated-histogram-median
    #:approximated-histogram-quantile

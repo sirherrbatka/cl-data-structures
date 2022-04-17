@@ -244,8 +244,7 @@
                   (setf rhs-centroid (approximated-histogram-bin-value bin)
                         rhs-count (approximated-histogram-bin-count bin))))
             (setf lhs-total rhs-total)
-            (incf rhs-total (/ (+ lhs-count rhs-count)
-                               2))
+            (incf rhs-total (/ (+ lhs-count rhs-count) 2))
             (setf lhs rhs))
           (let* ((a (- rhs-count lhs-count))
                  (z 0))
@@ -319,6 +318,27 @@
     (setf (aref result i)
           (approximated-histogram-bin-count bin))
     (finally (return result))))
+
+
+(defun approximated-histogram-truncated-mean (histogram fraction)
+  (check-type histogram approximated-histogram)
+  (check-type fraction real)
+  (assert (< 0.0 fraction 1.0))
+  (bind ((bins (access-bins histogram))
+         (low fraction)
+         (high (- 1.0 low))
+         ((low-quantile high-quantile)
+          (approximated-histogram-quantile histogram low high))
+         (low-bound (approximated-histogram-bin-position histogram
+                                                         low-quantile))
+         (high-bound (approximated-histogram-bin-position histogram
+                                                          high-quantile)))
+    (iterate
+      (for i form low-bound below high-bound)
+      (for bucket = (aref bins i))
+      (sum (approximated-histogram-bin-sum bin) into total)
+      (sum (approximated-histogram-bin-count bin) into count)
+      (finally (return (/ total count))))))
 
 
 (defun approximated-histogram-mean (histogram)
