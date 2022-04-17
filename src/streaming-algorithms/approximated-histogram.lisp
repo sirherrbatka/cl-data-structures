@@ -327,19 +327,19 @@
   (bind ((bins (access-bins histogram))
          (low fraction)
          (high (- 1.0 low))
-         (fill-pointer (access-fill-pointer histogram))
          ((low-quantile high-quantile)
           (approximated-histogram-quantile histogram low high))
          (low-bound (approximated-histogram-bin-position histogram
                                                          low-quantile))
          (high-bound (approximated-histogram-bin-position histogram
-                                                          high-quantile)))
+                                                          high-quantile))
+         (total 0.0d0)
+         (count 0.0d0))
     (iterate
-      (for i form low-bound to high-bound)
-      (while (< i fill-pointer))
+      (for i form low-bound below high-bound)
       (for bucket = (aref bins i))
-      (sum (approximated-histogram-bin-sum bin) into total)
-      (sum (approximated-histogram-bin-count bin) into count)
+      (incf total (approximated-histogram-bin-sum bin))
+      (incf count (approximated-histogram-bin-count bin))
       (finally (return (/ total count))))))
 
 
