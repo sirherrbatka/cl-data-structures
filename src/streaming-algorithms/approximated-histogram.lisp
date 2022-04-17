@@ -336,7 +336,7 @@
          (total 0.0d0)
          (count 0.0d0))
     (iterate
-      (for i form low-bound below high-bound)
+      (for i from low-bound below high-bound)
       (for bucket = (aref bins i))
       (incf total (approximated-histogram-bin-sum bin))
       (incf count (approximated-histogram-bin-count bin))
