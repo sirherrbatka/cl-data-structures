@@ -151,6 +151,10 @@
    (:description "Estimate mean of the approximated distribution."))
 
   (function
+   approximated-histogram-truncated-mean
+   (:description "Estimate mean of the approximated distribution. Truncates outliers by the fraction."))
+
+  (function
    approximated-histogram-median
    (:description "Estimate median of the approximated distribution."))
 
