@@ -327,6 +327,7 @@
   (bind ((bins (access-bins histogram))
          (low fraction)
          (high (- 1.0 low))
+         (fill-pointer (access-fill-pointer histogram))
          ((low-quantile high-quantile)
           (approximated-histogram-quantile histogram low high))
          (low-bound (approximated-histogram-bin-position histogram
@@ -335,12 +336,23 @@
                                                           high-quantile))
          (total 0.0d0)
          (count 0.0d0))
-    (iterate
-      (for i from low-bound below high-bound)
-      (for bucket = (aref bins i))
-      (incf total (approximated-histogram-bin-sum bin))
-      (incf count (approximated-histogram-bin-count bin))
-      (finally (return (/ total count))))))
+    (if (= low-bound high-bound)
+        0.0d0
+        (let ((first-bin (aref bins low-bound))
+              (last-bin (if (< high-bound fill-pointer)
+                            (aref bins high-bound)
+                            nil)))
+          (incf total (/ (approximated-histogram-bin-sum first-bin) 2.0))
+          (incf count (/ (approximated-histogram-bin-count first-bin) 2.0))
+          (unless (null last-bin)
+            (incf total (/ (approximated-histogram-bin-sum last-bin) 2.0))
+            (incf count (/ (approximated-histogram-bin-count last-bin) 2.0)))
+          (iterate
+            (for i from (1+ low-bound) below high-bound)
+            (for bin = (aref bins i))
+            (incf total (approximated-histogram-bin-sum bin))
+            (incf count (approximated-histogram-bin-count bin))
+            (finally (return (/ total count))))))))
 
 
 (defun approximated-histogram-mean (histogram)
