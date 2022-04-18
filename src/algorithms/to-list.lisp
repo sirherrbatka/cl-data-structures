@@ -7,11 +7,17 @@
   (:range &key key after)
   (:range &key (key #'identity) (after #'identity))
 
-  (%list)
+  (%list %tail)
 
-  ((setf %list '()))
+  ((setf %list '()
+         %tail %list))
 
   ((element)
-   (push element %list))
+   (if (null %list)
+       (setf %list (list element)
+             %tail %list)
+       (let ((next-cell (list element)))
+         (setf (cdr %tail) next-cell
+               %tail next-cell))))
 
-  ((nreverse %list)))
+  (%list))
