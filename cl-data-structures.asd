@@ -53,7 +53,7 @@
                              (:file "macros")
                              (:file "functions")
                              (:file "field")
-                             (:file "aux")
+                             (:file "auxilary")
                              (:file "docstrings")
                              ))
                (:module "adapters"
@@ -218,10 +218,7 @@
                              (:file "buffer-range")
                              (:file "docstrings")))
                (:module "math"
-                :components ((:module "aux"
-                              :components ((:file "package")
-                                           (:file "gamma")))
-                             (:file "package")
+                :components ((:file "package")
                              (:file "absolute-value-norm")
                              (:file "average")
                              (:file "variance")

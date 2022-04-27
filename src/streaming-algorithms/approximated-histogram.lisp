@@ -21,6 +21,15 @@
    :max most-negative-double-float))
 
 
+(defmethod print-object ((object approximated-histogram)
+                         stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "count: ~a min: ~a max: ~a"
+            (access-count object)
+            (access-min object)
+            (access-max object))))
+
+
 (defun make-approximated-histogram (&key (maximal-bins-count 128))
   (check-type maximal-bins-count integer)
   (cl-ds:check-argument-bounds maximal-bins-count
