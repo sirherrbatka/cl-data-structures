@@ -248,6 +248,7 @@
 @docfun['cl-ds.sa:approximated-histogram-add]
 @docfun['cl-ds.sa:approximated-histogram-count-lower]
 @docfun['cl-ds.sa:approximated-histogram-rank-order]
+@docfun['cl-ds.sa:approximated-histogram-truncated-mean]
 @docgeneric['cl-ds.sa:union]
 @docgeneric['cl-ds.sa:clean-sketch]
 @docclass['cl-ds.sa:fundamental-data-sketch]

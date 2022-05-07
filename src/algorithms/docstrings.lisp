@@ -110,7 +110,8 @@
                  (key "Function used to extract content for the FUNCTION. Defaults to the CL:IDENTITY."))
      :returns "FUNDAMENTAL-FORWARD-RANGE instance."
      :exceptional-situations "Will signal a TYPE-ERROR if KEY or FUNCTION is not funcallable."
-     :notes "Works almost like cl:map-and-friends, but lazily evaluates content."))
+     :notes ("Works almost like cl:map-and-friends, but lazily evaluates content."
+             "There is also parallel version of this function: parallel-on-each.")))
 
   (function count-elements
     (:description "Counts the number of elements. Useful mostly in conjunction with a GROUP-BY."
@@ -271,6 +272,8 @@
                  (:groups "HASH-TABLE groups prototype. Passing this will cause :TEST to be discarded. This argument is useful for using non-portable HASH-TABLE extension.")
                  (:test "Test for the inner hashtable (either eq, eql or equal)."))
      :returns "GROUP-BY-RANGE instance (either forward, bidirectional or random access, based on the class of the RANGE)."
+     :notes ("There is also parallel version of this function called parallel-group-by."
+             "Uses hash-table underneath, you can extract internal hash-table out of the aggregation result with READ-HASH-TABLE.")
      :examples "(let* ((data #(1 2 3 4 5 6 7 8 9 10))
                        (sums (cl-ds.alg:accumulate (cl-ds.alg:group-by data :key #'evenp) #'+)))
                   (prove:is (cl-ds:size sums) 2)

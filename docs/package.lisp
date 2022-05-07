@@ -8,8 +8,9 @@
 
 (cl:in-package #:cl-data-structures.documentation)
 
-(setf documentation-utils-extensions:*documentation* (documentation-utils-extensions:make-documentation-collection))
+
 (def-chunks *cl-data-structures*)
+(setf documentation-utils-extensions:*documentation* (documentation-utils-extensions:make-documentation-collection))
 (ql:quickload :cl-data-structures)
 
 (cl-lore.api.syntax:syntax
