@@ -1084,3 +1084,28 @@
         (when (sparse-rrb-node-contains tree i)
           (sum (sparse-rrb-tree-size (sparse-nref tree i)
                                      (1- depth)))))))
+
+
+(declaim (inline sparse-rrb-tree-map))
+(defun sparse-rrb-tree-map (tree depth &key tree-function leaf-function)
+  (declare (optimize (speed 3) (safety 0))
+           (type fixnum depth))
+  (cl-ds.utils:cases ((null leaf-function) (null tree-function))
+    (labels ((impl (node n)
+               (declare (type fixnum n))
+               (if (= n depth)
+                   (unless (null leaf-function)
+                     (funcall leaf-function node))
+                   (progn
+                     (unless (null tree-function)
+                       (funcall tree-function node))
+                     (iterate
+                       (declare (type fixnum i next-n))
+                       (with next-n = (1+ n))
+                       (with content = (sparse-rrb-node-content node))
+                       (with length = (sparse-rrb-node-size node))
+                       (for i from 0 below length)
+                       (for elt = (aref content i))
+                       (impl elt next-n))))))
+      (impl tree 0)
+      tree)))
