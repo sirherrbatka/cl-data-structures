@@ -1,6 +1,6 @@
 (asdf:defsystem cl-data-structures
   :name "cl-data-structures"
-  :version "1.0.0"
+  :version "1.3.0"
   :license "BSD simplified"
   :author "Marek Kochanowicz"
   :maintainer "Marek Kochanowicz"
