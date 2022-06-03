@@ -16,6 +16,7 @@
    #:apply-aggregation-function-with-aggregator
    #:apply-layer
    #:apply-range-function
+   #:layer-aggregator-constructor
    #:construct-aggregator
    #:define-aggregation-function
    #:extract-result

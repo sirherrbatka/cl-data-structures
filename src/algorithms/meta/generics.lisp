@@ -66,6 +66,8 @@ Range function invokaction protocol.
             (function aggregation-function) (arguments list))
     outer-constructor))
 
+(defgeneric layer-aggregator-constructor (function outer-constructor arguments))
+
 (defmacro call-constructor (constructor)
   `(the aggregator (funcall (the function ,constructor))))
 

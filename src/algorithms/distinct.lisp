@@ -135,27 +135,39 @@
         :original-range range))
 
 
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function distinct-function)
+                                                        outer-fn
+                                                        arguments)
+  (let ((distinct-key (ensure-function (getf arguments :key #'identity)))
+        (original (getf arguments :seen)))
+    (cl-ds.utils:cases ((:variant (eq distinct-key #'identity)))
+      (cl-ds.alg.meta:let-aggregator ((inner (cl-ds.alg.meta:call-constructor outer-fn))
+                                      (seen (if original
+                                                (cl-ds:replica original)
+                                                (cl-ds.dicts.hamt:make-mutable-hamt-dictionary
+                                                 (getf arguments :hash-function #'sxhash)
+                                                 (getf arguments :test #'eql)))))
+
+          ((element)
+            (let ((selected (funcall distinct-key element)))
+              (cl-ds:mod-bind (dict found) (cl-ds:add! seen selected t)
+                (unless found
+                  (cl-ds.alg.meta:pass-to-aggregation inner element)))))
+
+          ((cl-ds.alg.meta:extract-result inner))))))
+
+
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range distinct-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0) (compilation-speed 0)))
   (bind (((:slots %key %seen) range)
-         (distinct-key (ensure-function %key))
-         (outer-fn (call-next-method))
-         (seen %seen))
+         (outer-fn (call-next-method)))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.utils:cases ((:variant (eq distinct-key #'identity)))
-       (cl-ds.alg.meta:let-aggregator ((inner (cl-ds.alg.meta:call-constructor outer-fn))
-                                       (seen (cl-ds:replica seen nil)))
-
-           ((element)
-             (let ((selected (funcall distinct-key element)))
-               (cl-ds:mod-bind (dict found) (cl-ds:add! seen selected t)
-                 (unless found
-                   (cl-ds.alg.meta:pass-to-aggregation inner element)))))
-
-           ((cl-ds.alg.meta:extract-result inner))))
+     (cl-ds.alg.meta:layer-aggregator-constructor #'distinct
+                                                  outer-fn
+                                                  (list :seen %seen :key %key))
      function
      arguments)))

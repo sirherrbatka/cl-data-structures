@@ -16,15 +16,15 @@
   t)
 
 
-(defmethod open-stream-designator ((designator command))
-  (~> designator read-command-string
-      (uiop:launch-program :output :stream :force-shell nil)
-      uiop/launch-program:process-info-output))
-
-
 (defun command (format-control-string &rest format-arguments)
   (declare (dynamic-extent format-arguments))
   (check-type format-control-string string)
   (make 'command
         :command-string (apply #'format nil
                                format-control-string format-arguments)))
+
+
+(defmethod open-stream-designator ((designator command))
+  (~> designator read-command-string
+      (uiop:launch-program :output :stream :force-shell nil)
+      uiop/launch-program:process-info-output))
