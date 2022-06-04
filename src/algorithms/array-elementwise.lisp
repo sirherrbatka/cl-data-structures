@@ -22,6 +22,50 @@
   (make 'array-elementwise-forward-proxy :original-range range))
 
 
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function array-elementwise-function)
+                                                        outer-constructor
+                                                        arguments)
+  (cl-ds.alg.meta:let-aggregator
+      ((inners nil))
+
+      ((element)
+        (check-type element array)
+        (when (null inners)
+          (setf inners (copy-array element :element-type t))
+          (iterate
+            (declare (type fixnum i))
+            (for i from 0 below (if (array-has-fill-pointer-p inners)
+                                    (fill-pointer inners)
+                                    (array-total-size inners)))
+            (setf (row-major-aref inners i)
+                  (cl-ds.alg.meta:call-constructor outer-constructor))))
+        (iterate
+          (declare (type fixnum i))
+          (for i from 0 below (if (array-has-fill-pointer-p element)
+                                  (length element)
+                                  (array-total-size element)))
+          (cl-ds.alg.meta:pass-to-aggregation (row-major-aref inners i)
+                                              (row-major-aref element i))))
+      ((unless (null inners)
+         (iterate
+           (declare (type fixnum i))
+           (with result = (copy-array inners))
+           (for i from 0 below (if (array-has-fill-pointer-p inners)
+                                   (fill-pointer inners)
+                                   (array-total-size inners)))
+           (setf (row-major-aref result i)
+                 (cl-ds.alg.meta:extract-result (row-major-aref inners i)))
+           (finally (return result)))))
+
+       (unless (null inners)
+         (iterate
+           (declare (type fixnum i))
+           (for i from 0 below (if (array-has-fill-pointer-p inners)
+                                   (fill-pointer inners)
+                                   (array-total-size inners)))
+           (cl-ds.alg.meta:cleanup (row-major-aref inners i))))))
+
+
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range array-elementwise-forward-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
@@ -31,45 +75,8 @@
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.alg.meta:let-aggregator
-         ((inners nil))
-
-         ((element)
-           (check-type element array)
-           (when (null inners)
-             (setf inners (copy-array element :element-type t))
-             (iterate
-               (declare (type fixnum i))
-               (for i from 0 below (if (array-has-fill-pointer-p inners)
-                                       (fill-pointer inners)
-                                       (array-total-size inners)))
-               (setf (row-major-aref inners i)
-                     (cl-ds.alg.meta:call-constructor outer-fn))))
-           (iterate
-             (declare (type fixnum i))
-             (for i from 0 below (if (array-has-fill-pointer-p element)
-                                     (length element)
-                                     (array-total-size element)))
-             (cl-ds.alg.meta:pass-to-aggregation (row-major-aref inners i)
-                                                 (row-major-aref element i))))
-
-         ((unless (null inners)
-            (iterate
-              (declare (type fixnum i))
-              (with result = (copy-array inners))
-              (for i from 0 below (if (array-has-fill-pointer-p inners)
-                                      (fill-pointer inners)
-                                      (array-total-size inners)))
-              (setf (row-major-aref result i)
-                    (cl-ds.alg.meta:extract-result (row-major-aref inners i)))
-              (finally (return result)))))
-
-       (unless (null inners)
-         (iterate
-           (declare (type fixnum i))
-           (for i from 0 below (if (array-has-fill-pointer-p inners)
-                                   (fill-pointer inners)
-                                   (array-total-size inners)))
-           (cl-ds.alg.meta:cleanup (row-major-aref inners i)))))
+     (cl-ds.alg.meta:layer-aggregator-constructor #'array-elementwise
+                                                  outer-fn
+                                                  arguments)
      function
      arguments)))
