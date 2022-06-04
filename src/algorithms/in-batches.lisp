@@ -43,7 +43,7 @@
           (when (zerop chunk-counter)
             (vector-push-extend (cl-ds.alg.meta:call-constructor outer-constructor)
                                 chunks))
-          (setf chunk-counter (mod (the fixnum (1+ chunk-counter))
+          (setf chunk-counter (mod (1+ chunk-counter)
                                    batch-size))
           (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
                                               element))
