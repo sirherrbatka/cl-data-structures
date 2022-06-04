@@ -30,6 +30,27 @@
         :original-range (~> range read-original-range clone)))
 
 
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function in-batches-function)
+                                                        outer-constructor
+                                                        arguments)
+  (let ((batch-size (getf arguments :batch-size)))
+    (check-type batch-size positive-integer)
+    (cl-ds.alg.meta:let-aggregator
+        ((chunks (vect))
+         (chunk-counter 0))
+
+        ((element)
+          (when (zerop chunk-counter)
+            (vector-push-extend (cl-ds.alg.meta:call-constructor outer-constructor)
+                                chunks))
+          (setf chunk-counter (mod (the fixnum (1+ chunk-counter))
+                                   batch-size))
+          (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
+                                              element))
+
+        ((map 'vector #'cl-ds.alg.meta:extract-result chunks)))))
+
+
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range abstract-in-batches-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
@@ -40,21 +61,9 @@
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.alg.meta:let-aggregator
-         ((chunks (vect))
-          (chunk-counter 0))
-
-         ((element)
-          (when (zerop chunk-counter)
-            (vector-push-extend (cl-ds.alg.meta:call-constructor outer-fn)
-                                chunks))
-          (setf chunk-counter (mod (the fixnum (1+ chunk-counter))
-                                   batch-size))
-          (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
-                                              element))
-
-         ((map 'vector #'cl-ds.alg.meta:extract-result chunks)))
-
+     (cl-ds.alg.meta:layer-aggregator-constructor #'in-batches
+                                                  outer-fn
+                                                  (list :batch-size batch-size))
      function
      arguments)))
 
