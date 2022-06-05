@@ -30,27 +30,6 @@
         :original-range (~> range read-original-range clone)))
 
 
-(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function in-batches-function)
-                                                        outer-constructor
-                                                        arguments)
-  (let ((batch-size (getf arguments :batch-size)))
-    (check-type batch-size positive-integer)
-    (cl-ds.alg.meta:let-aggregator
-        ((chunks (vect))
-         (chunk-counter 0))
-
-        ((element)
-          (when (zerop chunk-counter)
-            (vector-push-extend (cl-ds.alg.meta:call-constructor outer-constructor)
-                                chunks))
-          (setf chunk-counter (mod (1+ chunk-counter)
-                                   batch-size))
-          (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
-                                              element))
-
-        ((map 'vector #'cl-ds.alg.meta:extract-result chunks)))))
-
-
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range abstract-in-batches-proxy)
                                                   outer-constructor
                                                   (function aggregation-function)
@@ -71,6 +50,27 @@
 (defclass in-batches-function (layer-function)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
+
+
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function in-batches-function)
+                                                        outer-constructor
+                                                        arguments)
+  (let ((batch-size (getf arguments :batch-size)))
+    (check-type batch-size positive-integer)
+    (cl-ds.alg.meta:let-aggregator
+        ((chunks (vect))
+         (chunk-counter 0))
+
+        ((element)
+          (when (zerop chunk-counter)
+            (vector-push-extend (cl-ds.alg.meta:call-constructor outer-constructor)
+                                chunks))
+          (setf chunk-counter (mod (1+ chunk-counter)
+                                   batch-size))
+          (cl-ds.alg.meta:pass-to-aggregation (last-elt chunks)
+                                              element))
+
+        ((map 'vector #'cl-ds.alg.meta:extract-result chunks)))))
 
 
 (defgeneric in-batches (range batch-size)
