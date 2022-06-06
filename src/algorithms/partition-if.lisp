@@ -58,42 +58,12 @@
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.utils:cases ((:variant (eq partition-key #'identity))
-                         (:variant (eq test #'eq)
-                                   (eq test #'eql)
-                                   (eq test #'equal)
-                                   (eq test #'string=)
-                                   (eq test #'=)
-                                   (eq test #'equalp)))
-       (cl-ds.alg.meta:let-aggregator
-           ((chunks (cl-ds.alg:to-vector collected))
-            (inner (cl-ds.alg.meta:call-constructor outer-fn)))
-
-           ((element)
-             (let* ((chunks-length (fill-pointer chunks))
-                    (last-chunk (the fixnum (1- chunks-length)))
-                    (key (funcall partition-key element))
-                    (empty (zerop chunks-length)))
-               (if empty
-                   (vector-push-extend element chunks)
-                   (bind ((old (~>> (if on-first 0 last-chunk)
-                                    (aref chunks)))
-                          (old-key (funcall partition-key old)))
-                     (if (funcall test old-key key)
-                         (vector-push-extend element chunks)
-                         (let ((old-chunks chunks)
-                               (*current-key* old-key))
-                           (setf chunks (vect element))
-                           (cl-ds.alg.meta:pass-to-aggregation inner old-chunks)))))))
-
-           ((unless (emptyp chunks)
-              (let* ((length (length chunks))
-                     (*current-key* (~>> (if on-first 0 (1- length))
-                                         (aref chunks)
-                                         (funcall partition-key))))
-                (cl-ds.alg.meta:pass-to-aggregation inner chunks)))
-            (cl-ds.alg.meta:extract-result inner))))
-
+     (cl-ds.alg.meta:layer-aggregator-constructor #'partition-if
+                                                  outer-fn
+                                                  (list test
+                                                        :key partition-key
+                                                        :on-first on-first
+                                                        :collected collected))
      function
      arguments)))
 
@@ -101,6 +71,52 @@
 (defclass partition-if-function (layer-function)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
+
+
+
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function partition-if-function)
+                                                        outer-fn
+                                                        arguments)
+  (bind (((test . arguments) arguments)
+         (partition-key (getf arguments :key #'identity))
+         (on-first (getf arguments :on-first)))
+    (cl-ds.utils:cases ((:variant (eq partition-key #'identity))
+                        (:variant (eq test #'eq)
+                                  (eq test #'eql)
+                                  (eq test #'equal)
+                                  (eq test #'string=)
+                                  (eq test #'=)
+                                  (eq test #'equalp)))
+      (cl-ds.alg.meta:let-aggregator
+          ((chunks (if-let ((collected (getf arguments :collected)))
+                     (cl-ds.alg:to-vector collected)
+                     (vect)))
+           (inner (cl-ds.alg.meta:call-constructor outer-fn)))
+
+          ((element)
+            (let* ((chunks-length (fill-pointer chunks))
+                   (last-chunk (the fixnum (1- chunks-length)))
+                   (key (funcall partition-key element))
+                   (empty (zerop chunks-length)))
+              (if empty
+                  (vector-push-extend element chunks)
+                  (bind ((old (~>> (if on-first 0 last-chunk)
+                                   (aref chunks)))
+                         (old-key (funcall partition-key old)))
+                    (if (funcall test old-key key)
+                        (vector-push-extend element chunks)
+                        (let ((old-chunks chunks)
+                              (*current-key* old-key))
+                          (setf chunks (vect element))
+                          (cl-ds.alg.meta:pass-to-aggregation inner old-chunks)))))))
+
+          ((unless (emptyp chunks)
+             (let* ((length (length chunks))
+                    (*current-key* (~>> (if on-first 0 (1- length))
+                                        (aref chunks)
+                                        (funcall partition-key))))
+               (cl-ds.alg.meta:pass-to-aggregation inner chunks)))
+            (cl-ds.alg.meta:extract-result inner))))))
 
 
 (defgeneric partition-if (range test &key key on-first)

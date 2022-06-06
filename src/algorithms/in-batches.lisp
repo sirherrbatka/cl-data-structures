@@ -42,7 +42,7 @@
      (read-original-range range)
      (cl-ds.alg.meta:layer-aggregator-constructor #'in-batches
                                                   outer-fn
-                                                  (list :batch-size batch-size))
+                                                  (list batch-size))
      function
      arguments)))
 
@@ -55,7 +55,7 @@
 (defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function in-batches-function)
                                                         outer-constructor
                                                         arguments)
-  (let ((batch-size (getf arguments :batch-size)))
+  (let ((batch-size (first arguments)))
     (check-type batch-size positive-integer)
     (cl-ds.alg.meta:let-aggregator
         ((chunks (vect))
