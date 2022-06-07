@@ -63,21 +63,41 @@
                                                   (arguments list))
   (bind ((old-window (access-window range))
          (old-current (access-current range))
-         (old-current-position (iterate
-                                 (for i from 0)
-                                 (for li on old-window)
-                                 (finding i such-that (eq li old-current))))
          (outer-fn (call-next-method)))
     (assert (functionp outer-fn))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.alg.meta:let-aggregator
-         ((window (copy-list old-window))
-          (tail (last window))
-          (inner (cl-ds.alg.meta:call-constructor outer-fn))
-          (current (nthcdr old-current-position window)))
+     (cl-ds.alg.meta:layer-aggregator-constructor
+      #'sliding-window
+      outer-fn
+      (list (read-window-size range)
+            :window (access-window range)
+            :current-position (iterate
+                                (for i from 0)
+                                (for li on old-window)
+                                (finding i such-that (eq li old-current)))))
+     function
+     arguments)))
 
-         ((element)
+
+(defclass sliding-window-function (layer-function)
+  ()
+  (:metaclass closer-mop:funcallable-standard-class))
+
+
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function sliding-window-function)
+                                                        outer-fn
+                                                        arguments)
+  (bind (((batch-size . arguments) arguments)
+         (old-current-position (getf arguments :current-position 0))
+         (old-window (getf arguments :window (make-list batch-size))))
+    (cl-ds.alg.meta:let-aggregator
+        ((window (copy-list old-window))
+         (tail (last window))
+         (inner (cl-ds.alg.meta:call-constructor outer-fn))
+         (current (nthcdr old-current-position window)))
+
+        ((element)
           (setf (first current) element)
           (setf current (rest current))
           (when (endp current)
@@ -90,15 +110,7 @@
                    (cdr window) nil)
             (setf current tail)))
 
-         ((cl-ds.alg.meta:extract-result inner)))
-
-     function
-     arguments)))
-
-
-(defclass sliding-window-function (layer-function)
-  ()
-  (:metaclass closer-mop:funcallable-standard-class))
+        ((cl-ds.alg.meta:extract-result inner)))))
 
 
 (defgeneric sliding-window (range batch-size)
