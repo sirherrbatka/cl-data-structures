@@ -154,36 +154,49 @@
                nil))))
 
 
+(defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function cumulative-accumulate-function)
+                                                        outer-fn
+                                                        arguments)
+  (let ((key (getf (rest arguments) :key #'identity))
+        (fn (first arguments)))
+    (cl-ds.utils:cases ((:variant (eq #'identity key)))
+      (cl-ds.alg.meta:let-aggregator ((inner (cl-ds.alg.meta:call-constructor outer-fn))
+                                      (state (getf (rest arguments) :state))
+                                      (initialized (getf (rest arguments) :initialized)))
+          ((element)
+            (if initialized
+                (let* ((next-state
+                         (~>> (funcall key element)
+                              (funcall fn state))))
+                  (setf state next-state)
+                  (cl-ds.alg.meta:pass-to-aggregation inner next-state))
+                (let ((r (funcall key element)))
+                  (setf state r initialized t)
+                  (cl-ds.alg.meta:pass-to-aggregation inner state))))
+
+          ((cl-ds.alg.meta:extract-result inner))
+
+        (cl-ds.alg.meta:cleanup inner)))))
+
+
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range cumulative-accumulate-range)
                                                   outer-constructor
                                                   (function aggregation-function)
                                                   (arguments list))
   (declare (optimize (debug 3) (safety 1)))
   (let ((fn (ensure-function (read-function range)))
+        (initialized (slot-boundp range '%state))
         (outer-fn (call-next-method))
         (key (ensure-function (read-cumulative-key range))))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
-     (cl-ds.utils:cases ((:variant (eq #'identity key)))
-       (cl-ds.alg.meta:let-aggregator ((inner (cl-ds.alg.meta:call-constructor outer-fn))
-                                       (initialized (slot-boundp range '%state))
-                                       (state (if initialized
-                                                  (read-initial-state range)
-                                                  nil)))
-           ((element)
-             (if initialized
-                 (let* ((next-state
-                          (~>> (funcall key element)
-                               (funcall fn state))))
-                   (setf state next-state)
-                   (cl-ds.alg.meta:pass-to-aggregation inner next-state))
-                 (let ((r (funcall key element)))
-                   (setf state r initialized t)
-                   (cl-ds.alg.meta:pass-to-aggregation inner state))))
-
-           ((cl-ds.alg.meta:extract-result inner))
-
-         (cl-ds.alg.meta:cleanup inner)))
+     (cl-ds.alg.meta:layer-aggregator-constructor #'cumulative-accumulate
+                                                  outer-fn
+                                                  (list fn :key key
+                                                           :initialized initialized
+                                                           :state (if initialized
+                                                                      (read-initial-state range)
+                                                                      nil)))
      function
      arguments)))
 
