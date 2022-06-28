@@ -45,6 +45,7 @@
    #:*current-key*
    #:accumulate
    #:array-elementwise
+   #:hash-table-elementwise
    #:bidirectional-chain-of-ranges
    #:bidirectional-proxy-range
    #:cartesian

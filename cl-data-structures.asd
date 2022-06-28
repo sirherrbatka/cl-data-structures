@@ -164,6 +164,7 @@
                                            ))
                              (:file "common")
                              (:file "array-elementwise")
+                             (:file "hash-table-elementwise")
                              (:file "on-each")
                              (:file "translation")
                              (:file "count")
