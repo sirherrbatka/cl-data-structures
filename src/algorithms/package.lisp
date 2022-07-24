@@ -76,6 +76,9 @@
    #:group-by-function
    #:group-by-result-range
    #:hash-table-range
+   #:reserve-sampling-result
+   #:reserve-sampling-push
+   #:make-reserve-sampling
    #:latch
    #:make-hash-table-range
    #:make-proxy
