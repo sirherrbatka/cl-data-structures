@@ -185,7 +185,7 @@ This is loglog-beta to be specific.
                         (expt (/ (1+ n) m) 2))))
              (+ 0.5d0 (* d #.(* +c+ (expt 2 (- +p+ +r+)))))))
           (t (/ (expected-collisions n m)
-                #.(coerce +p+ 'double-float))))))
+                +p+)))))
 
 
 (-> jaccard (sketch sketch) double-float)
