@@ -201,15 +201,7 @@
   (ensure-functionf predicate key)
   (nest
    (cases ((eq key #'identity)
-           (simple-vector-p vector)
-           (:variant
-            (typep vector '(vector fixnum))
-            (typep vector '(vector non-negative-fixnum))
-            (typep vector '(vector single-float))
-            (typep vector '(vector double-float)))
-           (:variant
-            (eq predicate #'>)
-            (eq predicate #'<))))
+           (simple-vector-p vector)))
    (let* ((length (length vector))
           (count (min length count))
           (result (make-array count

@@ -112,18 +112,7 @@
   (check-type second-order vector)
   (cases ((simple-vector-p first-order)
           (simple-vector-p second-order)
-          (:variant
-           (eq same #'=)
-           (eq same #'eql))
-          (:variant
-           (eq less #'<)
-           (eq less #'>))
-          (:variant
-           (typep first-order '(vector fixnum))
-           (typep first-order '(vector non-negative-fixnum)))
-          (:variant
-           (typep second-order '(vector non-negative-fixnum))
-           (typep second-order '(vector fixnum))))
+          (eq key #'identity))
     (with-vectors (first-order second-order)
       (iterate
         (declare (type fixnum a b first-length second-length))
