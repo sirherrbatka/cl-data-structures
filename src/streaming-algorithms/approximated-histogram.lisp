@@ -390,6 +390,10 @@
       (finally (return (/ sum (1- count)))))))
 
 
+(defun approximated-histogram-standard-deviation (histogram)
+  (~> histogram approximated-histogram-variance sqrt))
+
+
 (defun approximated-histogram-rank-order (histogram value &rest other-values)
   (check-type histogram approximated-histogram)
   (~>> (apply #'approximated-histogram-count-lower histogram value other-values)

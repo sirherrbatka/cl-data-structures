@@ -32,6 +32,7 @@
    #:approximated-histogram-values
    #:approximated-histogram-counts
    #:approximated-histogram-variance
+   #:approximated-histogram-standard-deviation
    #:approximated-set-cardinality
    #:approximated-top-k
    #:bloom-filter
