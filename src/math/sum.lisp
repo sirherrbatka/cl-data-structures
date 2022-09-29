@@ -2,8 +2,8 @@
 
 
 (cl-ds.alg.meta:define-aggregation-function sum sum-function
-  (:range &key key sum)
-  (:range &key (key #'identity) (sum 0))
+  (:range &key key sum after)
+  (:range &key (key #'identity) (sum 0) (after #'identity))
   ((%sum number))
   ((setf %sum sum))
   ((element)
@@ -13,8 +13,8 @@
 
 
 (cl-ds.alg.meta:define-aggregation-function array-sum array-sum-function
-  (:range &key key sum)
-  (:range &key (key #'identity) (sum nil))
+  (:range &key key sum after)
+  (:range &key (key #'identity) (sum nil) (after #'identity))
   ((%sum (or null array)))
   ((if (null sum)
        (setf %sum nil)
