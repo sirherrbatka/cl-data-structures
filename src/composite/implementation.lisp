@@ -23,7 +23,7 @@
 
 
 (defun make-functional-composite-container (root &rest make-bucket-callbacks)
-  (make 'mutable-composite-container
+  (make 'functional-composite-container
         :root root
         :make-bucket-callbacks make-bucket-callbacks))
 
