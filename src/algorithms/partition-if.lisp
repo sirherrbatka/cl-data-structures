@@ -116,7 +116,8 @@
                     (*current-key* (~>> (if on-first 0 (1- length))
                                         (aref chunks)
                                         (funcall partition-key))))
-               (cl-ds.alg.meta:pass-to-aggregation inner chunks)))
+               (handler-case (cl-ds.alg.meta:pass-to-aggregation inner chunks)
+                 (cl-ds.alg.meta:early-aggregation-exit nil))))
             (cl-ds.alg.meta:extract-result inner))))))
 
 
