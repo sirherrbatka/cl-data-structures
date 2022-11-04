@@ -19,6 +19,7 @@
    #:layer-aggregator-constructor
    #:construct-aggregator
    #:define-aggregation-function
+   #:early-aggregation-exit
    #:extract-result
    #:layer-function
    #:let-aggregator
@@ -79,6 +80,7 @@
    #:reservoir-sampling-result
    #:reservoir-sampling-push
    #:make-reservoir-sampling
+   #:reservoir-sample
    #:latch
    #:make-hash-table-range
    #:make-proxy
@@ -91,7 +93,6 @@
    #:random-access-chain-of-ranges
    #:random-access-proxy-range
    #:rate
-   #:reservoir-sample
    #:access-functor
    #:read-functor-constructor
    #:read-functor-prototype
