@@ -108,7 +108,8 @@
                         (let ((old-chunks chunks)
                               (*current-key* old-key))
                           (setf chunks (vect element))
-                          (cl-ds.alg.meta:pass-to-aggregation inner old-chunks)))))))
+                          (handler-case (cl-ds.alg.meta:pass-to-aggregation inner old-chunks)
+                            (cl-ds.alg.meta:early-aggregation-exit nil))))))))
 
           ((unless (emptyp chunks)
              (let* ((length (length chunks))
