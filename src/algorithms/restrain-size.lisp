@@ -111,9 +111,11 @@
           (position position))
 
          ((element)
-           (when (< (the fixnum position) size)
-             (cl-ds.alg.meta:pass-to-aggregation inner element)
-             (incf (the fixnum position))))
+           (if (< (the fixnum position) size)
+               (progn
+                 (cl-ds.alg.meta:pass-to-aggregation inner element)
+                 (incf (the fixnum position)))
+               (signal 'cl-ds.alg.meta:early-aggregation-exit)))
 
          ((cl-ds.alg.meta:extract-result inner))
 

@@ -61,10 +61,12 @@ Range function invokaction protocol.
         (success nil))
     (unwind-protect
          (progn
-           (across-aggregate range
-                             (lambda (x)
-                               (pass-to-aggregation aggregator
-                                                    x)))
+           (handler-case
+               (across-aggregate range
+                                 (lambda (x)
+                                   (pass-to-aggregation aggregator
+                                                        x)))
+             (early-aggregation-exit nil))
            (setf success t))
       (unless success (cleanup aggregator)))
     (extract-result aggregator)))

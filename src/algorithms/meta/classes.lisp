@@ -19,3 +19,7 @@
 (defclass aggregation-function (range-function)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
+
+
+(define-condition early-aggregation-exit (condition)
+  ())
