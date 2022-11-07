@@ -86,7 +86,9 @@
               (when (null group)
                 (setf group (cl-ds.alg.meta:call-constructor outer-fn)
                       (gethash selected groups) group))
-              (cl-ds.alg.meta:pass-to-aggregation group element)))
+              (handler-case
+                  (cl-ds.alg.meta:pass-to-aggregation group element)
+                (cl-ds.alg.meta:early-aggregation-exit nil))))
 
            ((maphash (lambda (key aggregator &aux (*current-key* key))
                        (let ((result (cl-ds.alg.meta:extract-result aggregator)))
