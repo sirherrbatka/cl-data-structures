@@ -3,15 +3,17 @@
 
 (cl-ds.alg.meta:define-aggregation-function
     average average-function
-    (:range &key key sum count after)
-    (:range &key (key #'identity) (sum 0) (count 0) (after #'identity))
+    (:range &key key sum count after weight)
+    (:range &key (key #'identity) (sum 0) (count 0) (after #'identity) (weight (constantly 1)))
     ((%sum number) (%count integer))
     ((setf %sum sum
+           %weight weight
            %count count))
     ((element)
      (check-type element number)
-     (incf %count)
-     (incf %sum element))
+     (let ((weight (funcall %weight cl-ds.alg.meta:aggregated-element)))
+       (incf %count weight)
+       (incf %sum (* element weight))))
     ((/ %sum %count)))
 
 

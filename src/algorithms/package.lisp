@@ -20,6 +20,7 @@
    #:construct-aggregator
    #:define-aggregation-function
    #:early-aggregation-exit
+   #:aggregated-element
    #:extract-result
    #:layer-function
    #:let-aggregator

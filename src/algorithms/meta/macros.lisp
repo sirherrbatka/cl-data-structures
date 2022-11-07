@@ -44,7 +44,7 @@
                                   function-state-forms))
           (function-types (mapcar (lambda (x) (if (atom x) t (second x)))
                                   function-state-forms)))
-      (with-gensyms (!element !after !range !outer-constructor !function !key !arguments !init !main
+      (with-gensyms (!after !range !outer-constructor !function !key !arguments !init !main
                               !extract-callback !keys)
         (bind (((aggregate-lambda-list . aggregate-body) aggregate-form))
           `(flet ((,!function (,!key ,!after ,!arguments)
@@ -70,13 +70,15 @@
                                    (if (or (eq ,!key #'identity)
                                            (eq ,!key 'identity)
                                            (null ,!key))
-                                       (make-aggregator :pass (lambda (,@aggregate-lambda-list)
-                                                                ,@aggregate-body)
+                                       (make-aggregator :pass
+                                                        (lambda (aggregated-element)
+                                                          (destructuring-bind ,aggregate-lambda-list aggregated-element
+                                                            ,@aggregate-body))
                                                         :extract ,!extract-callback)
                                        (let ((,!key (ensure-function ,!key)))
                                          (make-aggregator :pass
-                                                          (lambda (,!element)
-                                                            (let ((,@aggregate-lambda-list (funcall ,!key ,!element)))
+                                                          (lambda (aggregated-element)
+                                                            (let ((,@aggregate-lambda-list (funcall ,!key aggregated-element)))
                                                               ,@aggregate-body))
                                                           :extract ,!extract-callback))))))
                           (apply #',!init ,!arguments)
