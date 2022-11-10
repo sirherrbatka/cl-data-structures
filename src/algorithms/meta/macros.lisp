@@ -71,9 +71,9 @@
                                            (eq ,!key 'identity)
                                            (null ,!key))
                                        (make-aggregator :pass
-                                                        (lambda (aggregated-element)
-                                                          (destructuring-bind ,aggregate-lambda-list aggregated-element
-                                                            ,@aggregate-body))
+                                                        (lambda (aggregated-element
+                                                            &aux (,@aggregate-lambda-list aggregated-element))
+                                                          ,@aggregate-body)
                                                         :extract ,!extract-callback)
                                        (let ((,!key (ensure-function ,!key)))
                                          (make-aggregator :pass

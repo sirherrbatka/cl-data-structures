@@ -5,7 +5,7 @@
     average average-function
     (:range &key key sum count after weight)
     (:range &key (key #'identity) (sum 0) (count 0) (after #'identity) (weight (constantly 1)))
-    ((%sum number) (%count integer))
+    ((%sum number) (%count integer) (%weight function))
     ((setf %sum sum
            %weight weight
            %count count))
