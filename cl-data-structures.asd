@@ -201,6 +201,7 @@
                              (:file "first-element")
                              (:file "in-batches")
                              (:file "sliding-window")
+                             (:file "with-previous-element")
                              (:file "docstrings")
                              ))
                (:module "file-system"

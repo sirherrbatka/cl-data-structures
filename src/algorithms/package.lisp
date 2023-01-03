@@ -45,6 +45,7 @@
    #:%summary
    #:%summary
    #:*current-key*
+   #:*previous-element*
    #:accumulate
    #:array-elementwise
    #:hash-table-elementwise
@@ -53,6 +54,7 @@
    #:cartesian
    #:chain
    #:first-element
+   #:with-previous-element-proxy
    #:last-element
    #:connect
    #:connect-traversable
