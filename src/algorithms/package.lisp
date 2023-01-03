@@ -54,7 +54,7 @@
    #:cartesian
    #:chain
    #:first-element
-   #:with-previous-element-proxy
+   #:with-previous-element
    #:last-element
    #:connect
    #:connect-traversable
