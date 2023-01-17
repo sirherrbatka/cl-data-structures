@@ -38,11 +38,11 @@
         :maximal-bins-count maximal-bins-count
         :bins (if (null initial-content)
                   (map-into (make-array (1+ maximal-bins-count)) #'make-approximated-histogram-bin)
-                  (~> initial-content
-                      (map 'vector (lambda (value)
-                                     (make-approximated-histogram-bin :value (coerce value 'double-float)
-                                                                      :count 1.0d0))
-                           _)
+                  (~> (map 'vector
+                           (lambda (value)
+                             (make-approximated-histogram-bin :value (coerce value 'double-float)
+                                                              :count 1.0d0))
+                           initial-content)
                       (sort #'< :key #'approximated-histogram-bin-value)))))
 
 
