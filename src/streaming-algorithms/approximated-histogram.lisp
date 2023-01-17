@@ -94,7 +94,8 @@
       (replace bins bins
                :start1 pos
                :start2 (1+ pos))
-      (decf fill-pointer))))
+      (decf fill-pointer)))
+  histogram)
 
 
 (defun approximated-histogram-bins (histogram)
