@@ -30,14 +30,20 @@
             (access-max object))))
 
 
-(defun make-approximated-histogram (&key (maximal-bins-count 128))
+(defun make-approximated-histogram (&key (maximal-bins-count 128) initial-content)
   (check-type maximal-bins-count integer)
   (cl-ds:check-argument-bounds maximal-bins-count
                                (<= 4 maximal-bins-count array-total-size-limit))
   (make 'approximated-histogram
         :maximal-bins-count maximal-bins-count
-        :bins (make-array (1+ maximal-bins-count)
-                          :initial-element (make-approximated-histogram-bin))))
+        :bins (if (null initial-content)
+                  (map-into (make-array (1+ maximal-bins-count)) #'make-approximated-histogram-bin)
+                  (~> initial-content
+                      (map 'vector (lambda (value)
+                                     (make-approximated-histogram-bin :value (coerce value 'double-float)
+                                                                      :count 1.0d0))
+                           _)
+                      (sort #'< :key #'approximated-histogram-bin-value)))))
 
 
 (defstruct approximated-histogram-bin

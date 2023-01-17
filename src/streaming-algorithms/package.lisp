@@ -25,6 +25,7 @@
    #:approximated-histogram-cumulant-sum
    #:approximated-histogram-truncated-mean
    #:approximated-histogram-mean
+   #:approximated-histogram-trim
    #:approximated-histogram-median
    #:approximated-histogram-quantile
    #:approximated-histogram-rank-order
