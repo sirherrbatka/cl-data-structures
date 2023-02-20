@@ -34,7 +34,7 @@
   (check-type maximal-bins-count integer)
   (cl-ds:check-argument-bounds maximal-bins-count
                                (<= 4 maximal-bins-count array-total-size-limit))
-  (if (null initial-content)
+  (if (emptyp initial-content)
       (make 'approximated-histogram
             :maximal-bins-count maximal-bins-count
             :bins (map-into (make-array (1+ maximal-bins-count))
