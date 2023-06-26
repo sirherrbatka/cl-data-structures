@@ -36,7 +36,7 @@
   (bind (((:slots %tree-size %shift %tree %tail %tail-mask
                   %element-type %tree-index-bound)
           rrb-container)
-         (tail-mask (the fixnum %tail-mask))
+         (tail-mask (the cl-ds.common.rrb:sparse-rrb-mask %tail-mask))
          (tail-size (logcount tail-mask))
          (tail (the simple-vector %tail))
          (element-type (read-element-type rrb-container))
@@ -76,7 +76,8 @@
                           :element-type (array-element-type content))))
                  (setf (cl-ds.common.rrb:sparse-rrb-node-content into) r))
                content)))
-    (declare (type fixnum length new-bitmask bitmask position)
+    (declare (type fixnum length position)
+             (type cl-ds.common.rrb:sparse-rrb-mask new-bitmask bitmask)
              (type (simple-array * (*)) new-content content))
     (setf (cl-ds.common.rrb:sparse-rrb-node-bitmask into)
           new-bitmask)
@@ -97,7 +98,7 @@
 (defun insert-tail! (structure)
   (let ((tail-mask (access-tail-mask structure))
         (ownership-tag nil))
-    (declare (type fixnum tail-mask))
+    (declare (type (type cl-ds.common.rrb:sparse-rrb-mask new-bitmask bitmask) tail-mask))
     (when (zerop tail-mask)
       (return-from insert-tail! structure))
     (bind ((new-node (make-node-from-tail structure ownership-tag))
@@ -168,7 +169,7 @@
 (defun insert-tail (structure)
   (declare (optimize (speed 3) (debug 0) (space 0) (safety 0)))
   (let ((tail-mask (access-tail-mask structure)))
-    (declare (type fixnum tail-mask))
+    (declare (type (type cl-ds.common.rrb:sparse-rrb-mask new-bitmask bitmask) tail-mask))
     (if (zerop tail-mask)
         (make (type-of structure)
               :tree (access-tree structure)
@@ -260,7 +261,7 @@
     transactional-sparse-rrb-vector)
 (defun transactional-insert-tail! (structure ownership-tag)
   (let ((tail-mask (access-tail-mask structure)))
-    (declare (type fixnum tail-mask))
+    (declare (type (type cl-ds.common.rrb:sparse-rrb-mask new-bitmask bitmask) tail-mask))
     (when (zerop tail-mask)
       (return-from transactional-insert-tail! structure))
     (bind ((new-node (make-node-from-tail structure ownership-tag))
@@ -880,7 +881,8 @@
               (apply #'cl-ds.meta:alter-bucket
                      container operation nil current-bucket all))
              (last-node-size (logcount last-node-mask)))
-        (declare (type fixnum last-node-size last-node-mask))
+        (declare (type fixnum last-node-size )
+                 (type cl-ds.common.rrb:sparse-rrb-mask last-node-mask))
         (unless (cl-ds:changed status)
           (return-from transactional-shrink-tree!
             (values structure status)))
@@ -1034,7 +1036,7 @@
                   (1- position)))
     (let* ((tail-mask (access-tail-mask structure))
            (tail-empty (zerop tail-mask)))
-      (declare (type fixnum tail-mask))
+      (declare (type cl-ds.common.rrb:sparse-rrb-mask tail-mask))
       (if tail-empty
           (adjust-tree-to-new-size! structure
                                     (scan-index-bound structure)
@@ -1063,7 +1065,7 @@
     (let* ((tail-mask (access-tail-mask structure))
            (tail-empty (zerop tail-mask))
            (tag (cl-ds.common.abstract:read-ownership-tag structure)))
-      (declare (type fixnum tail-mask))
+      (declare (type cl-ds.common.rrb:sparse-rrb-mask tail-mask))
       (if tail-empty
           (adjust-tree-to-new-size! structure
                                     (scan-index-bound structure)
@@ -1213,7 +1215,7 @@
                         (tail-mask (ash 1 offset))
                         (tail (cl-ds.common.rrb:make-node-content t)))
                    (declare (type cl-ds.common.rrb:rrb-node-position offset)
-                            (type fixnum tail-mask)
+                            (type cl-ds.common.rrb:sparse-rrb-mask tail-mask)
                             (type simple-vector tail))
                    (setf (aref tail offset) bucket
                          (access-tail structure) tail
@@ -1265,7 +1267,7 @@
                         (tail-mask (ash 1 offset))
                         (tail (cl-ds.common.rrb:make-node-content t)))
                    (declare (type cl-ds.common.rrb:rrb-node-position offset)
-                            (type fixnum tail-mask)
+                            (type cl-ds.common.rrb:sparse-rrb-mask tail-mask)
                             (type simple-vector tail))
                    (setf (aref tail offset) bucket
                          (access-tail structure) tail
@@ -1322,7 +1324,7 @@
                                (ceiling (1+ position))
                                (* cl-ds.common.rrb:+maximum-children-count+))))
                        (declare (type cl-ds.common.rrb:rrb-node-position offset)
-                                (type fixnum tail-mask)
+                                (type cl-ds.common.rrb:sparse-rrb-mask tail-mask)
                                 (type simple-vector tail))
                        (setf (aref tail offset) bucket
                              (access-tail new-structure) tail
