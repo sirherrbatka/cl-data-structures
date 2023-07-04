@@ -164,16 +164,15 @@
 
 
 (defmethod cl-ds:peek-front ((range forward-connecting-range))
-  (block nil
-    (bind (((:slots %ranges) range))
-      (values (mapcar (lambda (x)
-                        (multiple-value-bind (value more)
-                            (cl-ds:peek-front x)
-                          (when (null more)
-                            (return-from nil (values nil nil)))
-                          value))
-                      %ranges)
-              t))))
+  (bind (((:slots %ranges) range))
+    (values (mapcar (lambda (x)
+                      (multiple-value-bind (value more)
+                          (cl-ds:peek-front x)
+                        (when (null more)
+                          (return-from cl-ds:peek-front (values nil nil)))
+                        value))
+                    %ranges)
+            t)))
 
 
 (defmethod cl-ds:peek-front ((range zipping-mixin))
@@ -185,16 +184,15 @@
 
 
 (defmethod cl-ds:peek-back ((range bidirectional-connecting-range))
-  (block nil
-    (bind (((:slots %ranges) range))
-      (values (mapcar (lambda (x)
-                        (multiple-value-bind (value more)
-                            (cl-ds:peek-back x)
-                          (when (null more)
-                            (return-from nil (values nil nil)))
-                          value))
-                      %ranges)
-              t))))
+  (bind (((:slots %ranges) range))
+    (values (mapcar (lambda (x)
+                      (multiple-value-bind (value more)
+                          (cl-ds:peek-back x)
+                        (when (null more)
+                          (return-from cl-ds:peek-back (values nil nil)))
+                        value))
+                    %ranges)
+            t)))
 
 
 (defmethod cl-ds:peek-back ((range zipping-mixin))
@@ -208,16 +206,15 @@
 (defmethod cl-ds:at ((range random-access-connecting-range) location
                      &rest more-locations)
   (cl-ds:assert-one-dimension more-locations)
-  (block nil
-    (bind (((:slots %ranges) range))
-      (values (mapcar (lambda (x)
-                        (multiple-value-bind (value more)
-                            (cl-ds:at x location)
-                          (when (null more)
-                            (return-from nil (values nil nil)))
-                          value))
-                      %ranges)
-              t))))
+  (bind (((:slots %ranges) range))
+    (values (mapcar (lambda (x)
+                      (multiple-value-bind (value more)
+                          (cl-ds:at x location)
+                        (when (null more)
+                          (return-from cl-ds:at (values nil nil)))
+                        value))
+                    %ranges)
+            t)))
 
 
 (defmethod cl-ds:at ((range zipping-mixin) location &rest more-locations)
