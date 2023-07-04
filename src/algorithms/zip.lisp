@@ -123,19 +123,19 @@
 
 
 (defmethod cl-ds:consume-front ((range forward-connecting-range))
-  (block nil
-    (bind (((:slots %ranges) range))
-      (values (mapcar (lambda (x)
-                        (multiple-value-bind (value more)
-                            (cl-ds:consume-front x)
-                          (when (null more)
-                            (return-from nil (values nil nil)))
-                          value))
-                      %ranges)
-              t))))
+  (bind (((:slots %ranges) range))
+    (values (mapcar (lambda (x)
+                      (multiple-value-bind (value more)
+                          (cl-ds:consume-front x)
+                        (when (null more)
+                          (return-from cl-ds:consume-front (values nil nil)))
+                        value))
+                    %ranges)
+            t)))
 
 
 (defmethod cl-ds:consume-front ((range zipping-mixin))
+  (declare (optimize (debug 3)))
   (bind (((:slots %function) range)
          ((:values values more) (call-next-method)))
     (if more
@@ -144,16 +144,15 @@
 
 
 (defmethod cl-ds:consume-back ((range bidirectional-connecting-range))
-  (block nil
-    (bind (((:slots %ranges) range))
-      (values (mapcar (lambda (x)
-                        (multiple-value-bind (value more)
-                            (cl-ds:consume-back x)
-                          (when (null more)
-                            (return-from nil (values nil nil)))
-                          value))
-                      %ranges)
-              t))))
+  (bind (((:slots %ranges) range))
+    (values (mapcar (lambda (x)
+                      (multiple-value-bind (value more)
+                          (cl-ds:consume-back x)
+                        (when (null more)
+                          (return-from cl-ds:consume-back (values nil nil)))
+                        value))
+                    %ranges)
+            t)))
 
 
 (defmethod cl-ds:consume-back ((range zipping-mixin))

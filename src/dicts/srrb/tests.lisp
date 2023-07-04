@@ -1,10 +1,6 @@
-(cl:in-package :cl-user)
-(defpackage sparse-rrb-vector-tests
-  (:use :cl :prove :cl-data-structures.aux-package)
-  (:shadowing-import-from :iterate :collecting :summing :in))
-(cl:in-package :sparse-rrb-vector-tests)
+(cl:in-package :cl-ds.dicts.srrb)
 
-(plan 383297)
+(prove:plan 383297)
 
 (bind ((vector (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector
                               :tail nil))
@@ -12,10 +8,10 @@
         (cl-ds.dicts.srrb::set-in-tail! vector #'cl-ds:add! vector 5 5 nil))
        (tail (cl-ds.dicts.srrb::access-tail vector))
        (tail-mask (cl-ds.dicts.srrb::access-tail-mask vector)))
-  (is structure vector)
-  (ok (cl-ds:changed status))
-  (is (aref tail 5) 5)
-  (is tail-mask (ash 1 5)))
+  (prove:is structure vector)
+  (prove:ok (cl-ds:changed status))
+  (prove:is (aref tail 5) 5)
+  (prove:is tail-mask (ash 1 5)))
 
 (let* ((count 500)
        (container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector))
@@ -28,27 +24,27 @@
      #'(setf cl-ds:at) container container position :value point))
   (iterate
     (for (position . point) in-vector input-data)
-    (is (cl-ds:at container position) point))
-  (setf input-data (~>> (cl-ds:iota-range :to count)
-                        (cl-ds.alg:zip #'list* (cl-ds.alg:shuffled-range 0 count))
-                        cl-ds.alg:to-vector))
+    (prove:is (cl-ds:at container position) point))
+  (setf input-data (cl-ds.alg:to-vector (cl-ds.alg:zip #'list*
+                                                       (cl-ds.alg:shuffled-range 0 count)
+                                                       (cl-ds:iota-range :to count))))
   (iterate
     (for (position . point) in-vector input-data)
     (cl-ds.meta:position-modification #'(setf cl-ds:at) container container
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
-    (is (cl-ds:at container position) point))
-  (is (cl-ds.dicts.srrb::access-tree-index-bound container)
+    (prove:is (cl-ds:at container position) point))
+  (prove:is (cl-ds.dicts.srrb::access-tree-index-bound container)
       (cl-ds.dicts.srrb::scan-index-bound container)))
 
 
 (let ((shift (cl-ds.dicts.srrb::shift-for-position 47)))
-  (is shift 1))
+  (prove:is shift 1))
 
 
 (let ((shift (cl-ds.dicts.srrb::shift-for-position 308)))
-  (is shift 1))
+  (prove:is shift 1))
 
 (let* ((count 500)
        (input-data (~>> (cl-ds:iota-range :to count)
@@ -63,18 +59,18 @@
                                       position :value point))
   (iterate
     (for (position . point) in-vector input-data)
-    (is (cl-ds:at container position) point))
+    (prove:is (cl-ds:at container position) point))
   (iterate
     (repeat (length input-data))
     (for position = (car (aref input-data 0)))
     (for (values structure status) = (cl-ds.meta:position-modification
                                       #'cl-ds:erase! container container position))
-    (is structure container)
-    (is (nth-value 1 (cl-ds:at container position)) nil)
+    (prove:is structure container)
+    (prove:is (nth-value 1 (cl-ds:at container position)) nil)
     (cl-ds.utils:swapop input-data 0)
     (iterate
       (for (position . point) in-vector input-data)
-      (is (cl-ds:at container position) point))))
+      (prove:is (cl-ds:at container position) point))))
 
 
 (let* ((container (make-instance 'cl-ds.dicts.srrb::mutable-sparse-rrb-vector)))
