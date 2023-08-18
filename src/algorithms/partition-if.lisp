@@ -35,7 +35,6 @@
   (call-next-method))
 
 
-
 (defmethod clone ((range abstract-partition-if-proxy))
   (make (class-of range)
         :original-range (~> range read-original-range clone)
@@ -71,7 +70,6 @@
 (defclass partition-if-function (layer-function)
   ()
   (:metaclass closer-mop:funcallable-standard-class))
-
 
 
 (defmethod cl-ds.alg.meta:layer-aggregator-constructor ((function partition-if-function)
