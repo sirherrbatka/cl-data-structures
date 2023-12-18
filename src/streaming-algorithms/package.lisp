@@ -33,6 +33,7 @@
    #:approximated-histogram-values
    #:approximated-histogram-counts
    #:approximated-histogram-variance
+   #:approximated-histogram-mode
    #:approximated-histogram-standard-deviation
    #:approximated-set-cardinality
    #:approximated-top-k

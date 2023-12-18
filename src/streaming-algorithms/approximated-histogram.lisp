@@ -386,6 +386,28 @@
          (access-count histogram))))
 
 
+(defun approximated-histogram-mode (histogram)
+  (check-type histogram approximated-histogram)
+  (bind (((:accessors (bins access-bins)
+                      (fill-pointer access-fill-pointer))
+          histogram))
+    (when (zerop fill-pointer)
+      (error 'cl-ds:invalid-value :format-control "Mode can't be found because passed histogram is empty."))
+    (iterate
+      (with most-frequent = (~> bins
+                                (extremum #'> :end fill-pointer
+                                              :key #'approximated-histogram-bin-count)
+                                approximated-histogram-bin-count ))
+      (for i from 0 below fill-pointer)
+      (for bin = (aref bins i))
+      (for count = (approximated-histogram-bin-count bin))
+      (when (= count most-frequent)
+        (summing count into count-sum)
+        (counting t into bin-count)
+        (summing (approximated-histogram-bin-value bin) into value-sum))
+      (finally (return (values (/ value-sum bin-count) count-sum))))))
+
+
 (defun approximated-histogram-variance (histogram)
   (check-type histogram approximated-histogram)
   (bind (((:accessors (count access-count)
