@@ -78,6 +78,7 @@
                                (cl-ds:fundamental-container (cl-ds:whole-range x))
                                (cl:sequence (cl-ds:whole-range x))))))))
 
+
 (defun cartesian-array (function element-type range &rest more-ranges)
   (declare (dynamic-extent more-ranges))
   (bind ((ranges-count (~> more-ranges length 1+))
