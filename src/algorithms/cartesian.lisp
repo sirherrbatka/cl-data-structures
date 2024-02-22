@@ -77,3 +77,17 @@
                                (cl-ds:fundamental-forward-range (cl-ds:clone x))
                                (cl-ds:fundamental-container (cl-ds:whole-range x))
                                (cl:sequence (cl-ds:whole-range x))))))))
+
+(defun cartesian-array (function element-type range &rest more-ranges)
+  (declare (dynamic-extent more-ranges))
+  (bind ((ranges-count (~> more-ranges length 1+))
+         (vector (~> (apply #'cartesian function range more-ranges)
+                     cl-ds.alg:to-vector))
+         (length (length vector))
+         (edge-length (truncate (expt length (/ 1 ranges-count))))
+         (result (make-array (make-list ranges-count :initial-element edge-length)
+                             :element-type element-type)))
+    (iterate
+      (for i from 0 below length)
+      (setf (row-major-aref result i) (aref vector i)))
+    result))

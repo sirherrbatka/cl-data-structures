@@ -1,7 +1,4 @@
-(cl:in-package #:cl-user)
-
-
-(defpackage :cl-data-structures.streaming-algorithms
+(cl:defpackage :cl-data-structures.streaming-algorithms
   (:use #:common-lisp #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.sa)
   (:shadow cl:union)

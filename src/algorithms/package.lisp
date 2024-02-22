@@ -52,6 +52,7 @@
    #:bidirectional-chain-of-ranges
    #:bidirectional-proxy-range
    #:cartesian
+   #:cartesian-array
    #:chain
    #:first-element
    #:with-previous-element
