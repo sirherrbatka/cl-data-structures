@@ -5,6 +5,8 @@
                            proxy-range)
   ((%key :initarg :key
          :reader read-key)
+   (%redicate :initarg :predicate
+              :reader read-predicate)
    (%function :initarg :function
               :reader read-function)
    (%current :initform nil
@@ -19,6 +21,7 @@
     ((range multiplex-proxy))
   '((:key read-key)
     (:current access-current)
+    (:predicate read-predicate)
     (:function read-function)))
 
 
@@ -85,6 +88,7 @@
 (defmethod cl-ds:consume-front ((range multiplex-proxy))
   (bind (((:slots %current) range)
          (function (read-function range))
+         (predicate (read-predicate range))
          (key (read-key range))
          (inner-range (read-original-range range)))
     (iterate
@@ -97,8 +101,11 @@
       (for (values next even-more) = (cl-ds:consume-front inner-range))
       (unless even-more
         (return-from cl-ds:consume-front (values nil nil)))
-      (setf %current (~>> next (funcall key) (funcall function))))
-    range))
+      (for candidate = (funcall key next))
+      (for accepted = (funcall predicate candidate))
+      (if accepted
+          (setf %current (funcall function candidate))
+          (return-from cl-ds:consume-front (values candidate t))))))
 
 
 (defmethod cl-ds:peek-front ((range multiplex-proxy))
@@ -110,12 +117,12 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 
-(defgeneric multiplex (range &key key function)
+(defgeneric multiplex (range &key key function predicate)
   (:generic-function-class multiplex-function)
-  (:method (range &key (key #'identity) (function #'cl-ds:whole-range))
+  (:method (range &key (key #'identity) (function #'cl-ds:whole-range) (predicate (constantly t)))
     (ensure-functionf key)
     (apply-range-function range #'multiplex
-                          (list range :key key :function function))))
+                          (list range :key key :function function :predicate predicate))))
 
 
 (defclass forward-multiplex-proxy (multiplex-proxy
@@ -129,6 +136,7 @@
   (make 'forward-multiplex-proxy
         :original-range range
         :key (getf (rest all) :key)
+        :predicate (getf (rest all) :predicate)
         :function (getf (rest all) :function)))
 
 
@@ -139,6 +147,7 @@
   (declare (optimize (speed 3) (safety 0) (compilation-speed 0) (space 0)))
   (bind ((outer-fn (call-next-method))
          (fn (ensure-function (read-function range)))
+         (predicate (ensure-function (read-predicate range)))
          (key (ensure-function (read-key range))))
     (cl-ds.alg.meta:aggregator-constructor
      (read-original-range range)
@@ -147,11 +156,14 @@
            ((inner (cl-ds.alg.meta:call-constructor outer-fn)))
 
            ((element)
-            (~>> element (funcall key) (funcall fn)
-                 (cl-ds:traverse
-                  _
-                  (lambda (x)
-                    (cl-ds.alg.meta:pass-to-aggregation inner x)))))
+             (let ((element (funcall key element)))
+               (if (funcall predicate element)
+                   (~>> element (funcall fn)
+                        (cl-ds:traverse
+                         _
+                         (lambda (x)
+                           (cl-ds.alg.meta:pass-to-aggregation inner x))))
+                   (cl-ds.alg.meta:pass-to-aggregation inner element))))
 
            ((cl-ds.alg.meta:extract-result inner))
 
