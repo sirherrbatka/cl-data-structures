@@ -21,6 +21,7 @@
     (format stream "[~a]" (skip-list-node-content object))
     (print-object (skip-list-node-at object 0) stream)))
 
+
 (defmethod print-object ((object assoc-skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
     (format stream "[~a:~a]"
@@ -33,6 +34,7 @@
   (pointers skip-list-node-pointers)
   (level skip-list-node-level)
   (content skip-list-node-content))
+
 
 (cl-ds.utils:define-list-of-slots assoc-skip-list-node (skip-list-node)
   (value assoc-skip-list-node-value))
