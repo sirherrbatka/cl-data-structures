@@ -19,15 +19,19 @@
 
 (defstruct (reservoir-sampling (:constructor make-reservoir-sampling*))
   result
+  replacement
+  test
   (w 0.0d0 :type double-float)
   (skip-count 0 :type fixnum))
 
 
-(defun make-reservoir-sampling (sample-size)
+(defun make-reservoir-sampling (sample-size &optional (replacement t) (test #'eql))
   (check-type sample-size positive-fixnum)
   (let ((w (gen-w sample-size)))
     (make-reservoir-sampling*
      :result (make-array sample-size :fill-pointer 0)
+     :replacement replacement
+     :test test
      :w w
      :skip-count (calculate-skip-count w))))
 
@@ -39,6 +43,8 @@
 (cl-ds.utils:define-list-of-slots reservoir-sampling ()
   (result reservoir-sampling-result)
   (w reservoir-sampling-w)
+  (replacement reservoir-sampling-replacement)
+  (test reservoir-sampling-test)
   (skip-count reservoir-sampling-skip-count)
   (sample-size reservoir-sampling-sample-size))
 
@@ -47,23 +53,27 @@
   (check-type reservoir-sampling reservoir-sampling)
   (cl-ds.utils:with-slots-for (reservoir-sampling reservoir-sampling)
     (cond ((< (fill-pointer result) sample-size)
-           (vector-push element result))
+           (unless (and (not replacement)
+                        (find element result :test test))
+             (vector-push element result)))
           ((zerop skip-count)
-           (setf skip-count (calculate-skip-count w)
-                 (aref result (random sample-size)) element
-                 w (gen-w sample-size w)))
+           (unless (and (not replacement)
+                        (find element result :test test))
+             (setf skip-count (calculate-skip-count w)
+                   (aref result (random sample-size)) element
+                   w (gen-w sample-size w))))
           (t (decf skip-count)))))
 
 
 (cl-ds.alg.meta:define-aggregation-function
     reservoir-sample reservoir-sample-function
 
-    (:range sample-size &key key after)
-    (:range sample-size &key (key #'identity) (after #'identity))
+    (:range sample-size &key key after test replacement)
+    (:range sample-size &key (key #'identity) (after #'identity) (test #'eql) (replacement t))
 
     ((%result reservoir-sampling))
 
-    ((setf %result (make-reservoir-sampling sample-size)))
+    ((setf %result (make-reservoir-sampling sample-size replacement test)))
 
     ((element)
      (reservoir-sampling-push %result element))

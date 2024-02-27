@@ -188,8 +188,7 @@
 
 
 (declaim (notinline locate-node))
-(-> locate-node (simple-vector t function) (values simple-vector
-                                                   simple-vector))
+(-> locate-node (simple-vector t function) (values simple-vector simple-vector))
 (defun locate-node (pointers item test)
   (declare (optimize (speed 3) (safety 0) (debug 0)
                      (compilation-speed 0) (space 0)))
@@ -273,12 +272,12 @@
 
 (defmethod cl-ds:size ((container fundamental-skip-list))
   (iterate
-   (for i from 0)
-   (for node
-        initially (~> container read-pointers (aref 0))
-        then (~> node skip-list-node-pointers (aref 0)))
-   (until (null node))
-   (finally (return i))))
+    (for i from 0)
+    (for node
+         initially (~> container read-pointers (aref 0))
+         then (~> node skip-list-node-pointers (aref 0)))
+    (until (null node))
+    (finally (return i))))
 
 
 (cl-ds.utils:define-list-of-slots fundamental-skip-list ()
