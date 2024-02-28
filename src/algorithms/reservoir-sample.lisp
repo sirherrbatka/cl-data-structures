@@ -52,16 +52,16 @@
 (defun reservoir-sampling-push (reservoir-sampling element)
   (check-type reservoir-sampling reservoir-sampling)
   (cl-ds.utils:with-slots-for (reservoir-sampling reservoir-sampling)
-    (cond ((< (fill-pointer result) sample-size)
-           (unless (and (not replacement)
-                        (find element result :test test))
-             (vector-push element result)))
-          ((zerop skip-count)
-           (unless (and (not replacement)
-                        (find element result :test test))
-             (setf skip-count (calculate-skip-count w)
-                   (aref result (random sample-size)) element
-                   w (gen-w sample-size w))))
+    (cond ((and (< (fill-pointer result) sample-size)
+                (nand (not replacement)
+                      (find element result :test test)))
+           (vector-push element result))
+          ((and (zerop skip-count)
+                (nand (not replacement)
+                      (find element result :test test)))
+           (setf skip-count (calculate-skip-count w)
+                 (aref result (random sample-size)) element
+                 w (gen-w sample-size w)))
           (t (decf skip-count)))))
 
 
