@@ -19,4 +19,5 @@
    #:tokenize
    #:command
    #:read-path
+   #:words
    #:with-file-ranges))

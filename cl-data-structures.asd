@@ -231,6 +231,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 :components ((:file "package")
                              (:file "common")
                              (:file "line-by-line")
+                             (:file "words")
                              (:file "tokenize")
                              (:file "find")
                              (:file "unix")
