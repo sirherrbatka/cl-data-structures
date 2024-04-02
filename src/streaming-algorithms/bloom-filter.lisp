@@ -142,3 +142,17 @@
         :hash-fn (ensure-function hash-fn)
         :depth depth
         :width width))
+
+
+(defun bloom-filter-jaccard (a b)
+  (check-type a bloom-filter)
+  (check-type b bloom-filter)
+  (compatiblep a b)
+  (let ((a-counters (access-counters a))
+        (b-counters (access-counters b)))
+    (coerce (/ (- (array-total-size a-counters)
+                  (iterate
+                    (for i from 0 below (array-total-size a-counters))
+                    (counting (= 0 (row-major-aref a-counters i) (row-major-aref b-counters i)))))
+               (array-total-size a-counters))
+            'single-float)))

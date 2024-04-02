@@ -35,6 +35,7 @@
    #:approximated-set-cardinality
    #:approximated-top-k
    #:bloom-filter
+   #:bloom-filter-jaccard
    #:clean-sketch
    #:fundamental-data-sketch
    #:gather-minhash-corpus

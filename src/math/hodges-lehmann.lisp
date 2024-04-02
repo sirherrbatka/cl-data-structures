@@ -15,7 +15,11 @@
                 (median-length (1+ (index (1- length) (1- length))))
                 (middle (truncate median-length 2))
                 (median-buffer (make-array median-length :element-type 'double-float))
-                (indexes (~> length iota (coerce '(vector fixnum))))
+                (indexes (iterate
+                           (with result = (make-array length))
+                           (for i from 0 below length)
+                           (setf (aref result i) i)
+                           (finally (return result))))
                 ((:dflet average-of-pairs (i))
                  (iterate
                    (for j from (1+ i) below length)
