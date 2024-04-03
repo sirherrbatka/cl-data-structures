@@ -137,7 +137,7 @@
   (make 'bloom-filter
         :counters (make-array depth
                    :initial-element 0
-                   :element-type 'non-negative-fixnum)
+                   :element-type 'bit)
         :hashes (or hashes (ph:make-hash-array width))
         :hash-fn (ensure-function hash-fn)
         :depth depth
@@ -150,9 +150,10 @@
   (compatiblep a b)
   (let ((a-counters (access-counters a))
         (b-counters (access-counters b)))
-    (coerce (/ (- (array-total-size a-counters)
-                  (iterate
-                    (for i from 0 below (array-total-size a-counters))
-                    (counting (= 0 (row-major-aref a-counters i) (row-major-aref b-counters i)))))
-               (array-total-size a-counters))
-            'single-float)))
+    (iterate
+      (for i from 0 below (array-total-size a-counters))
+      (counting (= 1 (row-major-aref a-counters i) (row-major-aref b-counters i))
+                into intersection)
+      (counting (>= 1 (+ (row-major-aref a-counters i) (row-major-aref b-counters i)))
+                into union)
+      (finally (return (- 1.0 (/ intersection union)))))))
