@@ -152,8 +152,11 @@
         (b-counters (access-counters b)))
     (iterate
       (for i from 0 below (array-total-size a-counters))
-      (counting (= 1 (row-major-aref a-counters i) (row-major-aref b-counters i))
+      (counting (= 1
+                   (row-major-aref a-counters i)
+                   (row-major-aref b-counters i))
                 into intersection)
-      (counting (>= 1 (+ (row-major-aref a-counters i) (row-major-aref b-counters i)))
+      (counting (or (= 1 (row-major-aref a-counters i))
+                    (= 1 (row-major-aref b-counters i)))
                 into union)
       (finally (return (- 1.0 (/ intersection union)))))))
