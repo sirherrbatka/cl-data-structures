@@ -445,7 +445,6 @@
                      operation
                      value
                      bucket
-                     index
                      rest)
             (unless (cl-ds:changed status)
               (return-from cl-ds.meta:position-modification
