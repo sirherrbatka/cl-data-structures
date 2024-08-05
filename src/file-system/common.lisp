@@ -1,12 +1,16 @@
 (cl:in-package #:cl-data-structures.file-system)
 
 
-(defmethod open-stream-designator ((designator pathname))
-  (open designator))
+(defgeneric open-stream-designator (designator &optional direction))
 
 
-(defmethod open-stream-designator ((designator string))
-  (open designator))
+
+(defmethod open-stream-designator ((designator pathname) &optional (direction :input))
+  (open designator :direction direction))
+
+
+(defmethod open-stream-designator ((designator string) &optional (direction :input))
+  (open designator :direction direction))
 
 
 (defgeneric stream-designator-p (designator))

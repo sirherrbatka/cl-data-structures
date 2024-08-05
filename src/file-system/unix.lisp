@@ -24,7 +24,13 @@
                                format-control-string format-arguments)))
 
 
-(defmethod open-stream-designator ((designator command))
-  (~> designator read-command-string
-      (uiop:launch-program :output :stream :force-shell nil)
-      uiop/launch-program:process-info-output))
+(defmethod open-stream-designator ((designator command) &optional (direction :input))
+  (eswitch (direction)
+    (:input
+     (~> designator read-command-string
+         (uiop:launch-program :output :stream :force-shell nil)
+         uiop/launch-program:process-info-output))
+    (:output
+     (~> designator read-command-string
+         (uiop:launch-program :input :stream :force-shell nil)
+         uiop/launch-program:process-info-input))))
