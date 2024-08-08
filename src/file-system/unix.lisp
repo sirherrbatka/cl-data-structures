@@ -46,5 +46,7 @@
                  (uiop:launch-program :input :stream :output :stream :force-shell nil
                                       :element-type element-type
                                       :external-format external-format))))
-       (make-two-way-stream uiop/launch-program:process-info-output
-                            uiop/launch-program:process-info-input)))))
+       (values (make-two-way-stream uiop/launch-program:process-info-output
+                                    uiop/launch-program:process-info-input)
+               uiop/launch-program:process-info-output
+               uiop/launch-program:process-info-input)))))
