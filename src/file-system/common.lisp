@@ -1,16 +1,15 @@
 (cl:in-package #:cl-data-structures.file-system)
 
 
-(defgeneric open-stream-designator (designator &optional direction))
+(defgeneric open-stream-designator (designator &key direction element-type external-format))
 
 
+(defmethod open-stream-designator ((designator pathname) &key (direction :input) (element-type 'character) (external-format :default))
+  (open designator :direction direction :element-type element-type :external-format external-format))
 
-(defmethod open-stream-designator ((designator pathname) &optional (direction :input))
-  (open designator :direction direction))
 
-
-(defmethod open-stream-designator ((designator string) &optional (direction :input))
-  (open designator :direction direction))
+(defmethod open-stream-designator ((designator string) &key (direction :input) (element-type 'character) (external-format :default))
+  (open designator :direction direction :element-type element-type :external-format external-format))
 
 
 (defgeneric stream-designator-p (designator))
