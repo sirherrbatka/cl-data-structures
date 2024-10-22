@@ -10,7 +10,7 @@
                 ((:dflet index (i j))
                  (+ (- (* length i)
                        (/ (* i (1+ i)) 2)
-                       1 i)
+                       i)
                     j))
                 (median-length (1+ (index (1- length) (1- length))))
                 (middle (truncate median-length 2))
@@ -22,7 +22,7 @@
                            (finally (return result))))
                 ((:dflet average-of-pairs (i))
                  (iterate
-                   (for j from (1+ i) below length)
+                   (for j from i below length)
                    (for index = (index i j))
                    (setf (aref median-buffer index)
                          (coerce (/ (+ (aref vector i)
