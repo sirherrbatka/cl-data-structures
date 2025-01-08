@@ -31,7 +31,6 @@
   (bind ((address (make-array (length dimensions)
                               :element-type 'fixnum
                               :initial-element 0))
-         (length (length dimensions))
          (pointers (list))
          (skipped 0)
          (pointer nil)
@@ -43,8 +42,7 @@
       (with batches = (batches pinned 2))
       (for (axis position) in batches)
       (setf (ldb (byte 1 axis) skipped) 1)
-      (setf (elt address axis) position)
-      (finally (decf length (length batches))))
+      (setf (elt address axis) position))
     (iterate
       (for i from 0)
       (for dim in dimensions)
