@@ -62,7 +62,7 @@
 
 (defgeneric with-previous-element (range &key key)
   (:generic-function-class with-previous-element-function)
-  (:method (range &key key)
+  (:method (range &key (key #'identity))
     (apply-range-function range #'with-previous-element (list key))))
 
 
