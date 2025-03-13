@@ -242,6 +242,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              (:file "parallel-group-by")
                              (:file "parallel-on-each")
                              (:file "buffer-range")
+                             (:file "traverse")
                              (:file "docstrings")))
                (:module "math"
                 :components ((:file "package")
