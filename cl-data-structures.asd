@@ -238,6 +238,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              (:file "docstrings")))
                (:module "threads"
                 :components ((:file "package")
+                             (:file "common")
                              (:file "parallel-multiplex")
                              (:file "parallel-group-by")
                              (:file "parallel-on-each")
