@@ -9,6 +9,6 @@
    #:parallel-multiplex
    #:parallel-on-each
    #:parallel-group-by
-   #:traverse
-   #:across
+   #:parallel-traverse
+   #:parallel-across
    ))

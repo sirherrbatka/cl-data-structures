@@ -1,7 +1,7 @@
 (cl:in-package #:cl-data-structures.threads)
 
 
-(defun traverse (object function &key (chunk-size 64) (maximum-queue-size 128))
+(defun parallel-traverse (object function &key (chunk-size 64) (maximum-queue-size 128))
   (bind ((tasks (make-instance 'task-queue
                                :queue-size maximum-queue-size
                                :callback function
@@ -10,7 +10,7 @@
     (task-queue-finalize tasks)
     object))
 
-(defun across (object function &key (chunk-size 64) (maximum-queue-size 128))
+(defun parallel-across (object function &key (chunk-size 64) (maximum-queue-size 128))
   (bind ((tasks (make-instance 'task-queue
                                :queue-size maximum-queue-size
                                :callback function
