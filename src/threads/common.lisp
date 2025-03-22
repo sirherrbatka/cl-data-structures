@@ -40,15 +40,15 @@
       task-queue
     (vector-push-extend task (buffer task-queue))
     (when (= (fill-pointer buffer) batch-size)
-      (bt2:with-lock-held (lock)
-        (setf (gethash buffer tasks)
-              (cl-ds.utils:with-rebind (buffer)
-                (lparallel:future
-                  (cl-ds.utils:rebind
-                   (map nil callback buffer)
-                   (bt2:with-lock-held (lock)
-                     (remhash buffer tasks)
-                     (bt2:condition-notify cv)))))))
+      (let ((task (cl-ds.utils:with-rebind (buffer)
+                    (lparallel:future
+                      (cl-ds.utils:rebind
+                       (map nil callback buffer)
+                       (bt2:with-lock-held (lock)
+                         (remhash buffer tasks)
+                         (bt2:condition-notify cv)))))))
+        (bt2:with-lock-held (lock)
+          (setf (gethash buffer tasks) task)))
       (setf buffer (make-array batch-size :adjustable t :fill-pointer 0))
       (bt2:with-lock-held (lock)
         (iterate
