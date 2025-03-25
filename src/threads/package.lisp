@@ -1,4 +1,4 @@
-(cl:defpackage :cl-data-structures.threads
+(cl:defpackage #:cl-data-structures.threads
   (:use #:cl-data-structures.aux-package #:common-lisp)
   (:nicknames #:cl-ds.threads)
   (:export
@@ -8,4 +8,5 @@
    #:parallel-group-by
    #:parallel-traverse
    #:parallel-across
+   #:parallel-contains-p
    ))
