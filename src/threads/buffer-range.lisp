@@ -94,7 +94,7 @@
                             (cl-ds.alg.meta:pass-to-aggregation inner e))
               (error (e) (bt:with-lock-held (error-lock)
                            (setf stored-error e)
-                           (leave))))))
+                           (return-from thread-function nil))))))
          (aggregate-thread nil))
     (cl-ds.alg.meta:aggregator-constructor
      (cl-ds.alg:read-original-range range)
