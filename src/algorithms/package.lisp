@@ -50,6 +50,7 @@
    #:array-elementwise
    #:hash-table-elementwise
    #:bidirectional-chain-of-ranges
+   #:containsp
    #:bidirectional-proxy-range
    #:cartesian
    #:cartesian-array

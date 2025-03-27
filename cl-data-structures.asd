@@ -186,6 +186,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                            (:file "docstrings")
                                            ))
                              (:file "common")
+                             (:file "contains")
                              (:file "array-elementwise")
                              (:file "hash-table-elementwise")
                              (:file "on-each")
