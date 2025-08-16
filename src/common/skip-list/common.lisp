@@ -190,8 +190,6 @@
 (declaim (notinline locate-node))
 (-> locate-node (simple-vector t function) (values simple-vector simple-vector))
 (defun locate-node (pointers item test)
-  (declare (optimize (speed 3) (safety 0) (debug 0)
-                     (compilation-speed 0) (space 0)))
   (let* ((pointers-length (length pointers))
          (prev-result (make-array pointers-length
                                   :initial-element nil))
