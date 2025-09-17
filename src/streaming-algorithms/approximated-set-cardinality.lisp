@@ -40,6 +40,14 @@
   (~> state access-registers hll:cardinality))
 
 
+(defun approximated-set-cardinality-add (data-sketch element)
+  (bind (((:slots %hash-fn %registers) data-sketch)
+          (hash-fn (ensure-function %hash-fn))
+          (hash (ldb (byte 64 0) (funcall hash-fn element))))
+     (declare (optimize (speed 3) (debug 0) (safety 1) (space 0)))
+     (hll:add-hash %registers hash)))
+
+
 (cl-ds.alg.meta:define-aggregation-function
   approximated-set-cardinality approximated-set-cardinality-function
 

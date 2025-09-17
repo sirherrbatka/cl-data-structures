@@ -47,6 +47,7 @@
    #:make-one-bit-minhash
    #:minhash
    #:minhash-jaccard/double-float
+   #:approximated-set-cardinality-add
    #:minhash-jaccard/fixnum
    #:minhash-jaccard/single-float
    #:one-bit-minhash-jaccard/double-float

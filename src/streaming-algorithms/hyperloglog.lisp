@@ -157,8 +157,8 @@ This is loglog-beta to be specific.
     (with x = 0.0d0)
     (with b1 = 0.0d0)
     (with b2 = 0.0d0)
-    (setf den (expt 2.0d0 power)
-          power (+ (if (= i +2Q+) (+ +p+ +r+ i -1) (+ +p+ +r+ i)) 0.0d0))
+    (setf power (+ (if (= i +2Q+) (+ +p+ +r+ i -1) (+ +p+ +r+ i)) 0.0d0)
+          den (expt 2.0d0 power))
     (iterate
       (declare (type fixnum j)
                (type double-float prx pry))
