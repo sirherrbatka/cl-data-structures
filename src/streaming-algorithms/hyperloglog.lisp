@@ -7,7 +7,6 @@
            #:add-hash
            #:new-sketch
            #:register
-           #:hash-integer
            #:sketch
            #:union))
 
