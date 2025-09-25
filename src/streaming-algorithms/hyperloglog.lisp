@@ -99,7 +99,7 @@ This is loglog-beta to be specific.
 (declaim (inline hash-shifts))
 (defun hash-shifts (y)
   (declare (optimize (speed 3)))
-  (ldb (byte 16 #.(- 64 +r+)) y))
+  (ldb (byte 16 #.(- 64 +r+)) (cl-ds.utils:hash-integer y)))
 
 
 (-> add-hash (sketch (unsigned-byte 64)) sketch)
@@ -121,14 +121,7 @@ This is loglog-beta to be specific.
 
 
 (defun union (sketch &rest more-sketches)
-  (iterate
-    (with result = (new-sketch))
-    (for s in (cons sketch more-sketches))
-    (iterate
-      (declare (type fixnum i))
-      (for i from 0 below +m+)
-      (maxf (aref result i) (aref s i)))
-    (finally (return result))))
+  (apply #'map-into (new-sketch) #'max sketch more-sketches))
 
 
 (-> expected-collisions ((double-float 0.0d0) (double-float 0.0d0)) double-float)
@@ -197,10 +190,10 @@ This is loglog-beta to be specific.
       (for i from 0 below +m+)
       (for ea = (aref a i))
       (for eb = (aref b i))
-      (if (= ea eb)
-          (unless (zerop ea)
-            (incf c))
-          (incf n)))
+      (when (and (not (zerop ea)) (= ea eb))
+        (incf c))
+      (unless (= ea eb 0)
+        (incf n)))
     (when (= c 0)
       (return-from jaccard 1.0d0))
     (let* ((c1 (cardinality a))
