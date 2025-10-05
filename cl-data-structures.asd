@@ -274,6 +274,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              (:file "polynomial-hashing")
                              (:file "package")
                              (:file "common")
+                             (:file "simhash")
                              (:file "approximated-histogram")
                              (:file "approximated-set-cardinality")
                              (:file "approximated-counts")
