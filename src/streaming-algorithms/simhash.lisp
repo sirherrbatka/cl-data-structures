@@ -16,7 +16,7 @@
    (iterate
      (declare (type (unsigned-byte 64) hash)
               (type fixnum i)
-              (type (simple-array (unsigned-byte 32) (64)) %counters))
+              (type (simple-array fixnum (64)) %counters))
      (with hash = (ldb (byte 64 0) (funcall %hash-fn element)))
      (for i from 0 below 64)
      (if (ldb-test (byte 1 i) hash)
