@@ -49,6 +49,7 @@
    #:minhash-jaccard/double-float
    #:approximated-set-cardinality-add
    #:simhash
+   #:simhash-distance
    #:minhash-jaccard/fixnum
    #:minhash-jaccard/single-float
    #:one-bit-minhash-jaccard/double-float

@@ -33,3 +33,7 @@
      (for counter = (aref %counters i))
      (setf (ldb (byte 1 i) result) (the bit (clamp counter 0 1)))
      (finally (return result)))))
+
+
+(defun simhash-distance (a b)
+  (logcount (logxor a b)))
