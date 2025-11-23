@@ -988,24 +988,19 @@
                 cl-ds.common:empty-eager-modification-operation-status))))
 
 
-(defun tree-index-bound (tree shift)
-  (if (cl-ds.meta:null-bucket-p tree)
-      0
-      (iterate
-        (with result = 0)
-        (for i from 0 to shift)
-        (for byte-position from (* cl-ds.common.rrb:+bit-count+ shift)
-             downto 0
-             by cl-ds.common.rrb:+bit-count+)
-        (for bitmask = (cl-ds.common.rrb:sparse-rrb-node-bitmask node))
-        (for index = (~> bitmask integer-length 1-))
-        (for last = (~> bitmask logcount 1-))
-        (for node
-             initially tree
-             then (~> node cl-ds.common.rrb:sparse-rrb-node-content (aref last)))
-        (setf (ldb (byte cl-ds.common.rrb:+bit-count+ byte-position) result)
-              index)
-        (finally (return (1+ result))))))
+(defun tree-index-bound (tree shift &optional (result 0))
+  (cond ((cl-ds.meta:null-bucket-p tree) 0)
+        (t
+         (bind ((bitmask (cl-ds.common.rrb:sparse-rrb-node-bitmask tree))
+                (last-index (1- (logcount bitmask)))
+                (next-result (logior (ash result cl-ds.common.rrb:+bit-count+)
+                                     (1- (integer-length bitmask)))))
+           (if (zerop shift)
+               (1+ next-result)
+               (~> tree
+                   cl-ds.common.rrb:sparse-rrb-node-content
+                   (aref last-index)
+                   (tree-index-bound (1- shift) next-result)))))))
 
 
 (-> scan-index-bound (fundamental-sparse-rrb-vector) fixnum)
