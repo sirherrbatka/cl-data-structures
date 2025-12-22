@@ -30,7 +30,7 @@
     :initarg :stored-error-lock
     :accessor stored-error-lock))
   (:default-initargs
-   :cv (bt2:make-condition-variable)
+   :cv (bt2:make-condition-variable :name "task queue CV")
    :lock (bt2:make-lock)
    :tasks (make-hash-table)
    :stored-error-lock (bt2:make-lock)
@@ -59,31 +59,35 @@
       task-queue
     (vector-push-extend task (buffer task-queue))
     (when (= (fill-pointer buffer) batch-size)
-      (let ((task (cl-ds.utils:with-rebind (buffer)
-                    (lparallel:future
-                      (handler-case
-                          (when (bt2:with-lock-held (stored-error-lock)
-                                  (null stored-error))
-                            (cl-ds.utils:rebind
-                             (map nil callback buffer)
-                             (bt2:with-lock-held (lock)
-                               (remhash buffer tasks)
-                               (bt2:condition-notify cv))))
-                        (error (e)
-                          (bt2:with-lock-held (stored-error-lock)
-                            (bt2:with-lock-held (lock)
-                              (setf stored-error e)
-                              (bt2:condition-notify cv)))))))))
-        (bt2:with-lock-held (lock)
+      (bt2:with-lock-held (lock)
+        (let ((task (cl-ds.utils:with-rebind (buffer)
+                      (lparallel:future
+                        (unwind-protect
+                             (handler-case
+                                 (if (bt2:with-lock-held (stored-error-lock) (null stored-error))
+                                     (cl-ds.utils:rebind
+                                      (map nil callback buffer)
+                                      (bt2:with-lock-held (lock)
+                                        (remhash buffer tasks)
+                                        (bt2:condition-notify cv)))
+                                     (bt2:with-lock-held (lock)
+                                       (remhash buffer tasks)
+                                       (bt2:condition-notify cv)))
+                               (error (e)
+                                 (bt2:with-lock-held (stored-error-lock)
+                                   (setf stored-error e))
+                                 (bt2:with-lock-held (lock)
+                                   (remhash buffer tasks)
+                                   (bt2:condition-notify cv)))))))))
           (setf (gethash buffer tasks) task)))
       (setf buffer (make-array batch-size :adjustable t :fill-pointer 0))
-      (bt2:with-lock-held (lock)
-        (iterate
-          (bt2:with-lock-held (stored-error-lock)
-            (unless (null stored-error)
-              (error stored-error)))
+      (iterate
+        (bt2:with-lock-held (stored-error-lock)
+          (unless (null stored-error)
+            (error stored-error)))
+        (bt2:with-lock-held (lock)
           (while (>= (hash-table-count tasks) queue-size))
-          (bt2:condition-wait cv lock))))))
+          (bt2:condition-wait cv lock :timeout 1))))))
 
 (defun task-queue-finalize (task-queue)
   (with-accessors ((buffer buffer)
@@ -93,9 +97,8 @@
                    (stored-error-lock stored-error-lock)
                    (function callback))
       task-queue
-    (let ((final (lparallel:future (map nil function buffer))))
-      (force-everything task-queue)
-      (lparallel:force final)
-      (bt2:with-lock-held (stored-error-lock)
-        (unless (null stored-error)
-          (error stored-error))))))
+    (force-everything task-queue)
+    (bt2:with-lock-held (stored-error-lock)
+      (unless (null stored-error)
+        (error stored-error)))
+    (map nil function buffer)))
