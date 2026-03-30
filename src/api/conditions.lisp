@@ -117,7 +117,7 @@
 
 (defmethod print-condition ((condition argument-value-out-of-bounds) stream)
   (if (slot-boundp condition '%argument)
-      (format stream "Argument ~A has value ~a which is out of bounds ~a.~%"
+      (format stream "Argument ~a has value ~a which is out of bounds ~a.~%"
               (read-argument condition)
               (read-value condition)
               (read-bounds condition))
