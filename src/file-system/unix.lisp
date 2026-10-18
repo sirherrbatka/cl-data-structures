@@ -9,7 +9,7 @@
 
 (defmethod print-object ((object command) stream)
   (print-unreadable-object (object stream)
-    (format stream "~a" (read-command-string object))))
+    (format stream "~A" (read-command-string object))))
 
 
 (defmethod stream-designator-p ((designator command))

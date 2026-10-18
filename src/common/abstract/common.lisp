@@ -49,14 +49,14 @@
 
 
 (defun struct-accessor-name (type slot)
-  (intern (format nil "~a-~a" type
+  (intern (format nil "~A-~A" type
                     (if (listp slot) (first slot) slot))))
 
 
 (defmacro define-tagged-untagged-node (name &body slots)
   (let* ((string (symbol-name name))
-         (tagged-name (intern (format nil "~a-TAGGED" string)))
-         (untagged-name (intern (format nil "~a-UNTAGGED" string))))
+         (tagged-name (intern (format nil "~A-TAGGED" string)))
+         (untagged-name (intern (format nil "~A-UNTAGGED" string))))
     `(progn
        (defstruct ,untagged-name
          ,@slots)
@@ -83,7 +83,7 @@
                                              new-value))
                          (,untagged-name (setf (,(struct-accessor-name untagged-name slot) argument)
                                                new-value))))))
-       (defun ,(intern (format nil "MAKE-~a" name))
+       (defun ,(intern (format nil "MAKE-~A" name))
             (&key ,@(iterate
                       (for slot in slots)
                       (for symbolp = (symbolp slot))
@@ -93,13 +93,13 @@
                           (collect `(,symbol ,(second slot)))))
                ownership-tag)
           (if (null ownership-tag)
-              (,(intern (format nil "MAKE-~a" untagged-name))
+              (,(intern (format nil "MAKE-~A" untagged-name))
                ,@(iterate
                    (for slot in slots)
                    (for symbol = (if (symbolp slot) slot (first slot)))
                    (collect (make-keyword symbol))
                    (collect symbol)))
-              (,(intern (format nil "MAKE-~a" tagged-name))
+              (,(intern (format nil "MAKE-~A" tagged-name))
                ,@(iterate
                    (for slot in slots)
                    (for symbol = (if (symbolp slot) slot (first slot)))

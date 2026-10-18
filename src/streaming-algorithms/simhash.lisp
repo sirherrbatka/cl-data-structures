@@ -10,13 +10,14 @@
   (%counters %hash-fn)
 
   ((setf %hash-fn hash-fn
-         %counters (make-array 64 :element-type '(unsigned-byte 32))))
+         %counters (make-array 64 :element-type '(signed-byte 64))))
 
   ((element)
    (iterate
      (declare (type (unsigned-byte 64) hash)
               (type fixnum i)
-              (type (simple-array fixnum (64)) %counters))
+              (optimize (debug 3))
+              (type (simple-array (signed-byte 64) (64)) %counters))
      (with hash = (ldb (byte 64 0) (funcall %hash-fn element)))
      (for i from 0 below 64)
      (if (ldb-test (byte 1 i) hash)
@@ -25,8 +26,9 @@
 
   ((iterate
      (declare (type fixnum i)
-              (type (unsigned-byte 32) counter)
+              (type (signed-byte 64) counter)
               (type (unsigned-byte 64) result)
+              (optimize (debug 3))
               (type integer result))
      (with result = 0)
      (for i from 0 below 64)

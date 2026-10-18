@@ -127,7 +127,7 @@
           (total-size (hash-table-count (read-hash-table obj))))
       (block map-block
         (maphash (lambda (key value) (declare (ignore value))
-                   (format stream "{~a}" key)
+                   (format stream "{~A}" key)
                    (incf current)
                    (when (eql current count)
                      (return-from map-block)))

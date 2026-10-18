@@ -46,7 +46,7 @@
            (binded nil)
            (funcall-args (mapcar (lambda (x)
                                    (if (eq :_ x)
-                                       (let ((arg (intern (format nil "ARG~a" (incf args-count)))))
+                                       (let ((arg (intern (format nil "ARG~A" (incf args-count)))))
                                          (push arg fargs)
                                          arg)
                                        (let ((symbol (gensym)))

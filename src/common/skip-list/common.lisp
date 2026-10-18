@@ -18,13 +18,13 @@
 
 (defmethod print-object ((object skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
-    (format stream "[~a]" (skip-list-node-content object))
+    (format stream "[~A]" (skip-list-node-content object))
     (print-object (skip-list-node-at object 0) stream)))
 
 
 (defmethod print-object ((object assoc-skip-list-node) stream)
   (print-unreadable-object (object stream :type nil :identity nil)
-    (format stream "[~a:~a]"
+    (format stream "[~A:~A]"
             (skip-list-node-content object)
             (assoc-skip-list-node-value object))
     (print-object (skip-list-node-at object 0) stream)))

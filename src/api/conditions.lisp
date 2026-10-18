@@ -29,7 +29,7 @@
 
 
 (defmethod print-condition ((condition initialization-error) stream)
-  (format stream "During initialization of ~a:~%"
+  (format stream "During initialization of ~A:~%"
           (read-class condition))
   (call-next-method))
 
@@ -106,7 +106,7 @@
 
 (defmethod print-condition ((condition file-releated-error) stream)
   (unless (null (path condition))
-    (format stream "Error when processing file ~a:~%" (path condition)))
+    (format stream "Error when processing file ~A:~%" (path condition)))
   (call-next-method))
 
 
@@ -117,11 +117,11 @@
 
 (defmethod print-condition ((condition argument-value-out-of-bounds) stream)
   (if (slot-boundp condition '%argument)
-      (format stream "Argument ~a has value ~a which is out of bounds ~a.~%"
+      (format stream "Argument ~A has value ~a which is out of bounds ~A.~%"
               (read-argument condition)
               (read-value condition)
               (read-bounds condition))
-      (format stream "Value ~a is out of bounds ~a.~%"
+      (format stream "Value ~A is out of bounds ~A.~%"
               (read-value condition)
               (read-bounds condition)))
   (call-next-method))
@@ -132,7 +132,7 @@
         (bounds (read-bounds condition))
         (i 20))
     (block out
-      (format stream "Value ~a is not in the set: " value)
+      (format stream "Value ~A is not in the set: " value)
       (map nil
            (lambda (x)
              (if (zerop (decf i))
@@ -146,7 +146,7 @@
 
 
 (defmethod print-condition ((condition argument-error) stream)
-  (format stream "Problem with the argument: ~a.~%"
+  (format stream "Problem with the argument: ~A.~%"
           (read-argument condition))
   (call-next-method))
 
@@ -167,5 +167,5 @@
 
 
 (defmethod print-condition ((condition invalid-value) stream)
-  (format stream "Invalid value: ~a.~%" (read-value condition))
+  (format stream "Invalid value: ~A.~%" (read-value condition))
   (call-next-method))
