@@ -31,6 +31,7 @@
    #:read-key
    #:cleanup
    #:state-result
+   #:run
    #:transformation!-function))
 
 
@@ -41,6 +42,8 @@
         #:cl-data-structures.aux-package)
   (:nicknames #:cl-ds.alg)
   (:shadow #:extrema #:extremum)
+  (:import-from #:cl-data-structures.algorithms.meta
+                #:run)
   (:export
    #:%summary
    #:%summary
@@ -112,6 +115,7 @@
    #:should-skip
    #:shuffled-range
    #:summary
+   #:run ; re-export
    #:summary-result-range
    #:to-hash-table
    #:to-list

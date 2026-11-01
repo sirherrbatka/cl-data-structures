@@ -40,7 +40,7 @@ Range function invokaction protocol.
 
 (defgeneric apply-range-function (range function arguments))
 
-(defgeneric apply-aggregation-function (range function arguments))
+(defgeneric apply-aggregation-function (range function arguments &optional run))
 
 (defgeneric make-state (aggregation-function
                         &rest all

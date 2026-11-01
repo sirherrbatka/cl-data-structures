@@ -23,3 +23,12 @@
 
 (define-condition early-aggregation-exit (condition)
   ())
+
+(defclass aggregations-container ()
+  ((%aggregators
+    :initarg :aggregators
+    :accessor aggregators)
+   (%input
+    :initarg :input
+    :accessor input))
+  (:default-initargs :aggregators (list)))
