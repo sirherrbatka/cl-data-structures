@@ -1,5 +1,0 @@
-* Tasks
-** DONE This will need another function to check if state of the function is complete.
-   CLOSED: [2020-01-18 sob 11:03]
-   [2019-02-03 nie]
-   [[file:~/quicklisp/local-projects/cl-data-structures/src/algorithms/meta/generics.lisp::(defgeneric%20expects-content-p%20(aggregator))]]

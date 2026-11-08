@@ -45,8 +45,18 @@
                                   function-state-forms))
           (function-types (mapcar (lambda (x) (if (atom x) t (second x)))
                                   function-state-forms)))
-      (with-gensyms (!after !range !outer-constructor !function !key !arguments !init !main
-                              !extract-callback !keys)
+      (with-gensyms (!after
+                     !range
+                     !outer-constructor
+                     !function
+                     !key
+                     !arguments
+                     !init
+                     !main
+                     !extract-callback
+                     !keys
+                     !cached-value
+                     !cached-value-present)
         (bind (((aggregate-lambda-list . aggregate-body) aggregate-form))
           `(flet ((,!function (,!key ,!after ,!arguments)
                     (lambda ()
@@ -64,10 +74,15 @@
                                                                  (null ,!after))
                                                              (lambda ()
                                                                ,@result-form)
-                                                             (let ((,!after (ensure-function ,!after)))
+                                                             (let ((,!after (ensure-function ,!after))
+                                                                   (,!cached-value-present nil)
+                                                                   (,!cached-value nil))
                                                                (lambda ()
-                                                                 (funcall ,!after
-                                                                          (progn ,@result-form)))))))
+                                                                 (if ,!cached-value-present
+                                                                     ,!cached-value
+                                                                     (prog1 (setf ,!cached-value
+                                                                                  (funcall ,!after (progn ,@result-form)))
+                                                                       (setf ,!cached-value-present t))))))))
                                    (if (or (eq ,!key #'identity)
                                            (eq ,!key 'identity)
                                            (null ,!key))
