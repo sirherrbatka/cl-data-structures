@@ -53,6 +53,7 @@
                      !arguments
                      !init
                      !main
+                     !extractor
                      !extract-callback
                      !keys
                      !cached-value
@@ -74,15 +75,17 @@
                                                                  (null ,!after))
                                                              (lambda ()
                                                                ,@result-form)
-                                                             (let ((,!after (ensure-function ,!after))
+                                                             (let* ((,!after (ensure-function ,!after))
                                                                    (,!cached-value-present nil)
-                                                                   (,!cached-value nil))
-                                                               (lambda ()
-                                                                 (if ,!cached-value-present
-                                                                     ,!cached-value
-                                                                     (prog1 (setf ,!cached-value
-                                                                                  (funcall ,!after (progn ,@result-form)))
-                                                                       (setf ,!cached-value-present t))))))))
+                                                                    (,!cached-value nil)
+                                                                    (,!extractor
+                                                                      (lambda ()
+                                                                        (if ,!cached-value-present
+                                                                            ,!cached-value
+                                                                            (prog1 (setf ,!cached-value
+                                                                                         (funcall ,!after (progn ,@result-form)))
+                                                                              (setf ,!cached-value-present t))))))
+                                                               ,!extractor))))
                                    (if (or (eq ,!key #'identity)
                                            (eq ,!key 'identity)
                                            (null ,!key))
