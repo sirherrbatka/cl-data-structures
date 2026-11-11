@@ -54,7 +54,7 @@
 (defmethod cl-ds.alg.meta:aggregator-constructor
     ((range parallel-forward-multiplex-proxy)
      outer-constructor
-     (function cl-ds.alg.meta:aggregation-function)
+     function
      (arguments list))
   (declare (optimize (speed 1) (safety 2) (debug 1)
                      (compilation-speed 0) (space 0)))

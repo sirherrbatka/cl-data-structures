@@ -188,7 +188,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range proxy-box-range)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function 
                                                   (arguments list))
   (let ((on-each-key (ensure-function (read-key range)))
         (outer-fn (call-next-method))

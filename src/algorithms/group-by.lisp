@@ -64,7 +64,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range group-by-proxy)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function 
                                                   (arguments list))
   (declare (optimize (speed 3) (safety 0) (debug 0)
                      (space 0) (compilation-speed 0)))
@@ -91,16 +91,20 @@
                 (cl-ds.alg.meta:early-aggregation-exit nil))))
 
            ((maphash (lambda (key aggregator &aux (*current-key* key))
-                       (let ((result (cl-ds.alg.meta:extract-result aggregator)))
+                       (let ((result (cl-ds.alg.meta:captured-aggregations-list
+                                      (cl-ds.alg.meta:with-captured-aggregations
+                                        (cl-ds.alg.meta:extract-result aggregator)))))
                          (if (funcall accept result)
                              (setf (gethash key groups) (funcall transform result))
                              (remhash key groups))))
                      groups)
-             (make-instance 'group-by-result-range
-                            :hash-table groups
-                            :keys (~> groups hash-table-keys (coerce 'vector))
-                            :begin 0
-                            :end (hash-table-count groups)))
+             (lret ((result (make-instance 'group-by-result-range
+                                           :hash-table groups
+                                           :keys (~> groups hash-table-keys (coerce 'vector))
+                                           :begin 0
+                                           :end (hash-table-count groups))))
+               
+               (cl-ds.alg.meta:push-to-aggregation-results result)))
 
          (iterate
            (for (key group) in-hashtable groups)

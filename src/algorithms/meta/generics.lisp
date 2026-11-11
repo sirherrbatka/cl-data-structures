@@ -60,10 +60,10 @@ Range function invokaction protocol.
 (defgeneric aggregator-constructor (range outer-constructor
                                     function arguments)
   (:method ((range cl:sequence) (outer-constructor function)
-            (function aggregation-function) (arguments list))
+            function (arguments list))
     outer-constructor)
   (:method ((range cl-ds:traversable) (outer-constructor function)
-            (function aggregation-function) (arguments list))
+            function (arguments list))
     outer-constructor))
 
 (defgeneric layer-aggregator-constructor (function outer-constructor arguments))
@@ -71,5 +71,6 @@ Range function invokaction protocol.
 (defmacro call-constructor (constructor)
   `(the aggregator (funcall (the function ,constructor))))
 
-(defun construct-aggregator (range function arguments)
-  (call-constructor (aggregator-constructor range nil function arguments)))
+(defgeneric construct-aggregator (range function arguments)
+  (:method (range function arguments)
+    (call-constructor (aggregator-constructor range nil function arguments))))

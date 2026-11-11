@@ -159,7 +159,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range distinct-proxy)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function
                                                   (arguments list))
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0) (compilation-speed 0)))
   (bind (((:slots %key %seen) range)

@@ -64,7 +64,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range without-proxy)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function
                                                   (arguments list))
   (declare (optimize (speed 3) (safety 0)))
   (let ((outer-fn (or outer-constructor

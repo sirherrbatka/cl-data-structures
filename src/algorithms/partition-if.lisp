@@ -46,7 +46,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range partition-if-proxy)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function
                                                   (arguments list))
   (declare (optimize (speed 3) (safety 0)))
   (bind ((on-first (read-on-first range))

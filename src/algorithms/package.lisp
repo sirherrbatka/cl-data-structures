@@ -31,6 +31,9 @@
    #:read-key
    #:cleanup
    #:state-result
+   #:with-captured-aggregations
+   #:captured-aggregations-list
+   #:push-to-aggregation-results
    #:run
    #:transformation!-function))
 

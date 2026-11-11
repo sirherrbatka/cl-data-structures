@@ -181,7 +181,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range cumulative-accumulate-range)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function
                                                   (arguments list))
   (declare (optimize (debug 3) (safety 1)))
   (let ((fn (ensure-function (read-function range)))

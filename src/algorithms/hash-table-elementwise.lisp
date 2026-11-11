@@ -42,8 +42,11 @@
       ((unless (null inners)
          (lret ((result (make-hash-table :test (hash-table-test inners)
                                          :size (hash-table-size inners))))
+           (push-to-aggregation-results result)
            (maphash (lambda (key value)
-                      (setf (gethash key result) (cl-ds.alg.meta:extract-result value)))
+                      (setf (gethash key result) (cl-ds.alg.meta:captured-aggregations-list
+                                                  (cl-ds.alg.meta:with-captured-aggregations
+                                                    (cl-ds.alg.meta:extract-result value)))))
                     inners))))
 
        (unless (null inners)

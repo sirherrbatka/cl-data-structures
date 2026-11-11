@@ -57,42 +57,54 @@ Range function invokaction protocol.
   '((:aggregators aggregators)
     (:input input)))
 
-(defgeneric make-aggregations-container (input aggregator)
-  (:method ((input aggregations-container) aggregator)
-    (cl-ds.utils:quasi-clone input :aggregators (cons aggregator (aggregators input))))
-  (:method (input aggregator)
+(defgeneric make-aggregations-container (input args)
+  (:method ((input aggregations-container) args)
+    (cl-ds.utils:quasi-clone input :aggregators (cons args (aggregators input))))
+  (:method (input args)
     (make-instance 'aggregations-container
                    :input input
-                   :aggregators (list aggregator))))
+                   :aggregators (list args))))
 
 (defun run (aggregations-container)
-  (let ((success nil)
-        (aggregators (~> aggregations-container aggregators reverse))
-        (range (input aggregations-container)))
-    (unwind-protect
-         (progn
-           (handler-case
-               (across-aggregate range
-                                 (lambda (x)
-                                   (iterate
-                                     (for aggregator in aggregators)
-                                     (pass-to-aggregation aggregator
-                                                          x))))
-             (early-aggregation-exit nil))
-           (setf success t))
-      (unless success (iterate
-                        (for aggregator in aggregators)
-                        (cleanup aggregator))))
-    (if (endp (rest aggregators))
-        (~> aggregators first extract-result)
-        (mapcar #'extract-result aggregators))))
+  (captured-aggregations-list
+   (with-captured-aggregations
+     (let* ((success nil)
+            (range (input aggregations-container))
+            (compound-aggregator (call-constructor (aggregator-constructor
+                                                    range 
+                                                    (let-aggregator ((aggregators (~>> aggregations-container aggregators
+                                                                                       (mapcar (lambda (x)
+                                                                                                 (construct-aggregator nil (first x) (second x)))))))
+                                                        ((element)
+                                                          (iterate
+                                                            (for aggregator in aggregators)
+                                                            (pass-to-aggregation aggregator
+                                                                                 element)))
+                                                        ((map nil #'extract-result aggregators))
+                                                      (iterate
+                                                        (for aggregator in aggregators)
+                                                        (cleanup aggregator)))
+                                                    nil
+                                                    nil))))
+       (unwind-protect
+            (progn
+              (handler-case
+                  (across-aggregate range
+                                    (aggregator-pass compound-aggregator))
+                (early-aggregation-exit nil))
+              (setf success t))
+         (unless success (cleanup compound-aggregator)))
+       (extract-result compound-aggregator)))))
 
 (defmethod apply-aggregation-function (range
                                        (function aggregation-function)
                                        all
                                        &optional run)
-  (let* ((aggregator (construct-aggregator range function all))
-         (container (make-aggregations-container range aggregator)))
+  (let* ((container (make-aggregations-container range (list function all))))
     (if run
         (run container)
         container)))
+
+(defmethod apply-aggregation-function ((range aggregations-container) function all &optional run)
+  (push (list function all) (aggregators range))
+  (if run (run range) range))

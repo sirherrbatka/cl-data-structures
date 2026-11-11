@@ -77,7 +77,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range parallel-group-by-proxy)
                                                   outer-constructor
-                                                  (function cl-ds.alg.meta:aggregation-function)
+                                                  function
                                                   (arguments list))
   (bind ((groups-prototype (read-groups range))
          (chunk-size (read-chunk-size range))

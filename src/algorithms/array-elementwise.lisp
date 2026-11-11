@@ -54,8 +54,12 @@
                                    (fill-pointer inners)
                                    (array-total-size inners)))
            (setf (row-major-aref result i)
-                 (cl-ds.alg.meta:extract-result (row-major-aref inners i)))
-           (finally (return result)))))
+                 (cl-ds.alg.meta:captured-aggregations-list
+                  (cl-ds.alg.meta:with-captured-aggregations
+                    (cl-ds.alg.meta:extract-result (row-major-aref inners i)))))
+           (finally
+            (push-to-aggregation-results result)
+            (return result)))))
 
        (unless (null inners)
          (iterate
@@ -68,7 +72,7 @@
 
 (defmethod cl-ds.alg.meta:aggregator-constructor ((range array-elementwise-forward-proxy)
                                                   outer-constructor
-                                                  (function aggregation-function)
+                                                  function
                                                   (arguments list))
   (declare (optimize (speed 3)))
   (let ((outer-fn (call-next-method)))

@@ -179,7 +179,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                (:module "algorithms"
                 :components ((:file "package")
                              (:module "meta"
-                              :components ((:file "macros")
+                              :components ((:file "variables")
+                                           (:file "macros")
                                            (:file "classes")
                                            (:file "generics")
                                            (:file "methods")

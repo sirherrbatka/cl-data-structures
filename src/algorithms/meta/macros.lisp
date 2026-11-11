@@ -53,7 +53,6 @@
                      !arguments
                      !init
                      !main
-                     !extractor
                      !extract-callback
                      !keys
                      !cached-value
@@ -73,19 +72,22 @@
                                  (let ((,!extract-callback (if (or (eq ,!after #'identity)
                                                                  (eq ,!after 'identity)
                                                                  (null ,!after))
-                                                             (lambda ()
-                                                               ,@result-form)
+                                                               (let ((,!cached-value-present nil)
+                                                                     (,!cached-value nil))
+                                                                 (lambda ()
+                                                                   (unless ,!cached-value-present
+                                                                       (prog1 (setf ,!cached-value (progn ,@result-form))
+                                                                         (setf ,!cached-value-present t)))
+                                                                   (push-to-aggregation-results ,!cached-value)))
                                                              (let* ((,!after (ensure-function ,!after))
-                                                                   (,!cached-value-present nil)
-                                                                    (,!cached-value nil)
-                                                                    (,!extractor
-                                                                      (lambda ()
-                                                                        (if ,!cached-value-present
-                                                                            ,!cached-value
-                                                                            (prog1 (setf ,!cached-value
-                                                                                         (funcall ,!after (progn ,@result-form)))
-                                                                              (setf ,!cached-value-present t))))))
-                                                               ,!extractor))))
+                                                                    (,!cached-value-present nil)
+                                                                    (,!cached-value nil))
+                                                               (lambda ()
+                                                                 (unless ,!cached-value-present
+                                                                     (setf ,!cached-value
+                                                                           (funcall ,!after (progn ,@result-form)))
+                                                                     (setf ,!cached-value-present t))
+                                                                 (push-to-aggregation-results ,!cached-value))))))
                                    (if (or (eq ,!key #'identity)
                                            (eq ,!key 'identity)
                                            (null ,!key))

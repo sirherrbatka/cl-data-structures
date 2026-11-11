@@ -73,7 +73,7 @@
 (defmethod cl-ds.alg.meta:aggregator-constructor
     ((range buffer-range)
      outer-constructor
-     (function cl-ds.alg.meta:aggregation-function)
+     function
      (arguments list))
   (declare (optimize (speed 3) (safety 0)
                      (compilation-speed 0) (space 0)))
