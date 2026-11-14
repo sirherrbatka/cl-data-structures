@@ -3,6 +3,8 @@
 
 (defvar *aggregation-results* nil)
 
+(defparameter *run* t)
+
 (defun push-to-aggregation-results (result)
   (unless (null *aggregation-results*)
     (vector-push-extend result *aggregation-results*))

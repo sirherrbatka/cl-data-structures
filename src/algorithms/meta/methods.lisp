@@ -65,31 +65,33 @@ Range function invokaction protocol.
                    :input input
                    :aggregators (list args))))
 
+(defun aggregations-container-aggregator (aggregations-container)
+  (call-constructor (aggregator-constructor
+                     (input aggregations-container)
+                     (let-aggregator ((aggregators (~>> aggregations-container aggregators
+                                                        (mapcar (lambda (x)
+                                                                  (construct-aggregator nil (first x) (second x)))))))
+                         ((element)
+                           (iterate
+                             (for aggregator in aggregators)
+                             (pass-to-aggregation aggregator
+                                                  element)))
+                         ((map nil #'extract-result aggregators))
+                       (iterate
+                         (for aggregator in aggregators)
+                         (cleanup aggregator)))
+                     nil
+                     nil)))
+
 (defun run (aggregations-container)
   (captured-aggregations-list
    (with-captured-aggregations
      (let* ((success nil)
-            (range (input aggregations-container))
-            (compound-aggregator (call-constructor (aggregator-constructor
-                                                    range 
-                                                    (let-aggregator ((aggregators (~>> aggregations-container aggregators
-                                                                                       (mapcar (lambda (x)
-                                                                                                 (construct-aggregator nil (first x) (second x)))))))
-                                                        ((element)
-                                                          (iterate
-                                                            (for aggregator in aggregators)
-                                                            (pass-to-aggregation aggregator
-                                                                                 element)))
-                                                        ((map nil #'extract-result aggregators))
-                                                      (iterate
-                                                        (for aggregator in aggregators)
-                                                        (cleanup aggregator)))
-                                                    nil
-                                                    nil))))
+            (compound-aggregator (aggregations-container-aggregator aggregations-container)))
        (unwind-protect
             (progn
               (handler-case
-                  (across-aggregate range
+                  (across-aggregate (input aggregations-container)
                                     (aggregator-pass compound-aggregator))
                 (early-aggregation-exit nil))
               (setf success t))

@@ -29,13 +29,13 @@
   (defun aggregation-function-defgeneric-form (function-name function-class
                                                generic-lambda-list method-lambda-list
                                                values)
-    `(defgeneric ,function-name (,@generic-lambda-list run)
+    `(defgeneric ,function-name (,@generic-lambda-list)
        (:generic-function-class ,function-class)
-       (:method (,@method-lambda-list (run t))
+       (:method (,@method-lambda-list)
          (apply-aggregation-function range
                                      (function ,function-name)
                                      (list ,@values)
-                                     run))))
+                                     *run*))))
 
   (defun aggregator-constructor-form (function-class function-state-forms init-body
                                       aggregate-form result-form method-lambda-list

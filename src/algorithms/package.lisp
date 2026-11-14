@@ -19,10 +19,12 @@
    #:layer-aggregator-constructor
    #:construct-aggregator
    #:define-aggregation-function
+   #:aggregations-container-aggregator
    #:early-aggregation-exit
    #:aggregated-element
    #:extract-result
    #:layer-function
+   #:*run*
    #:let-aggregator
    #:linear-aggregator
    #:call-constructor
@@ -103,6 +105,7 @@
    #:proxy-range
    #:random-access-chain-of-ranges
    #:random-access-proxy-range
+   #:route
    #:rate
    #:access-functor
    #:read-functor-constructor

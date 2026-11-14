@@ -227,6 +227,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              (:file "in-batches")
                              (:file "sliding-window")
                              (:file "with-previous-element")
+                             (:file "route")
                              (:file "docstrings")
                              ))
                (:module "file-system"
